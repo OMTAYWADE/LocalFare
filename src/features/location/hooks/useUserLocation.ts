@@ -6,7 +6,7 @@ import { getCurrentLocation } from "../services/location.service";
 
 import type {
     UserLocation,
-} from "../types/location.types";
+} from "../types";
 
 export function useUserLocation() {
     const [location, setLocation] =

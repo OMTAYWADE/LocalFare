@@ -1,6 +1,4 @@
-import type {
-    Coordinates,
-} from "../types/location.types";
+import type {  Coordinates,} from "../../place/types/place.types";
 
 const EARTH_RADIUS_KM = 6371;
 
