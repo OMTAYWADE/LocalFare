@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    Check,
     Crosshair,
     Loader2,
     MapPin,
@@ -14,37 +13,38 @@ interface LocationPillProps {
 }
 
 export default function LocationPill({
-    location = "Mumbai, Maharashtra",
+    location = "Location not detected",
     detecting = false,
     onLocate,
 }: LocationPillProps) {
     return (
-        <div className="flex w-full max-w-[520px] items-center justify-between rounded-[22px] border border-white/10 bg-[#123c35] px-4 py-3 text-white shadow-[0_18px_45px_rgba(18,60,53,0.18)] sm:rounded-full sm:px-5 sm:py-2.5">
-            <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e8f58d] text-[#123c35]">
-                    <MapPin
-                        className="h-4 w-4"
-                        strokeWidth={2.5}
-                    />
-                </span>
+        <div className="flex w-full max-w-[470px] items-center gap-3 rounded-[20px] border border-[#123c35]/10 bg-white/80 p-3 shadow-[0_14px_40px_rgba(18,60,53,0.08)] backdrop-blur-xl sm:rounded-full sm:px-4 sm:py-2.5">
+            {/* LOCATION ICON */}
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e8f58d] text-[#123c35]">
+                <MapPin
+                    className="h-4 w-4"
+                    strokeWidth={2.5}
+                />
+            </span>
 
-                <div className="min-w-0">
-                    <p className="text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                        Your location
-                    </p>
+            {/* LOCATION TEXT */}
+            <div className="min-w-0 flex-1">
+                <p className="text-[8px] font-black uppercase tracking-[0.18em] text-[#6d7974]">
+                    Starting from
+                </p>
 
-                    <p className="mt-0.5 truncate text-sm font-bold text-white">
-                        {location}
-                    </p>
-                </div>
+                <p className="mt-0.5 truncate text-sm font-black text-[#123c35]">
+                    {location}
+                </p>
             </div>
 
+            {/* LOCATE BUTTON */}
             <button
                 type="button"
                 onClick={onLocate}
                 disabled={detecting}
                 aria-label="Detect current location"
-                className="ml-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#e8f58d]/60 disabled:cursor-wait disabled:opacity-60"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#123c35] text-[#e8f58d] transition duration-300 hover:scale-105 hover:bg-[#0d312b] focus:outline-none focus:ring-2 focus:ring-[#123c35]/30 disabled:cursor-wait disabled:opacity-60"
             >
                 {detecting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

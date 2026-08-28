@@ -17,41 +17,113 @@ interface FoodRecommendationListProps {
 export default function FoodRecommendationList({
     recommendations,
 }: FoodRecommendationListProps) {
-    if (
-        recommendations.length === 0
-    ) {
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+
+    if (recommendations.length === 0) {
         return (
-            <div className="rounded-[28px] border border-dashed border-[#123c35]/15 bg-white p-10 text-center">
-
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#f7f3ea]">
-
-                    <SearchX className="h-5 w-5 text-[#123c35]" />
-
+            <div
+                className="
+                    rounded-[28px]
+                    border
+                    border-dashed
+                    border-[#123c35]/15
+                    bg-white
+                    px-6
+                    py-12
+                    text-center
+                    sm:px-10
+                "
+            >
+                <div
+                    className="
+                        mx-auto
+                        flex
+                        h-14
+                        w-14
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-[#f7f3ea]
+                    "
+                >
+                    <SearchX
+                        className="
+                            h-6
+                            w-6
+                            text-[#123c35]
+                        "
+                    />
                 </div>
 
-                <h3 className="mt-4 text-lg font-black text-[#123c35]">
+                <h3
+                    className="
+                        mt-5
+                        text-lg
+                        font-black
+                        tracking-[-0.03em]
+                        text-[#123c35]
+                    "
+                >
                     No matching food found
                 </h3>
 
-                <p className="mx-auto mt-2 max-w-sm text-xs leading-5 text-[#6d7974]">
-                    Try increasing your budget
-                    or relaxing one of your food
-                    preferences.
+                <p
+                    className="
+                        mx-auto
+                        mt-2
+                        max-w-sm
+                        text-xs
+                        leading-5
+                        text-[#6d7974]
+                    "
+                >
+                    We couldn't find food matching
+                    your current preferences.
                 </p>
 
+                <p
+                    className="
+                        mx-auto
+                        mt-1
+                        max-w-sm
+                        text-[10px]
+                        leading-5
+                        text-[#89938f]
+                    "
+                >
+                    Try increasing your budget or
+                    relaxing one of your preferences.
+                </p>
             </div>
         );
     }
 
-    return (
-        <div className="grid gap-5 md:grid-cols-2">
+    /* ============================================================
+       RECOMMENDATION GRID
+    ============================================================ */
 
+    return (
+        <div
+            className="
+                grid
+                gap-4
+                sm:gap-5
+                md:grid-cols-2
+                xl:gap-6
+            "
+        >
             {recommendations.map(
                 (recommendation) => (
-                    <FoodRecommendationCard key={ recommendation.food.id} recommendation={ recommendation}/>
+                    <FoodRecommendationCard
+                        key={recommendation.food.id}
+                        recommendation={
+                            recommendation
+                        }
+                    />
                 ),
             )}
-
         </div>
     );
 }

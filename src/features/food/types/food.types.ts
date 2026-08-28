@@ -73,3 +73,32 @@ export interface LocationSearchResult {
     location: Coordinates;
     distance?: DistanceResult;
 }
+
+export interface FoodItem {
+    // existing fields...
+
+    id: string;
+    name: string;
+    priceInr: number;
+
+    diet: FoodDiet;
+    spiceLevel: SpiceLevel;
+    cuisine: FoodCuisine[];
+
+    /*
+     * Dietary safety metadata
+     */
+
+    isVegan?: boolean;
+    containsEgg?: boolean;
+
+    containsOnion?: boolean;
+    containsGarlic?: boolean;
+
+    /*
+     * Jain suitability should be
+     * explicitly verified, not guessed.
+     */
+
+    jainSuitable?: boolean;
+}

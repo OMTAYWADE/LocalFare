@@ -129,3 +129,49 @@ button {
 .journey-image {
   object-fit: cover;
 }
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.animate-fade-up {
+    animation: fade-up 0.7s ease-out both;
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animation-delay-100 {
+    animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+    animation-delay: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .animate-float {
+        animation: none;
+    }
+}

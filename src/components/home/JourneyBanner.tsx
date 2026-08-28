@@ -3,9 +3,12 @@
 import {
     ArrowUpRight,
     Binoculars,
+    Camera,
     MapPin,
     Navigation,
+    ScanSearch,
     Send,
+    ShieldCheck,
     Sparkles,
 } from "lucide-react";
 
@@ -13,132 +16,291 @@ interface JourneyBannerProps {
     location?: string;
     onNearby?: () => void;
     onDestination?: () => void;
+    onLocalFare?: () => void;
+}
+
+interface JourneyCardProps {
+    icon: React.ReactNode;
+    eyebrow: string;
+    title: string;
+    description: string;
+    className: string;
+    iconClassName: string;
+    arrowClassName: string;
+    onClick?: () => void;
+    image?: string;
+}
+
+function JourneyCard({
+    icon,
+    eyebrow,
+    title,
+    description,
+    className,
+    iconClassName,
+    arrowClassName,
+    onClick,
+    image,
+}: JourneyCardProps) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={[
+                "group relative min-h-[180px] overflow-hidden rounded-[28px]",
+                "border border-[#123c35]/10 text-left",
+                "transition-all duration-500",
+                "hover:-translate-y-1.5 hover:shadow-[0_24px_60px_rgba(18,60,53,0.14)]",
+                "focus:outline-none focus:ring-2 focus:ring-[#123c35]/30",
+                "active:scale-[0.99]",
+                className,
+            ].join(" ")}
+        >
+            {image && (
+                <>
+                    <img
+                        src={image}
+                        alt=""
+                        aria-hidden="true"
+                        className="absolute inset-0 h-full w-full object-cover opacity-20 transition duration-700 group-hover:scale-105 group-hover:opacity-25"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-[#123c35]/10" />
+                </>
+            )}
+
+            {/* Decorative glow */}
+            <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/20 blur-2xl transition duration-700 group-hover:scale-150" />
+
+            <div className="relative z-10 flex h-full min-h-[180px] flex-col justify-between p-5 sm:p-6">
+                <div>
+                    <div className="flex items-start justify-between gap-3">
+                        <span
+                            className={[
+                                "flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px]",
+                                "transition duration-500 group-hover:scale-105",
+                                iconClassName,
+                            ].join(" ")}
+                        >
+                            {icon}
+                        </span>
+
+                        <span
+                            className={[
+                                "flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+                                "transition duration-300 group-hover:translate-x-1 group-hover:-translate-y-1",
+                                arrowClassName,
+                            ].join(" ")}
+                        >
+                            <ArrowUpRight className="h-4 w-4" />
+                        </span>
+                    </div>
+
+                    <p className="mt-5 text-[9px] font-black uppercase tracking-[0.2em] opacity-55">
+                        {eyebrow}
+                    </p>
+
+                    <h2 className="mt-1.5 text-xl font-black tracking-[-0.04em] sm:text-2xl">
+                        {title}
+                    </h2>
+
+                    <p className="mt-2 max-w-[340px] text-xs leading-5 opacity-70 sm:text-sm">
+                        {description}
+                    </p>
+                </div>
+            </div>
+        </button>
+    );
 }
 
 export default function JourneyBanner({
-    location = "Mumbai, Maharashtra",
+    location = "Your current location",
     onNearby,
     onDestination,
+    onLocalFare,
 }: JourneyBannerProps) {
     return (
-        <section className="relative isolate overflow-hidden rounded-[32px] border border-[#123c35]/10 bg-[#ccecf3] shadow-[0_24px_70px_rgba(18,60,53,0.08)] sm:rounded-[38px]">
-            {/* Image */}
-            <img
-                src="/images/fairtrip-journey-scene.png"
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 h-full min-h-[560px] w-full object-cover object-[68%_center] sm:min-h-[610px]"
-            />
+        <section className="relative mt-3 overflow-hidden rounded-[32px] border border-[#123c35]/10 bg-[#f7f3ea] sm:mt-5 sm:rounded-[40px]">
+            {/* Background decoration */}
+            <div className="pointer-events-none absolute -left-32 -top-32 h-[360px] w-[360px] rounded-full bg-[#e8f58d]/50 blur-3xl" />
 
-            {/* Desktop readability overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#ccecf3] via-[#ccecf3]/90 to-[#ccecf3]/10" />
+            <div className="pointer-events-none absolute -right-32 top-20 h-[320px] w-[320px] rounded-full bg-[#f5b79b]/25 blur-3xl" />
 
-            {/* Bottom readability */}
-            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#123c35]/25 to-transparent lg:hidden" />
+            {/* HERO */}
+            <div className="relative grid min-h-[500px] lg:grid-cols-[1.05fr_0.95fr]">
+                {/* LEFT */}
+                <div className="relative z-10 flex flex-col justify-center px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
+                    {/* Badge */}
+                    <div className="animate-fade-up inline-flex w-fit items-center gap-2 rounded-full border border-[#123c35]/10 bg-white/75 px-3 py-2 shadow-sm backdrop-blur-xl">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#123c35] text-[#e8f58d]">
+                            <Sparkles className="h-3 w-3" />
+                        </span>
 
-            <div className="relative z-10 flex min-h-[560px] flex-col justify-between p-5 sm:min-h-[610px] sm:p-8 lg:p-10">
-                {/* Eyebrow */}
-                <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#123c35]/10 bg-white/75 px-3 py-1.5 backdrop-blur-md">
-                        <Sparkles className="h-3.5 w-3.5 text-[#ef713d]" />
-
-                        <span className="text-[9px] font-black uppercase tracking-[0.18em] text-[#123c35]">
-                            Your journey starts here
+                        <span className="text-[9px] font-black uppercase tracking-[0.17em] text-[#123c35]">
+                            Travel with confidence
                         </span>
                     </div>
 
-                    <div className="mt-5 max-w-[470px]">
-                        <p className="text-sm font-semibold text-[#245d78]">
-                            Good to see you.
+                    {/* Heading */}
+                    <div className="animate-fade-up animation-delay-100 mt-7 max-w-[600px]">
+                        <p className="text-sm font-bold text-[#ef713d]">
+                            Welcome to FairTrip
                         </p>
 
-                        <h1 className="mt-2 text-4xl font-black leading-[0.94] tracking-[-0.06em] text-[#123c35] sm:text-6xl">
-                            Where shall
+                        <h1 className="mt-2 text-[clamp(3rem,7vw,6rem)] font-black leading-[0.88] tracking-[-0.075em] text-[#123c35]">
+                            Travel
                             <br />
-                            we{" "}
-                            <span className="handwritten text-[#ef713d]">
-                                take you?
+                            <span className="relative inline-block">
+                                smarter.
+                                <span className="absolute -bottom-2 left-0 h-2 w-[70%] rounded-full bg-[#e8f58d] sm:h-3" />
+                            </span>
+                            <br />
+                            <span className="font-serif italic text-[#ef713d]">
+                                pay fairly.
                             </span>
                         </h1>
 
-                        <p className="mt-5 max-w-[390px] text-sm leading-6 text-[#31544d]/80">
-                            Discover places around you or
-                            build a complete journey to a
-                            destination you already have in mind.
+                        <p className="mt-6 max-w-[480px] text-sm leading-6 text-[#52635e] sm:text-base sm:leading-7">
+                            Discover places, plan your destination and
+                            understand local food and travel prices before
+                            you spend.
                         </p>
+                    </div>
+
+                    {/* LOCATION */}
+                    <div className="animate-fade-up animation-delay-200 mt-8">
+                        <div className="flex w-full max-w-[470px] items-center gap-3 rounded-[20px] border border-[#123c35]/10 bg-white/80 p-3 shadow-[0_16px_40px_rgba(18,60,53,0.08)] backdrop-blur-xl">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e8f58d] text-[#123c35]">
+                                <MapPin className="h-4 w-4" />
+                            </span>
+
+                            <div className="min-w-0 flex-1">
+                                <p className="text-[8px] font-black uppercase tracking-[0.18em] text-[#6d7974]">
+                                    Starting from
+                                </p>
+
+                                <p className="mt-0.5 truncate text-sm font-black text-[#123c35]">
+                                    {location}
+                                </p>
+                            </div>
+
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#123c35] text-[#e8f58d]">
+                                <Navigation className="h-3.5 w-3.5" />
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Bottom actions */}
-                <div className="mt-10 max-w-[780px]">
-                    {/* Location */}
-                    <div className="mb-4 flex w-full max-w-[420px] items-center gap-3 rounded-[20px] border border-white/50 bg-white/80 px-4 py-3 shadow-[0_12px_35px_rgba(18,60,53,0.1)] backdrop-blur-xl">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e8f58d] text-[#123c35]">
-                            <MapPin className="h-3.5 w-3.5" />
-                        </span>
+                {/* RIGHT IMAGE */}
+                <div className="relative hidden min-h-[500px] overflow-hidden lg:block">
+                    <img
+                        src="/images/fairtrip-journey-scene.png"
+                        alt="Travel destination"
+                        className="absolute inset-0 h-full w-full object-cover object-center"
+                    />
 
-                        <div className="min-w-0">
-                            <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#6d7974]">
-                                Starting from
-                            </p>
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#f7f3ea] via-[#f7f3ea]/20 to-transparent" />
 
-                            <p className="truncate text-sm font-black text-[#123c35]">
-                                {location}
-                            </p>
+                    {/* Floating trust card */}
+                    <div className="animate-float absolute bottom-10 right-8 max-w-[240px] rounded-[22px] border border-white/40 bg-[#123c35]/90 p-4 text-white shadow-[0_20px_50px_rgba(0,0,0,0.18)] backdrop-blur-xl">
+                        <div className="flex items-center gap-3">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e8f58d] text-[#123c35]">
+                                <ShieldCheck className="h-4 w-4" />
+                            </span>
+
+                            <div>
+                                <p className="text-xs font-black">
+                                    Know before you pay
+                                </p>
+
+                                <p className="mt-0.5 text-[10px] leading-4 text-white/55">
+                                    Compare local prices with confidence.
+                                </p>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#123c35] text-[#e8f58d]">
-                            <Navigation className="h-3 w-3" />
-                        </span>
+            {/* JOURNEY SELECTOR */}
+            <div className="relative z-20 border-t border-[#123c35]/10 bg-white/45 p-4 backdrop-blur-xl sm:p-6 lg:p-8">
+                <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#ef713d]">
+                            Start here
+                        </p>
+
+                        <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-[#123c35] sm:text-2xl">
+                            What are you looking for?
+                        </h2>
                     </div>
 
-                    {/* Actions */}
-                    <div className="grid gap-3 sm:grid-cols-2">
-                        <button
-                            type="button"
-                            onClick={onNearby}
-                            className="group flex min-h-[88px] items-center gap-4 rounded-[24px] bg-[#123c35] p-5 text-left text-white transition duration-200 hover:-translate-y-1 hover:bg-[#0d312b] focus:outline-none focus:ring-2 focus:ring-[#123c35] focus:ring-offset-2"
-                        >
-                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[#e8f58d] text-[#123c35]">
-                                <Binoculars className="h-6 w-6" />
-                            </span>
+                    <p className="max-w-[360px] text-xs leading-5 text-[#6d7974] sm:text-right">
+                        Choose what you need and FairTrip will take you to the
+                        right tool.
+                    </p>
+                </div>
 
-                            <span className="min-w-0 flex-1">
-                                <strong className="block text-sm font-black">
-                                    Explore Nearby
-                                </strong>
+                <div className="grid gap-3 md:grid-cols-3">
+                    {/* EXPLORE */}
+                    <JourneyCard
+                        icon={<Binoculars className="h-5 w-5" />}
+                        eyebrow="Discover around you"
+                        title="Explore Nearby"
+                        description="Find attractions, food and useful places around your current location."
+                        className="bg-[#e8f58d] text-[#123c35]"
+                        iconClassName="bg-[#123c35] text-[#e8f58d]"
+                        arrowClassName="bg-[#cbe95b] text-[#123c35]"
+                        image="/images/fairtrip-journey-scene.png"
+                        onClick={onNearby}
+                    />
 
-                                <span className="mt-1 block text-xs leading-5 text-white/55">
-                                    Discover places, food and
-                                    attractions around you.
-                                </span>
-                            </span>
+                    {/* DESTINATION */}
+                    <JourneyCard
+                        icon={<Send className="h-5 w-5" />}
+                        eyebrow="Plan before you go"
+                        title="I Know My Destination"
+                        description="Choose a destination and compare routes, travel costs and options."
+                        className="bg-[#f8d4c1] text-[#123c35]"
+                        iconClassName="bg-[#ef713d] text-white"
+                        arrowClassName="bg-white/70 text-[#ef713d]"
+                        onClick={onDestination}
+                    />
 
-                            <ArrowUpRight className="h-5 w-5 shrink-0 text-[#e8f58d] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </button>
+                    {/* LOCALFARE */}
+                    <JourneyCard
+                        icon={<ScanSearch className="h-5 w-5" />}
+                        eyebrow="Check before you pay"
+                        title="Food & LocalFare"
+                        description="Check food prices and compare local fare signals to avoid overpaying."
+                        className="bg-[#123c35] text-white"
+                        iconClassName="bg-[#e8f58d] text-[#123c35]"
+                        arrowClassName="bg-white/10 text-[#e8f58d]"
+                        onClick={onLocalFare}
+                    />
+                </div>
 
-                        <button
-                            type="button"
-                            onClick={onDestination}
-                            className="group flex min-h-[88px] items-center gap-4 rounded-[24px] border border-[#123c35]/10 bg-white/90 p-5 text-left text-[#123c35] shadow-sm backdrop-blur transition duration-200 hover:-translate-y-1 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#123c35] focus:ring-offset-2"
-                        >
-                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[#f8d4c1] text-[#ef713d]">
-                                <Send className="h-5 w-5" />
-                            </span>
+                {/* TRUST MESSAGE */}
+                <div className="mt-4 flex flex-col gap-3 rounded-[20px] border border-[#123c35]/10 bg-[#f7f3ea]/80 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#dcefe5] text-[#123c35]">
+                            <ShieldCheck className="h-4 w-4" />
+                        </span>
 
-                            <span className="min-w-0 flex-1">
-                                <strong className="block text-sm font-black">
-                                    I Know My Destination
-                                </strong>
+                        <div>
+                            <p className="text-xs font-black text-[#123c35]">
+                                Built to make local travel more transparent
+                            </p>
 
-                                <span className="mt-1 block text-xs leading-5 text-[#6d7974]">
-                                    Compare routes, costs and
-                                    travel options.
-                                </span>
-                            </span>
+                            <p className="mt-0.5 text-[10px] text-[#6d7974]">
+                                Places · Food · Routes · Local prices
+                            </p>
+                        </div>
+                    </div>
 
-                            <ArrowUpRight className="h-5 w-5 shrink-0 text-[#ef713d] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </button>
+                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.15em] text-[#6d7974]">
+                        <Camera className="h-3.5 w-3.5" />
+                        Scan & compare
                     </div>
                 </div>
             </div>

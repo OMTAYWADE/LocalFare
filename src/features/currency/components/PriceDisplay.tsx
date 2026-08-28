@@ -1,19 +1,13 @@
 "use client";
 
-import {
-    useEffect,
-    useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import type { CurrencyCode } from "../types";
 
-import {
-    convertFromInr,
-} from "../currency.service";
+import { convertFromInr } from "../currency.service";
+import { formatCurrency } from "../currency.utils";
 
-import {
-    formatCurrency,
-} from "../currency.utils";
+import { useCurrency } from "./CurrencyProvider";
 
 interface PriceDisplayProps {
     inr: number;
@@ -24,22 +18,44 @@ interface PriceDisplayProps {
 
 export default function PriceDisplay({
     inr,
-    currency = "INR",
+    currency: providedCurrency,
     showInr = true,
     className = "",
 }: PriceDisplayProps) {
+    const {
+        currency: globalCurrency,
+    } = useCurrency();
+
+    /*
+     * Use explicitly provided currency when available.
+     * Otherwise use the global FairTrip currency.
+     */
+    const currency =
+        providedCurrency ?? globalCurrency;
+
+    /*
+     * Only foreign-currency conversion needs state.
+     *
+     * INR itself does not need conversion.
+     */
     const [
         convertedAmount,
         setConvertedAmount,
-    ] = useState<number | null>(
-        currency === "INR" ? inr : null,
-    );
+    ] = useState<number | null>(null);
 
     useEffect(() => {
         let cancelled = false;
 
+        /*
+         * INR is already the base currency.
+         *
+         * IMPORTANT:
+         * We do NOT call setState here.
+         */
         if (currency === "INR") {
-            return;
+            return () => {
+                cancelled = true;
+            };
         }
 
         async function loadConversion() {
@@ -51,7 +67,9 @@ export default function PriceDisplay({
                     );
 
                 if (!cancelled) {
-                    setConvertedAmount(amount);
+                    setConvertedAmount(
+                        amount,
+                    );
                 }
             } catch (error) {
                 console.error(
@@ -73,21 +91,31 @@ export default function PriceDisplay({
     }, [inr, currency]);
 
     /*
-     * INR is the base currency.
+     * =====================================================
+     * INR
+     * =====================================================
+     *
+     * No state required.
      */
     if (currency === "INR") {
         return (
             <span
                 className={`font-black text-[#123c35] ${className}`}
             >
-                {formatCurrency(inr, "INR")}
+                {formatCurrency(
+                    inr,
+                    "INR",
+                )}
             </span>
         );
     }
 
     /*
-     * Conversion is still loading.
+     * =====================================================
+     * FOREIGN CURRENCY - LOADING
+     * =====================================================
      */
+
     if (convertedAmount === null) {
         return (
             <span
@@ -102,7 +130,13 @@ export default function PriceDisplay({
                     </span>
                 )}
 
-                <span className="text-xs font-medium text-[#6d7974]">
+                <span
+                    className="
+                        text-xs
+                        font-bold
+                        text-[#6d7974]
+                    "
+                >
                     (converting...)
                 </span>
             </span>
@@ -110,16 +144,26 @@ export default function PriceDisplay({
     }
 
     /*
+     * =====================================================
+     * FOREIGN CURRENCY
+     * =====================================================
+     *
      * Example:
      *
-     * ₹500 ($5.90)
+     * ₹8500 ($100.30)
      */
+
     return (
         <span
             className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`}
         >
             {showInr && (
-                <span className="font-black text-[#123c35]">
+                <span
+                    className="
+                        font-black
+                        text-[#123c35]
+                    "
+                >
                     {formatCurrency(
                         inr,
                         "INR",
@@ -127,14 +171,18 @@ export default function PriceDisplay({
                 </span>
             )}
 
-            <span className="text-xs font-bold text-[#6d7974]">
+            <span
+                className="
+                    text-xs
+                    font-bold
+                    text-[#6d7974]
+                "
+            >
                 (
-                {" "}
                 {formatCurrency(
                     convertedAmount,
                     currency,
                 )}
-                {" "}
                 )
             </span>
         </span>

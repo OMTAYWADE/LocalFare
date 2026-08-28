@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import {
+    CURRENCIES,
     DEFAULT_CURRENCY,
 } from "../currency.config";
 
@@ -19,7 +20,10 @@ import type {
 
 interface CurrencyContextValue {
     currency: CurrencyCode;
-    setCurrency: (currency: CurrencyCode) => void;
+
+    setCurrency: (
+        currency: CurrencyCode,
+    ) => void;
 }
 
 const CurrencyContext =
@@ -31,45 +35,98 @@ interface CurrencyProviderProps {
     children: ReactNode;
 }
 
+function isCurrencyCode(
+    value: string | null,
+): value is CurrencyCode {
+    if (!value) {
+        return false;
+    }
+
+    return Object.prototype.hasOwnProperty.call(
+        CURRENCIES,
+        value,
+    );
+}
+
 export function CurrencyProvider({
     children,
 }: CurrencyProviderProps) {
-    const [currency, setCurrencyState] =
-        useState<CurrencyCode>(DEFAULT_CURRENCY);
+    /*
+     * Always start with USD.
+     *
+     * This is also our default currency.
+     */
+    const [
+        currency,
+        setCurrencyState,
+    ] = useState<CurrencyCode>(
+        DEFAULT_CURRENCY,
+    );
 
     /*
-     * Read saved currency after the component
-     * has mounted.
+     * Load saved currency after hydration.
      *
-     * setTimeout prevents the React cascading-render
-     * warning in strict development mode.
+     * We use a microtask so the state update does
+     * not happen synchronously during the effect body.
      */
     useEffect(() => {
-        const saved = window.localStorage.getItem("fairtrip-currency") as CurrencyCode | null;
+        const saved =
+            window.localStorage.getItem(
+                "fairtrip-currency",
+            );
 
-        if (saved) {
-            setTimeout(() => { setCurrencyState(saved); }, 0);
+        if (!isCurrencyCode(saved)) {
+            return;
         }
+
+        if (saved === DEFAULT_CURRENCY) {
+            return;
+        }
+
+        queueMicrotask(() => {
+            setCurrencyState(saved);
+        });
     }, []);
 
-    const setCurrency = ( nextCurrency: CurrencyCode,) => {
+    /*
+     * Change currency.
+     */
+    const setCurrency = (
+        nextCurrency: CurrencyCode,
+    ) => {
         setCurrencyState(nextCurrency);
-        window.localStorage.setItem( "fairtrip-currency", nextCurrency,);
+
+        window.localStorage.setItem(
+            "fairtrip-currency",
+            nextCurrency,
+        );
     };
-    const value = useMemo(() => ({ currency, setCurrency,}), [currency], );
+
+    const value = useMemo(
+        () => ({
+            currency,
+            setCurrency,
+        }),
+        [currency],
+    );
 
     return (
-        <CurrencyContext.Provider value={value}>
+        <CurrencyContext.Provider
+            value={value}
+        >
             {children}
         </CurrencyContext.Provider>
     );
 }
 
 export function useCurrency() {
-    const context = useContext(CurrencyContext);
+    const context =
+        useContext(CurrencyContext);
 
     if (!context) {
-        throw new Error("useCurrency must be used inside CurrencyProvider",);
+        throw new Error(
+            "useCurrency must be used inside CurrencyProvider",
+        );
     }
 
     return context;

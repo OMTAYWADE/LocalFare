@@ -320,6 +320,7 @@ export default function FoodScanner() {
                     and budget.
                 </p>
             </div>
+            
         </section>
     );
 }
