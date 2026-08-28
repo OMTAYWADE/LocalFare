@@ -1,37 +1,113 @@
 interface NominatimResult {
-  place_id: number;
-  lat: string;
-  lon: string;
-  display_name: string;
-  type?: string;
-  category?: string;
-  osm_type?: string;
-  osm_id?: number;
+    lat: string;
+    lon: string;
+    display_name: string;
 }
 
-const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
+export interface GeocodedLocation {
+    lat: string;
+    lon: string;
+    display_name: string;
+}
 
-export async function geocodePlace( query: string,): Promise<NominatimResult | null> {
-  const url = new URL( NOMINATIM_URL,);
-  url.searchParams.set( "q", query,);
-  url.searchParams.set( "format", "jsonv2",);
-  url.searchParams.set( "limit", "1",);
-  url.searchParams.set( "addressdetails", "1", );
+export async function geocodePlace(
+    query: string,
+): Promise<GeocodedLocation | null> {
+    const cleanQuery =
+        query.trim();
 
-  const response = await fetch( url.toString(),{
-      headers: {
-        "User-Agent": "LocalFare/0.1 (SIH prototype)",
-        Accept: "application/json",
-      },
+    if (!cleanQuery) {
+        return null;
+    }
 
-      next: { revalidate: 3600, },
-    },
-  );
+    const url =
+        new URL(
+            "https://nominatim.openstreetmap.org/search",
+        );
 
-  if (!response.ok) {
-    throw new Error( `Nominatim failed: ${response.status}`,);
-  }
+    url.searchParams.set(
+        "q",
+        cleanQuery,
+    );
 
-  const results = (await response.json()) as NominatimResult[];
-  return results[0] ?? null;
+    url.searchParams.set(
+        "format",
+        "jsonv2",
+    );
+
+    url.searchParams.set(
+        "limit",
+        "1",
+    );
+
+    url.searchParams.set(
+        "addressdetails",
+        "1",
+    );
+
+    try {
+        const response =
+            await fetch(
+                url.toString(),
+                {
+                    method: "GET",
+
+                    headers: {
+                        Accept:
+                            "application/json",
+
+                        "User-Agent":
+                            "LocalFare/0.1 (travel recommendation prototype)",
+                    },
+
+                    next: {
+                        revalidate: 3600,
+                    },
+                },
+            );
+
+        if (!response.ok) {
+            console.error(
+                "Nominatim request failed:",
+                response.status,
+            );
+
+            return null;
+        }
+
+        const data =
+            (await response.json()) as NominatimResult[];
+
+        if (
+            !Array.isArray(data) ||
+            data.length === 0
+        ) {
+            return null;
+        }
+
+        const first =
+            data[0];
+
+        if (
+            !first?.lat ||
+            !first?.lon ||
+            !first?.display_name
+        ) {
+            return null;
+        }
+
+        return {
+            lat: first.lat,
+            lon: first.lon,
+            display_name:
+                first.display_name,
+        };
+    } catch (error) {
+        console.error(
+            "Nominatim geocoding failed:",
+            error,
+        );
+
+        return null;
+    }
 }

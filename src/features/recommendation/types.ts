@@ -75,6 +75,7 @@ export interface ExploreRecommendationInput {
 }
 
 export interface ExploreRecommendation extends RealPlaceResult {
+    distanceKm: number;
     recommendationScore: number;
     recommendationReason: string;
     recommendationType: ExploreRecommendationType;

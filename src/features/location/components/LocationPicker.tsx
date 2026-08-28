@@ -13,9 +13,7 @@ import type {
     LocationSearchResult,
 } from "../types";
 
-import {
-    searchLocation,
-} from "../services/location.service";
+import { searchLocation } from "../services/location.service";
 
 interface Props {
     value?: UserLocation;
@@ -27,20 +25,28 @@ export default function LocationPicker({
     onChange,
 }: Props) {
     const [query, setQuery] = useState("");
-    const [results, setResults] =
-        useState<LocationSearchResult[]>([]);
+    const [results, setResults] = useState<
+        LocationSearchResult[]
+    >([]);
+
     const [loading, setLoading] = useState(false);
     const [gpsLoading, setGpsLoading] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
+    const [error, setError] = useState("");
 
     async function handleSearch() {
         const searchQuery = query.trim();
 
         if (!searchQuery) {
             setResults([]);
+            setHasSearched(false);
+            setError("");
             return;
         }
 
         setLoading(true);
+        setHasSearched(true);
+        setError("");
 
         try {
             const data =
@@ -54,6 +60,12 @@ export default function LocationPicker({
             );
 
             setResults([]);
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to search location.",
+            );
         } finally {
             setLoading(false);
         }
@@ -64,41 +76,71 @@ export default function LocationPicker({
             typeof navigator === "undefined" ||
             !navigator.geolocation
         ) {
+            setError(
+                "Geolocation is not supported by this browser.",
+            );
             return;
         }
 
         setGpsLoading(true);
+        setError("");
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const latitude =
-                    position.coords.latitude;
-
-                const longitude =
-                    position.coords.longitude;
-
                 onChange({
-                    latitude,
-                    longitude,
+                    latitude:
+                        position.coords.latitude,
+
+                    longitude:
+                        position.coords.longitude,
+
                     displayName:
                         "Your current location",
+
                     accuracy:
                         position.coords.accuracy,
+
                     source: "gps",
                 });
 
                 setGpsLoading(false);
             },
-
             (error) => {
                 console.error(
                     "Unable to get current location:",
                     error,
                 );
 
+                let message =
+                    "Unable to detect your location.";
+
+                if (
+                    error.code ===
+                    error.PERMISSION_DENIED
+                ) {
+                    message =
+                        "Location permission was denied.";
+                }
+
+                if (
+                    error.code ===
+                    error.POSITION_UNAVAILABLE
+                ) {
+                    message =
+                        "Your location is currently unavailable.";
+                }
+
+                if (
+                    error.code ===
+                    error.TIMEOUT
+                ) {
+                    message =
+                        "Location request timed out.";
+                }
+
+                setError(message);
                 setGpsLoading(false);
             },
-
             {
                 enableHighAccuracy: false,
                 timeout: 10000,
@@ -110,24 +152,18 @@ export default function LocationPicker({
     function selectLocation(
         result: LocationSearchResult,
     ) {
-        const selectedLocation: UserLocation = {
+        onChange({
             latitude: result.latitude,
             longitude: result.longitude,
             displayName: result.displayName,
-
-            /*
-             * Search results do not have GPS accuracy.
-             * Zero means accuracy is unknown.
-             */
             accuracy: 0,
-
             source: "search",
-        };
-
-        onChange(selectedLocation);
+        });
 
         setResults([]);
         setQuery("");
+        setHasSearched(false);
+        setError("");
     }
 
     return (
@@ -135,7 +171,6 @@ export default function LocationPicker({
 
             {/* HEADER */}
             <div className="flex items-center justify-between gap-4">
-
                 <div className="min-w-0">
                     <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#ef713d]">
                         Starting point
@@ -166,16 +201,19 @@ export default function LocationPicker({
 
             {/* SEARCH */}
             <div className="mt-4 flex gap-2">
-
                 <div className="flex min-w-0 flex-1 items-center gap-2 rounded-[18px] bg-[#f7f3ea] px-3">
-
                     <Search className="h-4 w-4 shrink-0 text-[#6d7974]" />
 
                     <input
                         value={query}
-                        onChange={(event) =>
-                            setQuery(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setQuery(
+                                event.target.value,
+                            );
+
+                            setHasSearched(false);
+                            setError("");
+                        }}
                         onKeyDown={(event) => {
                             if (
                                 event.key ===
@@ -200,57 +238,88 @@ export default function LocationPicker({
                     className="shrink-0 rounded-[18px] bg-[#123c35] px-4 text-xs font-black text-white transition hover:bg-[#0d312b] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {loading
-                        ? "..."
+                        ? "Searching..."
                         : "Search"}
                 </button>
             </div>
 
-            {/* SEARCH RESULTS */}
-            {results.length > 0 && (
-                <div className="mt-3 overflow-hidden rounded-[18px] border border-[#123c35]/10 bg-white">
+            {/* LOADING */}
+            {loading && (
+                <div className="mt-3 rounded-[18px] bg-[#f7f3ea] px-4 py-3">
+                    <p className="text-xs font-bold text-[#123c35]">
+                        Searching Google Maps...
+                    </p>
 
-                    {results.map(
-                        (result, index) => (
-                            <button
-                                key={`${result.latitude}-${result.longitude}-${index}`}
-                                type="button"
-                                onClick={() =>
-                                    selectLocation(
-                                        result,
-                                    )
-                                }
-                                className="flex w-full items-start gap-3 border-b border-[#123c35]/8 px-4 py-3 text-left transition last:border-0 hover:bg-[#f7f3ea]"
-                            >
-                                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f9dfd0]">
-                                    <MapPin className="h-3.5 w-3.5 text-[#ef713d]" />
-                                </span>
-
-                                <span className="min-w-0">
-                                    <span className="block text-xs font-bold leading-5 text-[#123c35]">
-                                        {
-                                            result.displayName
-                                        }
-                                    </span>
-
-                                    <span className="mt-0.5 block text-[10px] text-[#6d7974]">
-                                        {
-                                            result.latitude
-                                        }
-                                        {" · "}
-                                        {
-                                            result.longitude
-                                        }
-                                    </span>
-                                </span>
-                            </button>
-                        ),
-                    )}
+                    <p className="mt-1 text-[10px] text-[#6d7974]">
+                        Finding matching locations.
+                    </p>
                 </div>
             )}
 
+            {/* ERROR */}
+            {!loading && error && (
+                <div className="mt-3 rounded-[18px] border border-red-200 bg-red-50 px-4 py-3">
+                    <p className="text-xs font-bold text-red-700">
+                        Location search failed
+                    </p>
+
+                    <p className="mt-1 text-[10px] text-red-600">
+                        {error}
+                    </p>
+                </div>
+            )}
+
+            {/* RESULTS */}
+            {!loading &&
+                !error &&
+                results.length > 0 && (
+                    <div className="mt-3 overflow-hidden rounded-[18px] border border-[#123c35]/10 bg-white">
+                        {results.map(
+                            (
+                                result,
+                                index,
+                            ) => (
+                                <button
+                                    key={`${result.latitude}-${result.longitude}-${index}`}
+                                    type="button"
+                                    onClick={() =>
+                                        selectLocation(
+                                            result,
+                                        )
+                                    }
+                                    className="flex w-full items-start gap-3 border-b border-[#123c35]/8 px-4 py-3 text-left transition last:border-0 hover:bg-[#f7f3ea]"
+                                >
+                                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f9dfd0]">
+                                        <MapPin className="h-3.5 w-3.5 text-[#ef713d]" />
+                                    </span>
+
+                                    <span className="min-w-0">
+                                        <span className="block text-xs font-bold leading-5 text-[#123c35]">
+                                            {
+                                                result.displayName
+                                            }
+                                        </span>
+
+                                        <span className="mt-0.5 block text-[10px] text-[#6d7974]">
+                                            {result.latitude.toFixed(
+                                                5,
+                                            )}
+                                            {" · "}
+                                            {result.longitude.toFixed(
+                                                5,
+                                            )}
+                                        </span>
+                                    </span>
+                                </button>
+                            ),
+                        )}
+                    </div>
+                )}
+
             {/* NO RESULTS */}
             {!loading &&
-                query.trim() &&
+                !error &&
+                hasSearched &&
                 results.length === 0 && (
                     <div className="mt-3 rounded-[18px] bg-[#f7f3ea] px-4 py-3">
                         <p className="text-xs font-bold text-[#123c35]">
@@ -258,9 +327,8 @@ export default function LocationPicker({
                         </p>
 
                         <p className="mt-1 text-[10px] text-[#6d7974]">
-                            Try CSMT, Gateway of
-                            India, Marine Drive or
-                            Colaba.
+                            Try CSMT, Gateway of India,
+                            Marine Drive or Colaba.
                         </p>
                     </div>
                 )}

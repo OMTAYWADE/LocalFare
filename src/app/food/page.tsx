@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import FoodLocationCard from "@/features/food/components/FoodLocationCard";
-import { useUserLocation } from "@/features/location/hooks/useUserLocation";
 
 import {
     ArrowRight,
