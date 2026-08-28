@@ -1,15 +1,24 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import {
+    ChevronDown,
+} from "lucide-react";
 
-import { CURRENCIES } from "../currency.config";
-import type { CurrencyCode } from "../types";
+import {
+    CURRENCIES,
+} from "../currency.config";
+
+import type {
+    CurrencyCode,
+} from "../types";
 
 interface CurrencySelectorProps {
     value: CurrencyCode;
+
     onChange: (
         currency: CurrencyCode,
     ) => void;
+
     compact?: boolean;
 }
 
@@ -18,8 +27,6 @@ export default function CurrencySelector({
     onChange,
     compact = false,
 }: CurrencySelectorProps) {
-    const selected = CURRENCIES[value];
-
     return (
         <div className="relative inline-flex">
             <select
@@ -48,37 +55,21 @@ export default function CurrencySelector({
                         : "h-11 rounded-[14px] pl-3 pr-9 text-xs",
                 ].join(" ")}
             >
-                {Object.values(CURRENCIES).map(
-                    (item) => (
-                        <option
-                            key={item.code}
-                            value={item.code}
-                        >
-                            {item.flag} {item.code}{" "}
-                            — {item.name}
-                        </option>
-                    ),
-                )}
+                {Object.values(
+                    CURRENCIES,
+                ).map((item) => (
+                    <option
+                        key={item.code}
+                        value={item.code}
+                    >
+                        {item.flag}{" "}
+                        {item.code} —{" "}
+                        {item.name}
+                    </option>
+                ))}
             </select>
 
-            <ChevronDown
-                className="
-                    pointer-events-none
-                    absolute
-                    right-3
-                    top-1/2
-                    h-3.5
-                    w-3.5
-                    -translate-y-1/2
-                    text-[#6d7974]
-                "
-            />
-
-            {compact && (
-                <span className="pointer-events-none absolute left-3 hidden">
-                    {selected.symbol}
-                </span>
-            )}
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#6d7974]" />
         </div>
     );
 }

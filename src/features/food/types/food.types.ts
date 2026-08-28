@@ -32,27 +32,79 @@ export type FoodCuisine =
 export interface FoodItem {
     id: string;
     name: string;
+
     description?: string;
+
     cuisine: FoodCuisine[];
+
     diet: FoodDiet;
+
     spiceLevel: SpiceLevel;
+
     mealTypes: MealType[];
+
     priceInr: number;
+
     rating?: number;
+
     imageUrl?: string;
+
     ingredients?: string[];
+
     tags?: string[];
+
     latitude?: number;
+
     longitude?: number;
+
     restaurantId?: string;
+
     restaurantName?: string;
+
+    /*
+     * ---------------------------------------------------------
+     * DIETARY SAFETY METADATA
+     * ---------------------------------------------------------
+     */
+
+    /**
+     * Explicitly marks whether the food is vegan.
+     *
+     * This is kept separate from diet because your existing
+     * food data already uses this field.
+     */
+    isVegan?: boolean;
+
+    /**
+     * Whether the food contains egg.
+     */
+    containsEgg?: boolean;
+
+    /**
+     * Whether the food contains onion.
+     */
+    containsOnion?: boolean;
+
+    /**
+     * Whether the food contains garlic.
+     */
+    containsGarlic?: boolean;
+
+    /**
+     * Explicitly verified Jain suitability.
+     *
+     * Do not infer this from the food name.
+     */
+    jainSuitable?: boolean;
 }
+
 export interface Coordinates {
     latitude: number;
     longitude: number;
 }
 
-export interface UserLocation extends Coordinates {
+export interface UserLocation
+    extends Coordinates {
     name?: string;
     address?: string;
     accuracy?: number;
@@ -72,33 +124,4 @@ export interface LocationSearchResult {
     address: string;
     location: Coordinates;
     distance?: DistanceResult;
-}
-
-export interface FoodItem {
-    // existing fields...
-
-    id: string;
-    name: string;
-    priceInr: number;
-
-    diet: FoodDiet;
-    spiceLevel: SpiceLevel;
-    cuisine: FoodCuisine[];
-
-    /*
-     * Dietary safety metadata
-     */
-
-    isVegan?: boolean;
-    containsEgg?: boolean;
-
-    containsOnion?: boolean;
-    containsGarlic?: boolean;
-
-    /*
-     * Jain suitability should be
-     * explicitly verified, not guessed.
-     */
-
-    jainSuitable?: boolean;
 }

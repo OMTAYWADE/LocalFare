@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
 
-import type { CurrencyCode } from "../types";
+import type {
+    CurrencyCode,
+} from "../types";
 
-import { convertFromInr } from "../currency.service";
-import { formatCurrency } from "../currency.utils";
+import {
+    convertFromInr,
+} from "../currency.service";
 
-import { useCurrency } from "./CurrencyProvider";
+import {
+    formatCurrency,
+} from "../currency.utils";
 
 interface PriceDisplayProps {
     inr: number;
@@ -18,44 +26,24 @@ interface PriceDisplayProps {
 
 export default function PriceDisplay({
     inr,
-    currency: providedCurrency,
+    currency = "USD",
     showInr = true,
     className = "",
 }: PriceDisplayProps) {
-    const {
-        currency: globalCurrency,
-    } = useCurrency();
-
-    /*
-     * Use explicitly provided currency when available.
-     * Otherwise use the global FairTrip currency.
-     */
-    const currency =
-        providedCurrency ?? globalCurrency;
-
-    /*
-     * Only foreign-currency conversion needs state.
-     *
-     * INR itself does not need conversion.
-     */
     const [
         convertedAmount,
         setConvertedAmount,
-    ] = useState<number | null>(null);
+    ] = useState<number | null>(
+        currency === "INR"
+            ? inr
+            : null,
+    );
 
     useEffect(() => {
         let cancelled = false;
 
-        /*
-         * INR is already the base currency.
-         *
-         * IMPORTANT:
-         * We do NOT call setState here.
-         */
         if (currency === "INR") {
-            return () => {
-                cancelled = true;
-            };
+            return;
         }
 
         async function loadConversion() {
@@ -71,36 +59,29 @@ export default function PriceDisplay({
                         amount,
                     );
                 }
-            } catch (error) {
-                console.error(
-                    "Currency conversion failed:",
-                    error,
-                );
-
+            } catch {
                 if (!cancelled) {
-                    setConvertedAmount(null);
+                    setConvertedAmount(
+                        null,
+                    );
                 }
             }
         }
 
-        loadConversion();
+        void loadConversion();
 
         return () => {
             cancelled = true;
         };
     }, [inr, currency]);
 
-    /*
-     * =====================================================
-     * INR
-     * =====================================================
-     *
-     * No state required.
-     */
     if (currency === "INR") {
         return (
             <span
-                className={`font-black text-[#123c35] ${className}`}
+                className={[
+                    "font-black text-[#123c35]",
+                    className,
+                ].join(" ")}
             >
                 {formatCurrency(
                     inr,
@@ -110,16 +91,13 @@ export default function PriceDisplay({
         );
     }
 
-    /*
-     * =====================================================
-     * FOREIGN CURRENCY - LOADING
-     * =====================================================
-     */
-
     if (convertedAmount === null) {
         return (
             <span
-                className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`}
+                className={[
+                    "inline-flex flex-wrap items-baseline gap-1.5",
+                    className,
+                ].join(" ")}
             >
                 {showInr && (
                     <span className="font-black text-[#123c35]">
@@ -130,40 +108,22 @@ export default function PriceDisplay({
                     </span>
                 )}
 
-                <span
-                    className="
-                        text-xs
-                        font-bold
-                        text-[#6d7974]
-                    "
-                >
+                <span className="text-xs font-medium text-[#6d7974]">
                     (converting...)
                 </span>
             </span>
         );
     }
 
-    /*
-     * =====================================================
-     * FOREIGN CURRENCY
-     * =====================================================
-     *
-     * Example:
-     *
-     * ₹8500 ($100.30)
-     */
-
     return (
         <span
-            className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`}
+            className={[
+                "inline-flex flex-wrap items-baseline gap-1.5",
+                className,
+            ].join(" ")}
         >
             {showInr && (
-                <span
-                    className="
-                        font-black
-                        text-[#123c35]
-                    "
-                >
+                <span className="font-black text-[#123c35]">
                     {formatCurrency(
                         inr,
                         "INR",
@@ -171,13 +131,7 @@ export default function PriceDisplay({
                 </span>
             )}
 
-            <span
-                className="
-                    text-xs
-                    font-bold
-                    text-[#6d7974]
-                "
-            >
+            <span className="text-xs font-bold text-[#6d7974]">
                 (
                 {formatCurrency(
                     convertedAmount,

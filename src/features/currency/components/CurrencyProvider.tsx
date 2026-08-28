@@ -2,6 +2,7 @@
 
 import {
     createContext,
+    startTransition,
     useContext,
     useEffect,
     useMemo,
@@ -27,9 +28,9 @@ interface CurrencyContextValue {
 }
 
 const CurrencyContext =
-    createContext<CurrencyContextValue | null>(
-        null,
-    );
+    createContext<
+        CurrencyContextValue | null
+    >(null);
 
 interface CurrencyProviderProps {
     children: ReactNode;
@@ -51,11 +52,6 @@ function isCurrencyCode(
 export function CurrencyProvider({
     children,
 }: CurrencyProviderProps) {
-    /*
-     * Always start with USD.
-     *
-     * This is also our default currency.
-     */
     const [
         currency,
         setCurrencyState,
@@ -63,12 +59,6 @@ export function CurrencyProvider({
         DEFAULT_CURRENCY,
     );
 
-    /*
-     * Load saved currency after hydration.
-     *
-     * We use a microtask so the state update does
-     * not happen synchronously during the effect body.
-     */
     useEffect(() => {
         const saved =
             window.localStorage.getItem(
@@ -83,24 +73,21 @@ export function CurrencyProvider({
             return;
         }
 
-        queueMicrotask(() => {
+        startTransition(() => {
             setCurrencyState(saved);
         });
     }, []);
 
-    /*
-     * Change currency.
-     */
-    const setCurrency = (
+    function setCurrency(
         nextCurrency: CurrencyCode,
-    ) => {
+    ) {
         setCurrencyState(nextCurrency);
 
         window.localStorage.setItem(
             "fairtrip-currency",
             nextCurrency,
         );
-    };
+    }
 
     const value = useMemo(
         () => ({
