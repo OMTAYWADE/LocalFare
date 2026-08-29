@@ -1,7 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { FoodPreference, FoodRecommendation as FoodRecommendationType, } from "@/features/travel/types";
+
+import type {
+    FoodPreference,
+    FoodRecommendation as FoodRecommendationType,
+} from "@/features/travel/types";
+
 import FoodPreferences from "./FoodPreferences";
 import FoodCard from "./FoodCard";
 
@@ -10,24 +15,61 @@ interface FoodRecommendationsProps {
     remainingBudget?: number;
 }
 
-export default function FoodRecommendations({ foods, remainingBudget, }: FoodRecommendationsProps) {
-    const [preference, setPreference] = useState<FoodPreference>("local");
+export default function FoodRecommendations({
+    foods,
+    remainingBudget,
+}: FoodRecommendationsProps) {
+    const [preference, setPreference] =
+        useState<FoodPreference>("local");
 
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [expandedId, setExpandedId] =
+        useState<string | null>(null);
 
     const filteredFoods = useMemo(() => {
-        const matched = foods.filter((food) =>
-            food.preferences.includes(preference,),
-        );
+        /*
+         * Some existing food records do not contain
+         * `preferences`.
+         *
+         * Do not call `.includes()` directly on it.
+         *
+         * If preferences exist, use them.
+         * If they don't exist, keep the food instead
+         * of crashing the page.
+         */
+        const matched = foods.filter((food) => {
+            if (!Array.isArray(food.preferences)) {
+                return true;
+            }
+
+            return food.preferences.includes(preference);
+        });
 
         if (remainingBudget === undefined) {
             return matched;
         }
 
-        const budgetFriendly = matched.filter((food) => food.priceMin <= remainingBudget,);
+        /*
+         * Use priceMin when it exists.
+         *
+         * If priceMin is missing, don't reject the food.
+         */
+        const budgetFriendly = matched.filter((food) => {
+            if (
+                typeof food.priceMin !== "number"
+            ) {
+                return true;
+            }
 
-        return budgetFriendly.length > 0 ? budgetFriendly : matched;
-    }, [foods, preference, remainingBudget,]);
+            return (
+                food.priceMin <=
+                remainingBudget
+            );
+        });
+
+        return budgetFriendly.length > 0
+            ? budgetFriendly
+            : matched;
+    }, [foods, preference, remainingBudget]);
 
     return (
         <section className="mt-12">
@@ -41,12 +83,16 @@ export default function FoodRecommendations({ foods, remainingBudget, }: FoodRec
                 </h2>
 
                 <p className="mt-2 max-w-xl text-sm leading-6 text-[#6d7974]">
-                    Tell us what you enjoy and we'll prioritize
-                    local food that fits your journey.
+                    Tell us what you enjoy and we'll
+                    prioritize local food that fits
+                    your journey.
                 </p>
             </div>
 
-            <FoodPreferences selected={preference} onChange={setPreference}/>
+            <FoodPreferences
+                selected={preference}
+                onChange={setPreference}
+            />
 
             {remainingBudget !== undefined && (
                 <div className="mt-4 flex items-center justify-between rounded-[18px] bg-[#e8f58d]/60 px-4 py-3">
@@ -71,8 +117,20 @@ export default function FoodRecommendations({ foods, remainingBudget, }: FoodRec
 
             <div className="mt-5 space-y-3">
                 {filteredFoods.map((food) => (
-                    <FoodCard key={food.id} food={food} expanded={ expandedId === food.id }
-                        onToggle={() => setExpandedId( expandedId === food.id ? null : food.id, ) }/>
+                    <FoodCard
+                        key={food.id}
+                        food={food}
+                        expanded={
+                            expandedId === food.id
+                        }
+                        onToggle={() =>
+                            setExpandedId(
+                                expandedId === food.id
+                                    ? null
+                                    : food.id,
+                            )
+                        }
+                    />
                 ))}
             </div>
 

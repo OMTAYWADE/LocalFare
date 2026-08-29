@@ -2,6 +2,7 @@
 
 import { Clock3, ExternalLink, MapPin, Star, } from "lucide-react";
 import type { SearchResponse, } from "../types";
+import { PlaceImage } from "./PlaceImage";
 
 interface Props {
     data: SearchResponse;
@@ -30,69 +31,84 @@ export default function SearchResults({ data, }: Props) {
 
             <div className="grid gap-4 lg:grid-cols-2">
                 {data.results.map((place) => (
-                    <article key={place.id} className="rounded-[26px] border border-[#123c35]/10 bg-white p-5">
-                        <div className="flex items-start justify-between gap-4">
-                            <div>
-                                <span className="rounded-full bg-[#f7f3ea] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-[#31544d]">
-                                    {place.category}
-                                </span>
-
-                                <h3 className="mt-4 text-lg font-black tracking-[-0.03em] text-[#123c35]">
-                                    {place.name}
-                                </h3>
-                            </div>
-
-                            {place.rating && (
-                                <div className="flex items-center gap-1 rounded-full bg-[#e8f58d]/60 px-3 py-1.5 text-[10px] font-black text-[#123c35]">
-                                    <Star className="h-3 w-3 fill-current" />
-
-                                    {place.rating}
+                    <article key={place.id} className="overflow-hidden rounded-[26px] border border-[#123c35]/10 bg-white">
+                        <div className="relative h-40 w-full bg-[#f7f3ea]">
+                            {place.imageUrl ? (
+                                <PlaceImage
+                                    imageUrl={place.imageUrl}
+                                    alt={place.name}
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center text-xs text-[#8b9792]">
+                                    No image available
                                 </div>
                             )}
                         </div>
 
-                        {place.address && (
-                            <div className="mt-3 flex gap-2 text-xs leading-5 text-[#6d7974]">
-                                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                        <div className="p-5">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <span className="rounded-full bg-[#f7f3ea] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-[#31544d]">
+                                        {place.category}
+                                    </span>
 
-                                {place.address}
+                                    <h3 className="mt-4 text-lg font-black tracking-[-0.03em] text-[#123c35]">
+                                        {place.name}
+                                    </h3>
+                                </div>
+
+                                {place.rating && (
+                                    <div className="flex items-center gap-1 rounded-full bg-[#e8f58d]/60 px-3 py-1.5 text-[10px] font-black text-[#123c35]">
+                                        <Star className="h-3 w-3 fill-current" />
+
+                                        {place.rating}
+                                    </div>
+                                )}
                             </div>
-                        )}
 
-                        <div className="mt-5 grid grid-cols-2 gap-2">
-                            <div className="rounded-[16px] bg-[#f7f3ea] p-3">
-                                <p className="text-[9px] font-black uppercase tracking-[0.1em] text-[#6d7974]">
-                                    Distance
-                                </p>
+                            {place.address && (
+                                <div className="mt-3 flex gap-2 text-xs leading-5 text-[#6d7974]">
+                                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
 
-                                <p className="mt-1 text-sm font-black text-[#123c35]">
-                                    {place.distanceKm?.toFixed(1,) ?? "--"}{" "}
-                                    km
-                                </p>
+                                    {place.address}
+                                </div>
+                            )}
+
+                            <div className="mt-5 grid grid-cols-2 gap-2">
+                                <div className="rounded-[16px] bg-[#f7f3ea] p-3">
+                                    <p className="text-[9px] font-black uppercase tracking-[0.1em] text-[#6d7974]">
+                                        Distance
+                                    </p>
+
+                                    <p className="mt-1 text-sm font-black text-[#123c35]">
+                                        {place.distanceKm?.toFixed(1,) ?? "--"}{" "}
+                                        km
+                                    </p>
+                                </div>
+
+                                <div className="rounded-[16px] bg-[#e8f58d]/50 p-3">
+                                    <p className="text-[9px] font-black uppercase tracking-[0.1em] text-[#6d7974]">
+                                        Travel
+                                    </p>
+
+                                    <p className="mt-1 flex items-center gap-1 text-sm font-black text-[#123c35]">
+                                        <Clock3 className="h-3.5 w-3.5" />
+
+                                        {place.durationMinutes ? `${place.durationMinutes} min` : "--"}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="rounded-[16px] bg-[#e8f58d]/50 p-3">
-                                <p className="text-[9px] font-black uppercase tracking-[0.1em] text-[#6d7974]">
-                                    Travel
-                                </p>
+                            <div className="mt-4 flex items-center justify-between">
+                                <span className="text-[9px] font-semibold text-[#8b9792]">
+                                    OpenStreetMap
+                                </span>
 
-                                <p className="mt-1 flex items-center gap-1 text-sm font-black text-[#123c35]">
-                                    <Clock3 className="h-3.5 w-3.5" />
-
-                                    {place.durationMinutes ? `${place.durationMinutes} min` : "--"}
-                                </p>
+                                <a href={place.mapUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full bg-[#123c35] px-4 py-2.5 text-[10px] font-black text-white">
+                                    Map
+                                    <ExternalLink className="h-3 w-3" />
+                                </a>
                             </div>
-                        </div>
-
-                        <div className="mt-4 flex items-center justify-between">
-                            <span className="text-[9px] font-semibold text-[#8b9792]">
-                                OpenStreetMap
-                            </span>
-
-                            <a href={place.mapUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full bg-[#123c35] px-4 py-2.5 text-[10px] font-black text-white">
-                                Map
-                                <ExternalLink className="h-3 w-3" />
-                            </a>
                         </div>
                     </article>
                 ),

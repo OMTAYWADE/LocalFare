@@ -10,4 +10,6 @@ export interface LocationSearchResult {
   latitude: number;
   longitude: number;
   displayName: string;
+  placeId: string;
+  address: string
 }

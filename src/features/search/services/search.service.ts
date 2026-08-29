@@ -4,7 +4,7 @@ import { searchPlaces } from "./geoapifyPlaces.service";
 import { findPlaceImage } from "./placeImage.service";
 import { normalizeGeoapifyPlace } from "../utils/normalizeGeoapifyPlace";
 import { calculateStraightLineDistanceKm } from "../utils/distance";
-import type { RealPlaceResult, SearchIntent, SearchResponse,} from "../types";
+import type { RealPlaceResult, SearchIntent, SearchResponse, } from "../types";
 
 /* =========================================================
    MAIN SEARCH

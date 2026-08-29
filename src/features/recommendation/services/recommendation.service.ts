@@ -234,41 +234,22 @@ function getDistanceKm(
 */
 
 function getBestTravelOption(
-    options: DestinationTravelOption[],
+    options: DestinationTravelOption[] | undefined,
     preferredTransport: TransportChoice,
 ): DestinationTravelOption | undefined {
-    if (options.length === 0) {
+    if (!options || options.length === 0) {
         return undefined;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Try preferred transport first
-    |--------------------------------------------------------------------------
-    */
-
-    const preferred =
-        options.find(
-            (option) =>
-                option.provider ===
-                preferredTransport,
-        );
+    const preferred = options.find(
+        (option) => option.provider === preferredTransport,
+    );
 
     if (preferred) {
         return preferred;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Otherwise choose cheapest option
-    |--------------------------------------------------------------------------
-    */
-
-    return [...options].sort(
-        (a, b) =>
-            a.minPrice -
-            b.minPrice,
-    )[0];
+    return [...options].sort((a, b) => a.minPrice - b.minPrice)[0];
 }
 
 /*
@@ -866,10 +847,10 @@ function isGoodDestination(
     destination: NearbyDestination,
 ): boolean {
     const text = `
-        ${destination.name}
-        ${destination.category}
-        ${destination.description}
-        ${destination.highlights.join(" ")}
+        ${destination.name ?? ""}
+        ${destination.category ?? ""}
+        ${destination.description ?? ""}
+        ${(destination.highlights ?? []).join(" ")}
     `.toLowerCase();
 
     const keywords = [

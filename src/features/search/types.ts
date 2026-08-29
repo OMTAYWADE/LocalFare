@@ -70,9 +70,9 @@ export interface RealPlaceResult {
     durationMinutes?: number;
     source: "Geoapify";
     lastUpdated: string;
-    imageUrl?: string;
-    imageSource?: string;
     imageSourceUrl?: string;
+    imageUrl?: string;      
+    imageSource?: "Wikimedia Commons" | "Placeholder"; 
 }
 
 export interface SearchResponse {

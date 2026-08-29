@@ -28,9 +28,9 @@ import type {
    CONFIGURATION
    ========================================================= */
 
-const TOURIST_RADIUS_KM = 10;
+const TOURIST_RADIUS_KM = 20;
 
-const CITIZEN_RADIUS_KM = 10;
+const CITIZEN_RADIUS_KM = 25;
 
 const TOURIST_LIMIT = 8;
 
@@ -124,6 +124,7 @@ export async function getExploreRecommendations(
                 searchQuery,
                 latitude,
                 longitude,
+                radiusKm * 1000,
             );
 
 

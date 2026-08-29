@@ -1,3 +1,4 @@
+// Card.tsx (slightly richer hover)
 import type { ReactNode } from "react";
 
 interface CardProps {
@@ -6,9 +7,15 @@ interface CardProps {
   hover?: boolean;
 }
 
-export default function Card({ children, className = "", hover = false,}: CardProps) {
+export default function Card({ children, className = "", hover = false }: CardProps) {
   return (
-    <div className={` rounded-[24px] border border-[#e3e7e2] bg-white shadow-[0_8px_30px_rgba(25,45,38,0.04)] ${hover ? "transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(25,45,38,0.10)]" : ""} ${className} `} >
+    <div
+      className={`rounded-[24px] border border-[#e3e7e2] bg-white shadow-[0_8px_30px_rgba(25,45,38,0.04)] ${
+        hover
+          ? "transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#e3e7e2]/60 hover:shadow-[0_24px_60px_rgba(25,45,38,0.12)]"
+          : ""
+      } ${className}`}
+    >
       {children}
     </div>
   );

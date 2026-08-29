@@ -2,23 +2,17 @@ import { getGeoapifyApiKey } from "@/lib/geoapify/server";
 
 export interface GeoapifyPlaceResult {
     placeId?: string;
-
     name?: string;
-
     formatted?: string;
 
     addressLine1?: string;
-
     addressLine2?: string;
 
     city?: string;
-
     state?: string;
-
     country?: string;
 
     latitude?: number;
-
     longitude?: number;
 
     distance?: number;
@@ -26,32 +20,26 @@ export interface GeoapifyPlaceResult {
     categories?: string[];
 
     website?: string;
-
     phone?: string;
 }
 
 interface GeoapifyFeature {
-    type: "Feature";
+    type?: "Feature";
 
-    properties: {
+    properties?: {
         place_id?: string;
 
         name?: string;
-
         formatted?: string;
 
         address_line1?: string;
-
         address_line2?: string;
 
         city?: string;
-
         state?: string;
-
         country?: string;
 
         lat?: number;
-
         lon?: number;
 
         distance?: number;
@@ -66,168 +54,155 @@ interface GeoapifyFeature {
     };
 
     geometry?: {
-        type: string;
-
-        coordinates?: [
-            number,
-            number,
-        ];
+        type?: string;
+        coordinates?: [number, number];
     };
 }
 
 interface GeoapifyPlacesResponse {
-    type: "FeatureCollection";
-
+    type?: "FeatureCollection";
     features?: GeoapifyFeature[];
 }
 
 /**
  * Search nearby real-world places using Geoapify Places API.
+ *
+ * NOTE: Geoapify's /v2/places endpoint requires at least one of
+ * `filter` or `bias` to be present, so `latitude`/`longitude` are
+ * effectively required here — pass them, or use a geocoding/
+ * autocomplete endpoint instead if you need location-less search.
  */
 export async function searchPlaces(
     query: string,
     latitude?: number,
     longitude?: number,
-    radiusMeters = 5000,
+    radiusMeters = 25000,
 ): Promise<GeoapifyPlaceResult[]> {
-    const apiKey = getGeoapifyApiKey();
-
-    const params = new URLSearchParams();
-
-    params.set(
-        "apiKey",
-        apiKey,
-    );
-
-    /*
-     * Geoapify uses categories for
-     * nearby-place discovery.
-     */
-    params.set(
-        "categories",
-        getCategoriesFromQuery(query).join(","),
-    );
-
-    /*
-     * Location filter.
-     */
     if (
-        latitude !== undefined &&
-        longitude !== undefined
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
     ) {
-        params.set(
-            "filter",
-            `circle:${longitude},${latitude},${radiusMeters}`,
-        );
-
-        /*
-         * Sort/bias results toward the user.
-         */
-        params.set(
-            "bias",
-            `proximity:${longitude},${latitude}`,
+        throw new Error(
+            "searchPlaces requires a valid latitude and longitude " +
+            "(Geoapify's Places API requires a filter or bias parameter).",
         );
     }
 
+    const apiKey = getGeoapifyApiKey();
+
+    const categories = getCategoriesFromQuery(query);
+
+    const params = new URLSearchParams();
+
+    params.set("apiKey", apiKey);
+    params.set("categories", categories.join(","));
+    params.set("limit", "20");
+    params.set("lang", "en");
+
+    /*
+     * Geoapify uses:
+     *   longitude,latitude
+     * NOT:
+     *   latitude,longitude
+     */
     params.set(
-        "limit",
-        "20",
+        "filter",
+        `circle:${longitude},${latitude},${radiusMeters}`,
     );
 
     params.set(
-        "lang",
-        "en",
+        "bias",
+        `proximity:${longitude},${latitude}`,
     );
 
-    const response = await fetch(
-        `https://api.geoapify.com/v2/places?${params.toString()}`,
-        {
-            method: "GET",
-            cache: "no-store",
-        },
-    );
+    const url = `https://api.geoapify.com/v2/places?${params.toString()}`;
+
+    const response = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+    });
 
     if (!response.ok) {
-        const errorText =
-            await response.text();
-
+        const errorText = await response.text();
         throw new Error(
             `Geoapify Places request failed (${response.status}): ${errorText}`,
         );
     }
 
-    const data =
-        (await response.json()) as GeoapifyPlacesResponse;
+    const data = (await response.json()) as GeoapifyPlacesResponse;
 
-    return (
-        data.features?.map(
-            (feature) => {
-                const place =
-                    feature.properties;
+    const results = (data.features ?? [])
+        .map((feature) => {
+            const properties = feature.properties;
 
-                return {
-                    placeId:
-                        place.place_id,
+            if (!properties) {
+                return null;
+            }
 
-                    name:
-                        place.name,
+            /*
+             * Coordinates can come from geometry.coordinates
+             * ([longitude, latitude]) or from properties.lat/lon.
+             */
+            const coordinates = feature.geometry?.coordinates;
 
-                    formatted:
-                        place.formatted,
+            const placeLongitude = coordinates?.[0] ?? properties.lon;
+            const placeLatitude = coordinates?.[1] ?? properties.lat;
 
-                    addressLine1:
-                        place.address_line1,
+            if (
+                typeof placeLatitude !== "number" ||
+                typeof placeLongitude !== "number" ||
+                !Number.isFinite(placeLatitude) ||
+                !Number.isFinite(placeLongitude)
+            ) {
+                return null;
+            }
 
-                    addressLine2:
-                        place.address_line2,
+            const name =
+                properties.name?.trim() ||
+                properties.address_line1?.trim() ||
+                properties.formatted?.trim();
 
-                    city:
-                        place.city,
+            if (!name) {
+                return null;
+            }
 
-                    state:
-                        place.state,
+            const result: GeoapifyPlaceResult = {
+                placeId: properties.place_id,
+                name,
+                formatted: properties.formatted,
+                addressLine1: properties.address_line1,
+                addressLine2: properties.address_line2,
+                city: properties.city,
+                state: properties.state,
+                country: properties.country,
+                latitude: placeLatitude,
+                longitude: placeLongitude,
+                distance: properties.distance,
+                categories: properties.categories ?? [],
+                website: properties.website,
+                phone: properties.contact?.phone,
+            };
 
-                    country:
-                        place.country,
+            return result;
+        })
+        .filter((place): place is GeoapifyPlaceResult => place !== null);
 
-                    latitude:
-                        place.lat,
-
-                    longitude:
-                        place.lon,
-
-                    distance:
-                        place.distance,
-
-                    categories:
-                        place.categories ?? [],
-
-                    website:
-                        place.website,
-
-                    phone:
-                        place.contact?.phone,
-                };
-            },
-        ) ?? []
-    );
+    return results;
 }
 
 /**
- * Convert LocalFare's natural-language search
- * into Geoapify categories.
+ * Convert LocalFare search terms into Geoapify categories.
+ *
+ * NOTE: Geoapify's /v2/places endpoint filters by category, not
+ * free text — it does not natively support name-based search (e.g.
+ * "Starbucks"). Queries that don't match a known keyword fall back
+ * to a broad default category set, and any name-specific matching
+ * (e.g. filtering results whose `name` contains the query) needs to
+ * happen as a post-processing step on the returned results.
  */
-function getCategoriesFromQuery(
-    query: string,
-): string[] {
-    const normalized =
-        query
-            .toLowerCase()
-            .trim();
+function getCategoriesFromQuery(query: string): string[] {
+    const normalized = query.toLowerCase().trim();
 
-    /*
-     * FOOD
-     */
     if (
         normalized.includes("restaurant") ||
         normalized.includes("food") ||
@@ -236,29 +211,50 @@ function getCategoriesFromQuery(
         normalized.includes("lunch") ||
         normalized.includes("breakfast")
     ) {
-        return [
-            "catering.restaurant",
-            "catering.fast_food",
-            "catering.food_court",
-        ];
+        return ["catering.restaurant", "catering.fast_food", "catering.food_court"];
     }
 
-    /*
-     * CAFE
-     */
     if (
         normalized.includes("cafe") ||
         normalized.includes("coffee") ||
         normalized.includes("tea")
     ) {
-        return [
-            "catering.cafe",
-        ];
+        return ["catering.cafe"];
     }
 
-    /*
-     * TOURIST PLACES
-     */
+    if (normalized.includes("museum")) {
+        return ["entertainment.museum", "tourism.attraction"];
+    }
+
+    if (normalized.includes("park") || normalized.includes("garden")) {
+        return ["leisure.park"];
+    }
+
+    if (
+        normalized.includes("hotel") ||
+        normalized.includes("stay") ||
+        normalized.includes("hostel")
+    ) {
+        return ["accommodation"];
+    }
+
+    if (
+        normalized.includes("market") ||
+        normalized.includes("shopping") ||
+        normalized.includes("mall")
+    ) {
+        return ["commercial", "commercial.shopping_mall"];
+    }
+
+    if (
+        normalized.includes("temple") ||
+        normalized.includes("mosque") ||
+        normalized.includes("church") ||
+        normalized.includes("mandir")
+    ) {
+        return ["religion.place_of_worship"];
+    }
+
     if (
         normalized.includes("tourist") ||
         normalized.includes("attraction") ||
@@ -268,86 +264,21 @@ function getCategoriesFromQuery(
         normalized.includes("landmark")
     ) {
         return [
-            "tourism",
-            "entertainment",
+            "tourism.attraction",
+            "tourism.sights",
+            "entertainment.museum",
+            "entertainment.culture",
             "leisure.park",
         ];
     }
 
-    /*
-     * MUSEUM
-     */
-    if (
-        normalized.includes("museum")
-    ) {
-        return [
-            "tourism.museum",
-        ];
-    }
-
-    /*
-     * PARK
-     */
-    if (
-        normalized.includes("park") ||
-        normalized.includes("garden")
-    ) {
-        return [
-            "leisure.park",
-            "leisure.garden",
-        ];
-    }
-
-    /*
-     * HOTEL
-     */
-    if (
-        normalized.includes("hotel") ||
-        normalized.includes("stay") ||
-        normalized.includes("hostel")
-    ) {
-        return [
-            "accommodation",
-        ];
-    }
-
-    /*
-     * SHOPPING / MARKET
-     */
-    if (
-        normalized.includes("market") ||
-        normalized.includes("shopping") ||
-        normalized.includes("mall")
-    ) {
-        return [
-            "commercial",
-            "commercial.shopping_mall",
-        ];
-    }
-
-    /*
-     * WORSHIP
-     */
-    if (
-        normalized.includes("temple") ||
-        normalized.includes("mosque") ||
-        normalized.includes("church") ||
-        normalized.includes("mandir")
-    ) {
-        return [
-            "religion.place_of_worship",
-        ];
-    }
-
-    /*
-     * DEFAULT
-     *
-     * Instead of sending arbitrary text to the
-     * Places API, use broad categories.
-     */
     return [
-        "catering",
-        "tourism",
+        "tourism.attraction",
+        "tourism.sights",
+        "entertainment.culture",
+        "leisure.park",
+        "catering.restaurant",
+        "catering.cafe",
         "commercial",
     ];
 }

@@ -2,6 +2,7 @@
 
 import {
     LocateFixed,
+    Loader2,
     MapPin,
     Search,
 } from "lucide-react";
@@ -13,8 +14,6 @@ import type {
     LocationSearchResult,
 } from "../types";
 
-import { searchLocation } from "../services/location.service";
-
 interface Props {
     value?: UserLocation;
     onChange: (location: UserLocation) => void;
@@ -25,6 +24,7 @@ export default function LocationPicker({
     onChange,
 }: Props) {
     const [query, setQuery] = useState("");
+
     const [results, setResults] = useState<
         LocationSearchResult[]
     >([]);
@@ -34,6 +34,19 @@ export default function LocationPicker({
     const [hasSearched, setHasSearched] = useState(false);
     const [error, setError] = useState("");
 
+    /*
+     * ============================================================
+     * SEARCH LOCATION
+     * ============================================================
+     *
+     * We call our own Next.js API route:
+     *
+     * /api/location/search
+     *
+     * That route uses Nominatim/OpenStreetMap.
+     *
+     * We DO NOT call Geoapify from the client.
+     */
     async function handleSearch() {
         const searchQuery = query.trim();
 
@@ -49,8 +62,26 @@ export default function LocationPicker({
         setError("");
 
         try {
-            const data =
-                await searchLocation(searchQuery);
+            const response = await fetch(
+                `/api/location/search?q=${encodeURIComponent(
+                    searchQuery,
+                )}`,
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data?.error ||
+                        "Unable to search location.",
+                );
+            }
+
+            if (!Array.isArray(data)) {
+                throw new Error(
+                    "Invalid location response.",
+                );
+            }
 
             setResults(data);
         } catch (error) {
@@ -71,6 +102,11 @@ export default function LocationPicker({
         }
     }
 
+    /*
+     * ============================================================
+     * CURRENT GPS LOCATION
+     * ============================================================
+     */
     function useCurrentLocation() {
         if (
             typeof navigator === "undefined" ||
@@ -79,6 +115,7 @@ export default function LocationPicker({
             setError(
                 "Geolocation is not supported by this browser.",
             );
+
             return;
         }
 
@@ -105,6 +142,7 @@ export default function LocationPicker({
 
                 setGpsLoading(false);
             },
+
             (error) => {
                 console.error(
                     "Unable to get current location:",
@@ -141,6 +179,7 @@ export default function LocationPicker({
                 setError(message);
                 setGpsLoading(false);
             },
+
             {
                 enableHighAccuracy: false,
                 timeout: 10000,
@@ -149,6 +188,11 @@ export default function LocationPicker({
         );
     }
 
+    /*
+     * ============================================================
+     * SELECT SEARCH RESULT
+     * ============================================================
+     */
     function selectLocation(
         result: LocationSearchResult,
     ) {
@@ -166,9 +210,13 @@ export default function LocationPicker({
         setError("");
     }
 
+    /*
+     * ============================================================
+     * RENDER
+     * ============================================================
+     */
     return (
         <div className="rounded-[26px] border border-[#123c35]/10 bg-white p-4 shadow-[0_18px_50px_rgba(18,60,53,0.06)]">
-
             {/* HEADER */}
             <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
@@ -189,13 +237,11 @@ export default function LocationPicker({
                     aria-label="Use current location"
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e8f58d] text-[#123c35] transition hover:bg-[#cbe95b] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    <LocateFixed
-                        className={`h-4 w-4 ${
-                            gpsLoading
-                                ? "animate-pulse"
-                                : ""
-                        }`}
-                    />
+                    {gpsLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <LocateFixed className="h-4 w-4" />
+                    )}
                 </button>
             </div>
 
@@ -216,8 +262,7 @@ export default function LocationPicker({
                         }}
                         onKeyDown={(event) => {
                             if (
-                                event.key ===
-                                "Enter"
+                                event.key === "Enter"
                             ) {
                                 event.preventDefault();
                                 handleSearch();
@@ -245,14 +290,19 @@ export default function LocationPicker({
 
             {/* LOADING */}
             {loading && (
-                <div className="mt-3 rounded-[18px] bg-[#f7f3ea] px-4 py-3">
-                    <p className="text-xs font-bold text-[#123c35]">
-                        Searching Google Maps...
-                    </p>
+                <div className="mt-3 flex items-center gap-3 rounded-[18px] bg-[#f7f3ea] px-4 py-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-[#ef713d]" />
 
-                    <p className="mt-1 text-[10px] text-[#6d7974]">
-                        Finding matching locations.
-                    </p>
+                    <div>
+                        <p className="text-xs font-bold text-[#123c35]">
+                            Searching locations...
+                        </p>
+
+                        <p className="mt-1 text-[10px] text-[#6d7974]">
+                            Finding matching cities,
+                            landmarks and areas.
+                        </p>
+                    </div>
                 </div>
             )}
 
@@ -263,7 +313,7 @@ export default function LocationPicker({
                         Location search failed
                     </p>
 
-                    <p className="mt-1 text-[10px] text-red-600">
+                    <p className="mt-1 text-[10px] leading-4 text-red-600">
                         {error}
                     </p>
                 </div>
@@ -287,13 +337,13 @@ export default function LocationPicker({
                                             result,
                                         )
                                     }
-                                    className="flex w-full items-start gap-3 border-b border-[#123c35]/8 px-4 py-3 text-left transition last:border-0 hover:bg-[#f7f3ea]"
+                                    className="flex w-full items-start gap-3 border-b border-[#123c35]/8 px-4 py-3 text-left transition last:border-0 hover:bg-[#f7f3ea] focus:bg-[#f7f3ea] focus:outline-none"
                                 >
-                                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f9dfd0]">
+                                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f9dfd0]">
                                         <MapPin className="h-3.5 w-3.5 text-[#ef713d]" />
                                     </span>
 
-                                    <span className="min-w-0">
+                                    <span className="min-w-0 flex-1">
                                         <span className="block text-xs font-bold leading-5 text-[#123c35]">
                                             {
                                                 result.displayName
@@ -309,6 +359,10 @@ export default function LocationPicker({
                                                 5,
                                             )}
                                         </span>
+                                    </span>
+
+                                    <span className="mt-1 shrink-0 text-[9px] font-black uppercase tracking-wider text-[#ef713d]">
+                                        Select
                                     </span>
                                 </button>
                             ),
@@ -326,9 +380,11 @@ export default function LocationPicker({
                             No location found
                         </p>
 
-                        <p className="mt-1 text-[10px] text-[#6d7974]">
-                            Try CSMT, Gateway of India,
-                            Marine Drive or Colaba.
+                        <p className="mt-1 text-[10px] leading-5 text-[#6d7974]">
+                            Try a city, landmark or
+                            area such as CSMT,
+                            Gateway of India, Marine
+                            Drive or Colaba.
                         </p>
                     </div>
                 )}

@@ -1,6 +1,5 @@
 import { Clock3 } from "lucide-react";
 import type { FreshnessStatus } from "@/types";
-
 import Badge from "./Badge";
 
 interface Props {
@@ -8,16 +7,21 @@ interface Props {
   lastUpdated: string;
 }
 
-export default function FreshnessBadge({ status, lastUpdated,}: Props) {
-  const variant = status === "fresh" || status === "recent" ? "green" : status === "aging" ? "orange" : "red";
-  const label = status === "fresh" ? "Fresh" : status === "recent" ? "Recent" : status === "aging" ? "Aging" : "Stale";
+const config: Record<FreshnessStatus, { variant: "green" | "orange" | "red"; label: string }> = {
+  fresh: { variant: "green", label: "Fresh" },
+  recent: { variant: "green", label: "Recent" },
+  aging: { variant: "orange", label: "Aging" },
+  stale: { variant: "red", label: "Stale" },
+};
+
+export default function FreshnessBadge({ status, lastUpdated }: Props) {
+  const item = config[status] ?? { variant: "neutral" as const, label: "Unknown" };
+
   return (
-    <Badge variant={variant}>
+    <Badge variant={item.variant}>
       <Clock3 className="mr-1.5 h-3 w-3" />
-      {label}
-      <span className="mx-1 opacity-40">
-        ·
-      </span>
+      {item.label}
+      <span className="mx-1 opacity-40">·</span>
       {lastUpdated}
     </Badge>
   );

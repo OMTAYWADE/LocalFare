@@ -1,46 +1,54 @@
-import { foodItems, } from "../data/food-categories";
-import type { FoodItem, } from "../types/food.types";
+import { searchPlaces } from "@/features/search/services/geoapifyPlaces.service";
+import type { FoodItem } from "../types/food.types";
 
 export interface FoodSearchOptions {
     query?: string;
-    maxPriceInr?: number;
-    mealType?: FoodItem["mealTypes"][number];
-    vegetarian?: boolean;
-    spiceLevel?: FoodItem["spiceLevel"];
+    latitude: number;
+    longitude: number;
+    radiusMeters?: number;
+    maxPriceInr?: number; // kept for API compatibility; cannot be enforced (see note)
+    mealType?: FoodItem["mealTypes"][number]; // cannot be enforced (see note)
+    vegetarian?: boolean; // cannot be enforced (see note)
+    spiceLevel?: FoodItem["spiceLevel"]; // cannot be enforced (see note)
 }
 
-export function searchFood({ query, maxPriceInr, mealType, vegetarian, spiceLevel, }: FoodSearchOptions = {}): FoodItem[] {
-    const normalizedQuery = query?.trim().toLowerCase() || "";
-
-    return foodItems.filter((food) => {
-
-        //  Search name, cuisine,description and tags.
-        const matchesQuery = !normalizedQuery || food.name.toLowerCase().includes(normalizedQuery,) ||
-            food.description?.toLowerCase().includes(normalizedQuery,) ||
-            food.cuisine.some((cuisine) => cuisine.includes(normalizedQuery,),) ||
-            food.tags?.some((tag) => tag.includes(normalizedQuery,),);
-
-        if (!matchesQuery) {
-            return false;
-        }
-
-        if (maxPriceInr !== undefined && food.priceInr > maxPriceInr) {
-            return false;
-        }
-
-        if (mealType && !food.mealTypes.includes(mealType,)) {
-            return false;
-        }
-
-        if (vegetarian && food.diet !== "vegetarian") {
-            return false;
-        }
-
-        if (spiceLevel && food.spiceLevel !== spiceLevel) {
-            return false;
-        }
-
-        return true;
-    },
+/**
+ * Searches real restaurants/cafes near a location using Geoapify.
+ *
+ * IMPORTANT LIMITATION:
+ * Geoapify Places does not return dish-level data — no diet type,
+ * spice level, or price. Those fields are placeholders below, not
+ * real values, until a dish-level data source is layered on top.
+ */
+export async function searchFood({
+    query,
+    latitude,
+    longitude,
+    radiusMeters = 5000,
+}: FoodSearchOptions): Promise<FoodItem[]> {
+    const places = await searchPlaces(
+        query || "restaurant",
+        latitude,
+        longitude,
+        radiusMeters,
     );
+
+    return places
+        .filter((place) => place.name)
+        .map((place, index): FoodItem => ({
+            id: place.placeId ?? `${place.name}-${index}`,
+            name: place.name ?? "Unknown restaurant",
+            description: place.formatted,
+            cuisine: [],
+            diet: "non-vegetarian", // unknown from source; see limitation note
+            spiceLevel: "medium", // unknown from source; see limitation note
+            mealTypes: ["breakfast", "lunch", "snack", "dinner", "late-night"],
+            priceInr: 0, // unknown from source; see limitation note
+            rating: undefined,
+            imageUrl: undefined,
+            latitude: place.latitude,
+            longitude: place.longitude,
+            restaurantName: place.name,
+            tags: place.categories,
+        }));
 }

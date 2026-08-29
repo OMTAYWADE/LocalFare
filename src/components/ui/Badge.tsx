@@ -1,3 +1,4 @@
+// Badge.tsx
 import type { ReactNode } from "react";
 
 interface BadgeProps {
@@ -6,7 +7,7 @@ interface BadgeProps {
   className?: string;
 }
 
-export default function Badge({ children, variant = "neutral", className = "",}: BadgeProps) {
+export default function Badge({ children, variant = "neutral", className = "" }: BadgeProps) {
   const variants = {
     neutral: "border-slate-200 bg-slate-50 text-slate-600",
     green: "border-emerald-100 bg-emerald-50 text-emerald-700",
@@ -15,7 +16,9 @@ export default function Badge({ children, variant = "neutral", className = "",}:
   };
 
   return (
-    <span className={` inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${variants[variant]} ${className} `}>
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-all duration-200 ease-out hover:scale-[1.04] hover:shadow-sm animate-in fade-in slide-in-from-bottom-1 ${variants[variant]} ${className}`}
+    >
       {children}
     </span>
   );
