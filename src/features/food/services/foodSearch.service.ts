@@ -6,19 +6,18 @@ export interface FoodSearchOptions {
     latitude: number;
     longitude: number;
     radiusMeters?: number;
-    maxPriceInr?: number; // kept for API compatibility; cannot be enforced (see note)
-    mealType?: FoodItem["mealTypes"][number]; // cannot be enforced (see note)
-    vegetarian?: boolean; // cannot be enforced (see note)
-    spiceLevel?: FoodItem["spiceLevel"]; // cannot be enforced (see note)
 }
 
 /**
  * Searches real restaurants/cafes near a location using Geoapify.
  *
- * IMPORTANT LIMITATION:
- * Geoapify Places does not return dish-level data — no diet type,
- * spice level, or price. Those fields are placeholders below, not
- * real values, until a dish-level data source is layered on top.
+ * SCOPE:
+ * This returns real restaurant/cafe listings — name, location,
+ * address, contact info, distance. Geoapify does not provide
+ * dish-level data (diet type, spice level, or menu prices), so
+ * those fields are intentionally omitted rather than guessed.
+ * `mealTypes` defaults to all slots since Geoapify has no concept
+ * of meal timing for a restaurant listing.
  */
 export async function searchFood({
     query,
@@ -40,15 +39,17 @@ export async function searchFood({
             name: place.name ?? "Unknown restaurant",
             description: place.formatted,
             cuisine: [],
-            diet: "non-vegetarian", // unknown from source; see limitation note
-            spiceLevel: "medium", // unknown from source; see limitation note
             mealTypes: ["breakfast", "lunch", "snack", "dinner", "late-night"],
-            priceInr: 0, // unknown from source; see limitation note
-            rating: undefined,
-            imageUrl: undefined,
             latitude: place.latitude,
             longitude: place.longitude,
+            distanceKm:
+                typeof place.distance === "number"
+                    ? Math.round((place.distance / 1000) * 10) / 10
+                    : undefined,
             restaurantName: place.name,
+            website: place.website,
+            phone: place.phone,
+            mapUrl: `https://www.openstreetmap.org/?mlat=${place.latitude}&mlon=${place.longitude}#map=18/${place.latitude}/${place.longitude}`,
             tags: place.categories,
         }));
 }

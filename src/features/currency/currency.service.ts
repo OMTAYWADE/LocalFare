@@ -3,142 +3,212 @@ import type {
     ExchangeRates,
 } from "./types";
 
-const FALLBACK_RATES: ExchangeRates = {
-    INR: 1,
+const CURRENCY_CODES: CurrencyCode[] = [
+    "INR",
+    "USD",
+    "EUR",
+    "GBP",
+    "JPY",
+    "AUD",
+    "CAD",
+    "SGD",
+    "AED",
+];
 
-    USD: 0.0118,
-    EUR: 0.0101,
-    GBP: 0.0088,
-    JPY: 1.73,
-    AUD: 0.0165,
-    CAD: 0.0161,
-    SGD: 0.0151,
-    AED: 0.0433,
-};
+const RATE_CACHE_DURATION =
+    15 * 60 * 1000; // 15 minutes
 
-let cachedRates: ExchangeRates | null =
-    null;
+let cachedRates:
+    | ExchangeRates
+    | null = null;
 
 let cachedAt = 0;
 
-const CACHE_DURATION =
-    60 * 60 * 1000;
+/*
+ * ---------------------------------------------------------
+ * RESPONSE TYPES
+ * ---------------------------------------------------------
+ */
 
-/* =========================================================
-   GET RATES
-   ========================================================= */
+interface ExchangeRateApiResponse {
+    result?: string;
+
+    base_code?: string;
+
+    rates?: Record<
+        string,
+        number
+    >;
+}
+
+/*
+ * ---------------------------------------------------------
+ * VALIDATION
+ * ---------------------------------------------------------
+ */
+
+function isValidRate(
+    value: unknown,
+): value is number {
+    return (
+        typeof value === "number" &&
+        Number.isFinite(value) &&
+        value > 0
+    );
+}
+
+/*
+ * ---------------------------------------------------------
+ * GET LIVE EXCHANGE RATES
+ * ---------------------------------------------------------
+ *
+ * All internal application prices remain INR.
+ *
+ * Example:
+ *
+ * ₹100 INR
+ *      ↓
+ * USD rate
+ *      ↓
+ * $1.17
+ *
+ * These are exchange/reference rates.
+ * They are NOT the exact amount a bank/card provider
+ * necessarily charges.
+ */
 
 export async function getExchangeRates(): Promise<ExchangeRates> {
-    const now = Date.now();
+    const now =
+        Date.now();
 
+    /*
+     * Use memory cache for 15 minutes.
+     */
     if (
         cachedRates &&
         now - cachedAt <
-            CACHE_DURATION
+            RATE_CACHE_DURATION
     ) {
         return cachedRates;
     }
 
-    try {
-        const response =
-            await fetch(
-                "https://open.er-api.com/v6/latest/INR",
-                {
-                    cache: "no-store",
-                },
-            );
+    const endpoint =
+        process.env
+            .EXCHANGE_RATES_API_URL ??
+        "https://open.er-api.com/v6/latest/INR";
 
-        if (!response.ok) {
+    const response =
+        await fetch(
+            endpoint,
+            {
+                method: "GET",
+
+                cache:
+                    "no-store",
+
+                headers: {
+                    Accept:
+                        "application/json",
+                },
+            },
+        );
+
+    if (
+        !response.ok
+    ) {
+        throw new Error(
+            `Currency rate API failed (${response.status}).`,
+        );
+    }
+
+    const data =
+        (await response.json()) as ExchangeRateApiResponse;
+
+    if (
+        data.result ===
+        "error"
+    ) {
+        throw new Error(
+            "Currency rate provider returned an error.",
+        );
+    }
+
+    if (
+        !data.rates
+    ) {
+        throw new Error(
+            "Currency rate provider returned no rates.",
+        );
+    }
+
+    const rates =
+        {} as ExchangeRates;
+
+    rates.INR = 1;
+
+    for (
+        const currency of
+            CURRENCY_CODES
+    ) {
+        if (
+            currency ===
+            "INR"
+        ) {
+            continue;
+        }
+
+        const rate =
+            data.rates[
+                currency
+            ];
+
+        if (
+            !isValidRate(
+                rate,
+            )
+        ) {
             throw new Error(
-                `Currency API failed: ${response.status}`,
+                `Missing or invalid exchange rate for ${currency}.`,
             );
         }
 
-        const data =
-            await response.json();
-
-        const rates: ExchangeRates = {
-            INR: 1,
-
-            USD:
-                Number(
-                    data?.rates?.USD,
-                ) ||
-                FALLBACK_RATES.USD,
-
-            EUR:
-                Number(
-                    data?.rates?.EUR,
-                ) ||
-                FALLBACK_RATES.EUR,
-
-            GBP:
-                Number(
-                    data?.rates?.GBP,
-                ) ||
-                FALLBACK_RATES.GBP,
-
-            JPY:
-                Number(
-                    data?.rates?.JPY,
-                ) ||
-                FALLBACK_RATES.JPY,
-
-            AUD:
-                Number(
-                    data?.rates?.AUD,
-                ) ||
-                FALLBACK_RATES.AUD,
-
-            CAD:
-                Number(
-                    data?.rates?.CAD,
-                ) ||
-                FALLBACK_RATES.CAD,
-
-            SGD:
-                Number(
-                    data?.rates?.SGD,
-                ) ||
-                FALLBACK_RATES.SGD,
-
-            AED:
-                Number(
-                    data?.rates?.AED,
-                ) ||
-                FALLBACK_RATES.AED,
-        };
-
-        cachedRates = rates;
-        cachedAt = now;
-
-        return rates;
-    } catch (error) {
-        console.warn(
-            "Currency API unavailable. Using fallback rates.",
-            error,
-        );
-
-        return FALLBACK_RATES;
+        rates[
+            currency
+        ] = rate;
     }
+
+    cachedRates =
+        rates;
+
+    cachedAt =
+        now;
+
+    return rates;
 }
 
-/* =========================================================
-   INR → FOREIGN
-   ========================================================= */
+/*
+ * ---------------------------------------------------------
+ * INR → SELECTED CURRENCY
+ * ---------------------------------------------------------
+ */
 
 export async function convertFromInr(
     amountInr: number,
     targetCurrency: CurrencyCode,
 ): Promise<number> {
     if (
-        !Number.isFinite(amountInr)
+        !Number.isFinite(
+            amountInr,
+        )
     ) {
-        return 0;
+        throw new Error(
+            "Invalid INR amount.",
+        );
     }
 
     if (
-        targetCurrency === "INR"
+        targetCurrency ===
+        "INR"
     ) {
         return amountInr;
     }
@@ -147,34 +217,49 @@ export async function convertFromInr(
         await getExchangeRates();
 
     const rate =
-        rates[targetCurrency];
+        rates[
+            targetCurrency
+        ];
 
     if (
-        !rate ||
-        !Number.isFinite(rate)
+        !isValidRate(
+            rate,
+        )
     ) {
-        return amountInr;
+        throw new Error(
+            `Exchange rate unavailable for ${targetCurrency}.`,
+        );
     }
 
-    return amountInr * rate;
+    return (
+        amountInr *
+        rate
+    );
 }
 
-/* =========================================================
-   FOREIGN → INR
-   ========================================================= */
+/*
+ * ---------------------------------------------------------
+ * SELECTED CURRENCY → INR
+ * ---------------------------------------------------------
+ */
 
 export async function convertToInr(
     amount: number,
     sourceCurrency: CurrencyCode,
 ): Promise<number> {
     if (
-        !Number.isFinite(amount)
+        !Number.isFinite(
+            amount,
+        )
     ) {
-        return 0;
+        throw new Error(
+            "Invalid currency amount.",
+        );
     }
 
     if (
-        sourceCurrency === "INR"
+        sourceCurrency ===
+        "INR"
     ) {
         return amount;
     }
@@ -183,14 +268,73 @@ export async function convertToInr(
         await getExchangeRates();
 
     const rate =
-        rates[sourceCurrency];
+        rates[
+            sourceCurrency
+        ];
 
     if (
-        !rate ||
-        !Number.isFinite(rate)
+        !isValidRate(
+            rate,
+        )
     ) {
-        return amount;
+        throw new Error(
+            `Exchange rate unavailable for ${sourceCurrency}.`,
+        );
     }
 
-    return amount / rate;
+    return (
+        amount /
+        rate
+    );
+}
+
+/*
+ * ---------------------------------------------------------
+ * GET RATE FOR ONE CURRENCY
+ * ---------------------------------------------------------
+ */
+
+export async function getExchangeRate(
+    currency: CurrencyCode,
+): Promise<number> {
+    if (
+        currency ===
+        "INR"
+    ) {
+        return 1;
+    }
+
+    const rates =
+        await getExchangeRates();
+
+    const rate =
+        rates[
+            currency
+        ];
+
+    if (
+        !isValidRate(
+            rate,
+        )
+    ) {
+        throw new Error(
+            `Exchange rate unavailable for ${currency}.`,
+        );
+    }
+
+    return rate;
+}
+
+/*
+ * ---------------------------------------------------------
+ * CACHE CONTROL
+ * ---------------------------------------------------------
+ */
+
+export function clearExchangeRateCache(): void {
+    cachedRates =
+        null;
+
+    cachedAt =
+        0;
 }
