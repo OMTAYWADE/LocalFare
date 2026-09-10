@@ -1,27 +1,32 @@
 import type {
     FoodItem,
-    MealType,
-    SpiceLevel,
 } from "../types/food.types";
+
+export type TravelerType =
+    | "tourist"
+    | "citizen";
 
 export interface FoodRecommendationInput {
     food: FoodItem;
 
-    preferredFood?: string;
-
     budgetInr?: number;
 
-    preferredSpice?: SpiceLevel;
+    preferredSpice?: FoodItem["spiceLevel"];
 
     vegetarian?: boolean;
 
     preferredCuisine?: string;
 
-    currentMeal?: MealType;
+    currentMeal?: FoodItem["mealTypes"][number];
 
     minimumRating?: number;
 
+    preferredFood?: string;
+
     maxDistanceKm?: number;
+
+    travelerType?:
+    | TravelerType;
 }
 
 export interface FoodRecommendation {
@@ -32,6 +37,52 @@ export interface FoodRecommendation {
     reasons: string[];
 }
 
+function matchesFood(
+    food: FoodItem,
+    preferredFood?: string,
+): boolean {
+    if (
+        !preferredFood
+    ) {
+        return false;
+    }
+
+    const query =
+        preferredFood
+            .trim()
+            .toLowerCase();
+
+    if (!query) {
+        return false;
+    }
+
+    const name =
+        food.name
+            .trim()
+            .toLowerCase();
+
+    const tags =
+        (
+            food.tags ?? []
+        ).map(
+            (tag) =>
+                tag
+                    .trim()
+                    .toLowerCase(),
+        );
+
+    return (
+        name === query ||
+        name.includes(query) ||
+        query.includes(name) ||
+        tags.some(
+            (tag) =>
+                tag.includes(query) ||
+                query.includes(tag),
+        )
+    );
+}
+
 export function getFoodRecommendations(
     inputs: FoodRecommendationInput[],
 ): FoodRecommendation[] {
@@ -39,14 +90,15 @@ export function getFoodRecommendations(
         .map(
             ({
                 food,
-                preferredFood,
                 budgetInr,
                 preferredSpice,
                 vegetarian,
                 preferredCuisine,
                 currentMeal,
                 minimumRating,
+                preferredFood,
                 maxDistanceKm,
+                travelerType = "tourist",
             }) => {
                 let score = 0;
 
@@ -54,145 +106,107 @@ export function getFoodRecommendations(
                     [];
 
                 /*
-                 * FOOD NAME
+                 * ==============================================
+                 * 1. FOOD MATCH
+                 * ==============================================
                  */
+
                 if (
-                    preferredFood?.trim()
+                    matchesFood(
+                        food,
+                        preferredFood,
+                    )
                 ) {
-                    const query =
-                        preferredFood
-                            .trim()
-                            .toLowerCase();
-
-                    const foodName =
-                        food.name
-                            .toLowerCase();
-
-                    const restaurantName =
-                        food.restaurantName
-                            ?.toLowerCase() ??
-                        "";
-
-                    const tags =
-                        food.tags ?? [];
-
-                    const matchesFood =
-                        foodName.includes(
-                            query,
-                        );
-
-                    const matchesRestaurant =
-                        restaurantName.includes(
-                            query,
-                        );
-
-                    const matchesTag =
-                        tags.some(
-                            (tag) =>
-                                tag
-                                    .toLowerCase()
-                                    .includes(
-                                        query,
-                                    ),
-                        );
-
-                    if (
-                        matchesFood ||
-                        matchesRestaurant ||
-                        matchesTag
-                    ) {
-                        score += 40;
-
-                        reasons.push(
-                            "Matches what you searched for",
-                        );
-                    }
-                }
-
-                /*
-                 * DISTANCE
-                 */
-                if (
-                    food.distanceKm !==
-                    undefined
-                ) {
-                    if (
-                        food.distanceKm <=
-                        1
-                    ) {
-                        score += 30;
-
-                        reasons.push(
-                            "Very close to you",
-                        );
-                    } else if (
-                        food.distanceKm <=
-                        3
-                    ) {
-                        score += 20;
-
-                        reasons.push(
-                            "Close to you",
-                        );
-                    } else if (
-                        food.distanceKm <=
-                        5
-                    ) {
-                        score += 10;
-                    }
-
-                    if (
-                        maxDistanceKm !==
-                            undefined &&
-                        food.distanceKm <=
-                            maxDistanceKm
-                    ) {
-                        score += 10;
-
-                        reasons.push(
-                            "Within your preferred distance",
-                        );
-                    }
-                }
-
-                /*
-                 * VEGETARIAN
-                 */
-                if (vegetarian) {
-                    if (
-                        food.diet ===
-                            "vegetarian" ||
-                        food.diet ===
-                            "vegan" ||
-                        food.isVegan ===
-                            true
-                    ) {
-                        score += 25;
-
-                        reasons.push(
-                            "Vegetarian-friendly",
-                        );
-                    }
-                }
-
-                /*
-                 * SPICE
-                 */
-                if (
-                    preferredSpice &&
-                    food.spiceLevel ===
-                        preferredSpice
-                ) {
-                    score += 15;
+                    score += 35;
 
                     reasons.push(
-                        "Matches your spice preference",
+                        "Matches the food you want",
                     );
                 }
 
                 /*
-                 * CUISINE
+                 * ==============================================
+                 * 2. BUDGET
+                 * ==============================================
                  */
+
+                if (
+                    budgetInr !== undefined &&
+                    typeof food.priceMinInr ===
+                    "number" &&
+                    typeof food.priceMaxInr ===
+                    "number"
+                ) {
+                    if (
+                        food.priceMinInr <=
+                        budgetInr
+                    ) {
+                        score += 30;
+
+                        reasons.push(
+                            "Has an option within your budget",
+                        );
+                    } else {
+                        score -= 40;
+                    }
+                }
+
+                /*
+                 * ==============================================
+                 * 3. VEGETARIAN
+                 * ==============================================
+                 */
+
+                if (
+                    vegetarian
+                ) {
+                    if (
+                        food.diet ===
+                        "vegetarian" ||
+                        food.diet ===
+                        "vegan" ||
+                        food.isVegan ===
+                        true
+                    ) {
+                        score += 15;
+
+                        reasons.push(
+                            "Vegetarian-friendly",
+                        );
+                    } else if (
+                        food.diet !==
+                        undefined
+                    ) {
+                        score -= 35;
+                    }
+                }
+
+                /*
+                 * ==============================================
+                 * 4. MEAL TIME
+                 * ==============================================
+                 */
+
+                if (
+                    currentMeal &&
+                    food.mealTypes
+                        ?.includes(
+                            currentMeal,
+                        )
+                ) {
+                    score += 12;
+
+                    reasons.push(
+                        `Good for ${currentMeal}`,
+                    );
+                }
+
+                /*
+                 * ==============================================
+                 * 5. CUISINE
+                 * ==============================================
+                 */
+
                 if (
                     preferredCuisine
                 ) {
@@ -201,18 +215,19 @@ export function getFoodRecommendations(
                             .trim()
                             .toLowerCase();
 
-                    const matches =
-                        food.cuisine.some(
-                            (item) =>
+                    if (
+                        food.cuisine?.some(
+                            (
+                                item,
+                            ) =>
                                 item
                                     .toLowerCase()
                                     .includes(
                                         cuisine,
                                     ),
-                        );
-
-                    if (matches) {
-                        score += 15;
+                        )
+                    ) {
+                        score += 10;
 
                         reasons.push(
                             "Matches your cuisine preference",
@@ -221,40 +236,45 @@ export function getFoodRecommendations(
                 }
 
                 /*
-                 * MEAL TIME
+                 * ==============================================
+                 * 6. SPICE
+                 * ==============================================
                  */
-                if (currentMeal) {
-                    if (
-                        food.mealTypes.includes(
-                            currentMeal,
-                        )
-                    ) {
-                        score += 15;
 
-                        reasons.push(
-                            `Suitable for ${currentMeal}`,
-                        );
-                    }
+                if (
+                    preferredSpice &&
+                    food.spiceLevel ===
+                    preferredSpice
+                ) {
+                    score += 8;
+
+                    reasons.push(
+                        "Matches your spice preference",
+                    );
                 }
 
                 /*
-                 * RATING
+                 * ==============================================
+                 * 7. RATING
+                 * ==============================================
                  */
+
                 if (
                     food.rating !==
                     undefined
                 ) {
                     score += Math.round(
-                        food.rating * 4,
+                        food.rating *
+                        2,
                     );
 
                     if (
                         minimumRating !==
-                            undefined &&
+                        undefined &&
                         food.rating >=
-                            minimumRating
+                        minimumRating
                     ) {
-                        score += 15;
+                        score += 8;
 
                         reasons.push(
                             "Highly rated",
@@ -263,58 +283,163 @@ export function getFoodRecommendations(
                 }
 
                 /*
-                 * PRICE
+                 * ==============================================
+                 * 8. CITIZEN / LOCAL BEHAVIOR
+                 * ==============================================
                  *
-                 * Only use price if we have
-                 * real price information.
+                 * Citizens care more about:
+                 *
+                 * - famous local food
+                 * - authentic places
+                 * - willingness to travel farther
                  */
+
                 if (
-                    budgetInr !==
-                        undefined &&
-                    food.priceInr !==
-                        undefined
+                    travelerType ===
+                    "citizen"
                 ) {
+                    const tags =
+                        (
+                            food.tags ??
+                            []
+                        ).map(
+                            (tag) =>
+                                tag
+                                    .toLowerCase(),
+                        );
+
                     if (
-                        food.priceInr <=
-                        budgetInr
+                        tags.some(
+                            (tag) =>
+                                tag.includes(
+                                    "famous",
+                                ) ||
+                                tag.includes(
+                                    "popular",
+                                )
+                        )
                     ) {
-                        score += 20;
+                        score += 18;
 
                         reasons.push(
-                            "Fits your budget",
+                            "Popular local choice",
                         );
-                    } else {
-                        score -= 20;
+                    }
+
+                    if (
+                        tags.some(
+                            (tag) =>
+                                tag.includes(
+                                    "local",
+                                ) ||
+                                tag.includes(
+                                    "specialty",
+                                )
+                        )
+                    ) {
+                        score += 18;
+
+                        reasons.push(
+                            "Known local specialty",
+                        );
+                    }
+
+                    /*
+                     * Citizens can travel farther,
+                     * so distance is a smaller penalty.
+                     */
+                    if (
+                        food.distanceKm !==
+                        undefined
+                    ) {
+                        if (
+                            food.distanceKm <=
+                            3
+                        ) {
+                            score += 5;
+                        } else if (
+                            food.distanceKm <=
+                            10
+                        ) {
+                            score += 3;
+                        }
                     }
                 }
 
                 /*
-                 * DATA QUALITY
+                 * ==============================================
+                 * 9. TOURIST BEHAVIOR
+                 * ==============================================
+                 *
+                 * Tourists care more about:
+                 *
+                 * - nearby food
+                 * - easy access
+                 * - tourist-area convenience
                  */
-                if (
-                    food.restaurantName
-                ) {
-                    score += 5;
 
-                    reasons.push(
-                        "Real nearby place",
-                    );
+                if (
+                    travelerType ===
+                    "tourist"
+                ) {
+                    if (
+                        food.distanceKm !==
+                        undefined
+                    ) {
+                        if (
+                            food.distanceKm <=
+                            1
+                        ) {
+                            score += 15;
+
+                            reasons.push(
+                                "Very close to your location",
+                            );
+                        } else if (
+                            food.distanceKm <=
+                            3
+                        ) {
+                            score += 10;
+
+                            reasons.push(
+                                "Close to your location",
+                            );
+                        } else if (
+                            food.distanceKm <=
+                            5
+                        ) {
+                            score += 5;
+                        }
+                    }
+                }
+
+                /*
+                 * ==============================================
+                 * 10. DISTANCE LIMIT
+                 * ==============================================
+                 */
+
+                if (
+                    maxDistanceKm !==
+                    undefined &&
+                    food.distanceKm !==
+                    undefined &&
+                    food.distanceKm >
+                    maxDistanceKm
+                ) {
+                    score -= 25;
                 }
 
                 return {
                     food,
                     score,
-                    reasons:
-                        [
-                            ...new Set(
-                                reasons,
-                            ),
-                        ],
+                    reasons,
                 };
             },
         )
         .sort(
             (a, b) =>
-                b.score - a.score,
+                b.score -
+                a.score,
         );
 }

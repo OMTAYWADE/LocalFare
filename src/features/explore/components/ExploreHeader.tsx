@@ -1,5 +1,7 @@
 "use client";
 
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 import {
     ArrowDownRight,
     MapPin,
@@ -9,8 +11,46 @@ import {
 } from "lucide-react";
 
 export default function ExploreHeader() {
+    const headerRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const header = headerRef.current;
+        if (!header) return;
+
+        const ctx = gsap.context(() => {
+            const tl = gsap.timeline();
+
+            tl.fromTo(
+                "[data-header-badge]",
+                { opacity: 0, y: 10 },
+                { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
+            )
+            .fromTo(
+                "[data-header-title]",
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+                "-=0.18",
+            )
+            .fromTo(
+                "[data-header-copy]",
+                { opacity: 0, y: 14 },
+                { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+                "-=0.3",
+            )
+            .fromTo(
+                "[data-header-pill]",
+                { opacity: 0, y: 10 },
+                { opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: "power3.out" },
+                "-=0.2",
+            );
+        }, header);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
         <header
+            ref={headerRef}
             className="
                 relative
                 isolate
@@ -22,7 +62,7 @@ export default function ExploreHeader() {
                 from-[#dff1d7]
                 via-[#eef1c5]
                 to-[#f7d4b5]
-                px-5
+                px-4
                 py-6
                 shadow-[0_24px_70px_rgba(18,60,53,0.08)]
                 sm:rounded-[34px]
@@ -168,6 +208,7 @@ export default function ExploreHeader() {
                 {/* Badge */}
 
                 <div
+                    data-header-badge
                     className="
                         inline-flex
                         items-center
@@ -197,10 +238,11 @@ export default function ExploreHeader() {
                 {/* Heading */}
 
                 <h1
+                    data-header-title
                     className="
                         mt-4
                         max-w-[620px]
-                        text-[2.35rem]
+                        text-[2.1rem]
                         font-black
                         leading-[0.96]
                         tracking-[-0.065em]
@@ -220,6 +262,7 @@ export default function ExploreHeader() {
                 {/* Description */}
 
                 <p
+                    data-header-copy
                     className="
                         mt-4
                         max-w-[540px]
@@ -240,6 +283,7 @@ export default function ExploreHeader() {
                 ================================================== */}
 
                 <div
+                    data-header-pill
                     className="
                         mt-5
                         grid

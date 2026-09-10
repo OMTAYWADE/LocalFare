@@ -4,13 +4,17 @@ import {
     AlertTriangle,
     Loader2,
     MapPin,
+    MessageCircle,
     Sparkles,
     Utensils,
 } from "lucide-react";
 
+import gsap from "gsap";
+
 import {
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from "react";
 
@@ -23,18 +27,13 @@ import FoodRecommendationCard from "./FoodRecommendationCard";
 interface Props {
     items: string[];
 
-    latitude: number;
+    latitude?: number;
 
-    longitude: number;
+    longitude?: number;
 
-    /**
-     * Optional budget in INR.
-     *
-     * Can come from:
-     * - parent component
-     * - URL ?budget=100
-     */
     budgetInr?: number;
+
+    locationQuery?: string;
 }
 
 interface ApiResponse {
@@ -46,18 +45,36 @@ interface ApiResponse {
 
     metadata?: {
         source?: string;
+
         retrievedAt?: string;
+
         nearbyPlaceCount?: number;
+
         budgetInr?: number;
+
         priceFiltered?: boolean;
+
+        locationSource?:
+        | "gps"
+        | "user"
+        | "none";
+
+        searchLocationName?: string;
+
+        foodMatchCount?: number;
+
+        finalCandidateCount?: number;
+
+        radiusMeters?: number;
     };
 
     error?: string;
 }
 
-/**
- * Normalize text for food matching.
- */
+/* =========================================================
+ * TEXT HELPERS
+ * ========================================================= */
+
 function normalizeText(
     value: string,
 ): string {
@@ -74,10 +91,10 @@ function normalizeText(
         );
 }
 
-/**
- * Check whether a result represents the
- * food the user requested.
- */
+/* =========================================================
+ * FOOD MATCH
+ * ========================================================= */
+
 function matchesRequestedFood(
     recommendation: FoodRecommendation,
     requestedItems: string[],
@@ -90,17 +107,14 @@ function matchesRequestedFood(
             food.name,
         );
 
-    const tags =
-        (
-            food.tags ?? []
-        ).map(
-            normalizeText,
-        );
+    const tags = (
+        food.tags ?? []
+    ).map(
+        normalizeText,
+    );
 
     return requestedItems.some(
-        (
-            item,
-        ) => {
+        (item) => {
             const query =
                 normalizeText(
                     item,
@@ -112,7 +126,7 @@ function matchesRequestedFood(
 
             return (
                 foodName ===
-                    query ||
+                query ||
                 foodName.includes(
                     query,
                 ) ||
@@ -120,9 +134,7 @@ function matchesRequestedFood(
                     foodName,
                 ) ||
                 tags.some(
-                    (
-                        tag,
-                    ) =>
+                    (tag) =>
                         tag.includes(
                             query,
                         ) ||
@@ -135,16 +147,22 @@ function matchesRequestedFood(
     );
 }
 
-/**
- * Sort recommendations according to FairTrip priority:
+/* =========================================================
+ * SORT
  *
- * 1. Food match
- * 2. Budget fit
- * 3. Known price
- * 4. Lower price
+ * FOOD QUALITY FIRST.
+ *
+ * Price remains only a supporting factor.
+ *
+ * 1. Exact food match
+ * 2. Confirmed food match
+ * 3. Food popularity
+ * 4. Rating
  * 5. Recommendation score
- * 6. Distance
- */
+ * 6. Budget fit
+ * 7. Distance
+ * ========================================================= */
+
 function sortRecommendations(
     recommendations: FoodRecommendation[],
     requestedItems: string[],
@@ -163,120 +181,92 @@ function sortRecommendations(
             const bFood =
                 b.food;
 
-            const aPrice =
-                aFood.priceInr;
+            /* -------------------------------------------------
+             * 1. REQUESTED FOOD MATCH
+             * ------------------------------------------------- */
 
-            const bPrice =
-                bFood.priceInr;
-
-            /*
-             * -------------------------------------------------
-             * 1. FOOD MATCH
-             * -------------------------------------------------
-             */
-
-            const aFoodMatch =
+            const aRequested =
                 matchesRequestedFood(
                     a,
                     requestedItems,
                 );
 
-            const bFoodMatch =
+            const bRequested =
                 matchesRequestedFood(
                     b,
                     requestedItems,
                 );
 
             if (
-                aFoodMatch !==
-                bFoodMatch
+                aRequested !==
+                bRequested
             ) {
-                return aFoodMatch
+                return aRequested
                     ? -1
                     : 1;
             }
 
-            /*
-             * -------------------------------------------------
-             * 2. BUDGET FIT
-             * -------------------------------------------------
-             */
+            /* -------------------------------------------------
+             * 2. CONFIRMED FOOD MATCH
+             * ------------------------------------------------- */
 
             if (
-                budgetInr !==
-                undefined
+                aFood.foodMatchConfirmed !==
+                bFood.foodMatchConfirmed
             ) {
-                const aFits =
-                    typeof aPrice ===
-                        "number" &&
-                    aPrice <=
-                        budgetInr;
-
-                const bFits =
-                    typeof bPrice ===
-                        "number" &&
-                    bPrice <=
-                        budgetInr;
-
-                if (
-                    aFits !==
-                    bFits
-                ) {
-                    return aFits
-                        ? -1
-                        : 1;
-                }
-            }
-
-            /*
-             * -------------------------------------------------
-             * 3. KNOWN PRICE
-             * -------------------------------------------------
-             *
-             * A real known price is preferred over
-             * an unknown price.
-             */
-
-            const aHasPrice =
-                typeof aPrice ===
-                "number";
-
-            const bHasPrice =
-                typeof bPrice ===
-                "number";
-
-            if (
-                aHasPrice !==
-                bHasPrice
-            ) {
-                return aHasPrice
+                return aFood
+                    .foodMatchConfirmed
                     ? -1
                     : 1;
             }
 
-            /*
-             * -------------------------------------------------
-             * 4. LOWER PRICE
-             * -------------------------------------------------
-             */
+            /* -------------------------------------------------
+             * 3. FOOD POPULARITY
+             * ------------------------------------------------- */
+
+            const aPopularity =
+                aFood.popularityScore ??
+                -1;
+
+            const bPopularity =
+                bFood.popularityScore ??
+                -1;
 
             if (
-                aHasPrice &&
-                bHasPrice &&
-                aPrice !==
-                    bPrice
+                aPopularity !==
+                bPopularity
             ) {
                 return (
-                    aPrice! -
-                    bPrice!
+                    bPopularity -
+                    aPopularity
                 );
             }
 
-            /*
-             * -------------------------------------------------
-             * 5. RECOMMENDATION SCORE
-             * -------------------------------------------------
-             */
+            /* -------------------------------------------------
+             * 4. RATING
+             * ------------------------------------------------- */
+
+            const aRating =
+                aFood.rating ??
+                -1;
+
+            const bRating =
+                bFood.rating ??
+                -1;
+
+            if (
+                aRating !==
+                bRating
+            ) {
+                return (
+                    bRating -
+                    aRating
+                );
+            }
+
+            /* -------------------------------------------------
+             * 5. FAIRTRIP SCORE
+             * ------------------------------------------------- */
 
             if (
                 a.score !==
@@ -288,11 +278,53 @@ function sortRecommendations(
                 );
             }
 
-            /*
-             * -------------------------------------------------
-             * 6. DISTANCE
-             * -------------------------------------------------
-             */
+            /* -------------------------------------------------
+             * 6. BUDGET FIT
+             *
+             * Only used as tie-breaking.
+             * ------------------------------------------------- */
+
+            if (
+                budgetInr !==
+                undefined
+            ) {
+                const aMin =
+                    typeof aFood.priceMinInr ===
+                        "number"
+                        ? aFood.priceMinInr
+                        : undefined;
+
+                const bMin =
+                    typeof bFood.priceMinInr ===
+                        "number"
+                        ? bFood.priceMinInr
+                        : undefined;
+
+                const aFits =
+                    aMin !==
+                    undefined &&
+                    aMin <=
+                    budgetInr;
+
+                const bFits =
+                    bMin !==
+                    undefined &&
+                    bMin <=
+                    budgetInr;
+
+                if (
+                    aFits !==
+                    bFits
+                ) {
+                    return aFits
+                        ? -1
+                        : 1;
+                }
+            }
+
+            /* -------------------------------------------------
+             * 7. DISTANCE
+             * ------------------------------------------------- */
 
             const aDistance =
                 aFood.distanceKm ??
@@ -310,11 +342,421 @@ function sortRecommendations(
     );
 }
 
+/* =========================================================
+ * LOCATION BANNER
+ * ========================================================= */
+
+function LocationStatusBanner({
+    hasGpsLocation,
+    hasUserLocation,
+    locationQuery,
+    bannerRef,
+}: {
+    hasGpsLocation: boolean;
+
+    hasUserLocation: boolean;
+
+    locationQuery?: string;
+
+    bannerRef: React.RefObject<
+        HTMLDivElement | null
+    >;
+}) {
+    if (hasGpsLocation) {
+        return (
+            <div
+                ref={bannerRef}
+                className="overflow-hidden rounded-[28px] border border-[#123c35]/10 bg-[#123c35] shadow-[0_16px_45px_rgba(18,60,53,0.14)]"
+            >
+                <div className="flex items-start gap-4 p-5 sm:p-6">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#e8f58d]">
+                        <MapPin className="h-5 w-5 text-[#123c35]" />
+                    </div>
+
+                    <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#cbe95b]">
+                            Location ready
+                        </p>
+
+                        <h2 className="mt-1 text-xl font-black tracking-[-0.025em] text-white">
+                            Finding food around you
+                        </h2>
+
+                        <p className="mt-2 text-xs leading-5 text-white/65">
+                            Real place results
+                            are being
+                            prioritized using
+                            your approximate
+                            location.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (hasUserLocation) {
+        return (
+            <div
+                ref={bannerRef}
+                className="overflow-hidden rounded-[28px] border border-[#123c35]/10 bg-[#123c35] shadow-[0_16px_45px_rgba(18,60,53,0.14)]"
+            >
+                <div className="flex items-start gap-4 p-5 sm:p-6">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#e8f58d]">
+                        <MapPin className="h-5 w-5 text-[#123c35]" />
+                    </div>
+
+                    <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#cbe95b]">
+                            Location selected
+                        </p>
+
+                        <h2 className="mt-1 text-xl font-black tracking-[-0.025em] text-white">
+                            Searching around
+                        </h2>
+
+                        <p className="mt-1 text-base font-black text-[#e8f58d]">
+                            {
+                                locationQuery
+                            }
+                        </p>
+
+                        <p className="mt-2 text-xs leading-5 text-white/65">
+                            FairTrip is using
+                            this area to
+                            find real food
+                            places.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div
+            ref={bannerRef}
+            className="overflow-hidden rounded-[28px] border border-[#123c35]/10 bg-[#123c35] shadow-[0_16px_45px_rgba(18,60,53,0.14)]"
+        >
+            <div className="flex items-start gap-4 p-5 sm:p-6">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#ef713d]">
+                    <MapPin className="h-5 w-5 text-white" />
+                </div>
+
+                <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#cbe95b]">
+                        Location needed
+                        for nearby
+                        results
+                    </p>
+
+                    <h2 className="mt-1 text-xl font-black tracking-[-0.025em] text-white">
+                        Location was
+                        unavailable
+                    </h2>
+
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-white/90">
+                        We can still guide
+                        you about the
+                        food. To find real
+                        places nearby,
+                        enter an area,
+                        market, railway
+                        station or landmark.
+                    </p>
+
+                    <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-2 text-[9px] font-black text-white/75">
+                        <MapPin className="h-3.5 w-3.5 text-[#cbe95b]" />
+                        Area or landmark
+                        search available
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* =========================================================
+ * FOOD OVERVIEW
+ * ========================================================= */
+
+function FoodDetail({
+    label,
+    value,
+}: {
+    label: string;
+    value?: string;
+}) {
+    if (!value) {
+        return null;
+    }
+
+    return (
+        <div className="rounded-[18px] border border-[#123c35]/8 bg-[#fcfbf8] px-4 py-3">
+            <p className="text-[8px] font-black uppercase tracking-[0.16em] text-[#8a9590]">
+                {label}
+            </p>
+            <p className="mt-1.5 text-sm font-bold leading-5 text-[#173f38]">
+                {value}
+            </p>
+        </div>
+    );
+}
+
+function FoodOverview({
+    food,
+}: {
+    food: FoodRecommendation["food"];
+}) {
+    const priceText =
+        typeof food.priceMinInr === "number" &&
+        typeof food.priceMaxInr === "number"
+            ? `₹${food.priceMinInr.toLocaleString("en-IN")} – ₹${food.priceMaxInr.toLocaleString("en-IN")}`
+            : food.priceRange;
+
+    const category = food.cuisine?.length
+        ? food.cuisine.join(" • ")
+        : undefined;
+
+    const taste = food.tasteProfile?.length
+        ? food.tasteProfile.join(" • ")
+        : undefined;
+
+    const texture = food.texture?.length
+        ? food.texture.join(" • ")
+        : undefined;
+
+    const meals = food.mealTypes?.length
+        ? food.mealTypes.join(" • ")
+        : undefined;
+
+    const ingredients = food.ingredients?.length
+        ? food.ingredients.join(" • ")
+        : undefined;
+
+    const goodFor = food.goodFor?.length
+        ? food.goodFor.join(" • ")
+        : undefined;
+
+    const allergens = food.allergens?.length
+        ? food.allergens.join(" • ")
+        : undefined;
+
+    const dietaryFlags = [
+        food.isVegan ? "Vegan" : null,
+        food.containsEgg === false ? "Egg-free" : null,
+        food.jainSuitable ? "Jain suitable" : null,
+        food.containsOnion === false ? "Onion-free" : null,
+        food.containsGarlic === false ? "Garlic-free" : null,
+    ].filter((value): value is string => Boolean(value));
+
+    const nutritionItems = [
+        typeof food.nutrition?.calories === "number"
+            ? { label: "Calories", value: `${Math.round(food.nutrition.calories)} kcal` }
+            : null,
+        typeof food.nutrition?.proteinGrams === "number"
+            ? { label: "Protein", value: `${food.nutrition.proteinGrams.toFixed(1)} g` }
+            : null,
+        typeof food.nutrition?.carbohydratesGrams === "number"
+            ? { label: "Carbs", value: `${food.nutrition.carbohydratesGrams.toFixed(1)} g` }
+            : null,
+        typeof food.nutrition?.fatGrams === "number"
+            ? { label: "Fat", value: `${food.nutrition.fatGrams.toFixed(1)} g` }
+            : null,
+    ].filter(
+        (item): item is { label: string; value: string } => item !== null,
+    );
+
+    const quickFacts = [
+        category ? { label: "Category", value: category } : null,
+        food.diet ? { label: "Diet", value: food.diet } : null,
+        food.spiceLevel ? { label: "Spice", value: food.spiceLevel } : null,
+        meals ? { label: "Best time", value: meals } : null,
+    ].filter(
+        (item): item is { label: string; value: string } => item !== null,
+    );
+
+    const moreDetails = [
+        food.origin ? { label: "Origin", value: food.origin } : null,
+        ingredients ? { label: "Ingredients", value: ingredients } : null,
+        texture ? { label: "Texture", value: texture } : null,
+        food.preparationMethod
+            ? { label: "Preparation", value: food.preparationMethod }
+            : null,
+        food.servingStyle
+            ? { label: "Serving style", value: food.servingStyle }
+            : null,
+        taste ? { label: "Taste", value: taste } : null,
+        goodFor ? { label: "Good for", value: goodFor } : null,
+        allergens ? { label: "Allergens", value: allergens } : null,
+        priceText
+            ? {
+                  label: "Typical price",
+                  value: `${priceText}${food.priceEstimated ? " · estimated" : ""}`,
+              }
+            : null,
+        food.popularityLevel
+            ? {
+                  label: "Popularity",
+                  value: food.popularityReason
+                      ? `${food.popularityLevel} · ${food.popularityReason}`
+                      : food.popularityLevel,
+              }
+            : null,
+    ].filter(
+        (item): item is { label: string; value: string } => item !== null,
+    );
+
+    return (
+        <section
+            className="
+                mt-5 overflow-hidden rounded-[30px]
+                border border-[#123c35]/10 bg-white
+                shadow-[0_18px_50px_rgba(18,60,53,0.07)]
+            "
+        >
+            <div className="grid lg:grid-cols-[minmax(280px,38%)_1fr]">
+                {/* ONE IMAGE */}
+                <div className="relative min-h-[420px] bg-[#123c35]">
+                    {food.imageUrl ? (
+                        <img
+                            src={food.imageUrl}
+                            alt={food.name}
+                            loading="eager"
+                            className="absolute inset-0 h-full w-full object-cover"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Utensils className="h-16 w-16 text-white/20" />
+                        </div>
+                    )}
+
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent p-6">
+                        <span className="inline-flex rounded-full bg-[#e8f58d] px-3 py-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-[#123c35]">
+                            Food guide
+                        </span>
+                    </div>
+                </div>
+
+                {/* INFORMATION */}
+                <div className="p-6 sm:p-8 lg:p-9">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#ef713d]">
+                                Food overview
+                            </p>
+                            <h2 className="mt-2 text-[34px] font-black leading-none tracking-[-0.045em] text-[#123c35]">
+                                {food.name}
+                            </h2>
+                        </div>
+
+                        {typeof food.confidence === "number" && (
+                            <div className="rounded-[16px] bg-[#e8f58d] px-3.5 py-2.5 text-right">
+                                <p className="text-[8px] font-black uppercase tracking-[0.12em] text-[#61722c]">
+                                    Recognized
+                                </p>
+                                <p className="mt-0.5 text-sm font-black text-[#123c35]">
+                                    {Math.round(food.confidence * 100)}%
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {food.description && (
+                        <p className="mt-4 max-w-2xl text-[14px] leading-6 text-[#6b7772]">
+                            {food.description}
+                        </p>
+                    )}
+
+                    {quickFacts.length > 0 && (
+                        <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                            {quickFacts.map((fact) => (
+                                <FoodDetail
+                                    key={fact.label}
+                                    label={fact.label}
+                                    value={fact.value}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {moreDetails.length > 0 && (
+                        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                            {moreDetails.map((detail) => (
+                                <FoodDetail
+                                    key={detail.label}
+                                    label={detail.label}
+                                    value={detail.value}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {dietaryFlags.length > 0 && (
+                        <div className="mt-5 flex flex-wrap gap-2">
+                            {dietaryFlags.map((flag) => (
+                                <span
+                                    key={flag}
+                                    className="rounded-full bg-[#edf5d1] px-3 py-1.5 text-[9px] font-black text-[#35520d]"
+                                >
+                                    {flag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+
+                    {nutritionItems.length > 0 && (
+                        <div className="mt-6 rounded-[20px] border border-[#123c35]/8 bg-[#f7f3ea] p-4">
+                            <div className="flex items-center justify-between gap-3">
+                                <p className="text-[9px] font-black uppercase tracking-[0.14em] text-[#ef713d]">
+                                    Nutrition
+                                </p>
+                                <span className="text-[8px] font-bold uppercase tracking-[0.1em] text-[#89938f]">
+                                    Per serving · when available
+                                </span>
+                            </div>
+
+                            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                {nutritionItems.map((item) => (
+                                    <div key={item.label} className="rounded-[14px] bg-white p-3">
+                                        <p className="text-[8px] font-black uppercase tracking-[0.1em] text-[#89938f]">
+                                            {item.label}
+                                        </p>
+                                        <p className="mt-1 text-sm font-black text-[#123c35]">
+                                            {item.value}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {food.wikipediaUrl && (
+                        <a
+                            href={food.wikipediaUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-6 inline-flex items-center text-xs font-black text-[#ef713d] hover:underline"
+                        >
+                            Explore more about {food.name} →
+                        </a>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/* =========================================================
+ * MAIN
+ * ========================================================= */
+
 export default function FoodRecommendationList({
     items,
     latitude,
     longitude,
-    budgetInr: propBudgetInr,
+    budgetInr,
+    locationQuery,
 }: Props) {
     const [
         data,
@@ -336,27 +778,48 @@ export default function FoodRecommendationList({
     ] =
         useState("");
 
-    /*
-     * ---------------------------------------------------------
-     * BUDGET
-     * ---------------------------------------------------------
-     *
-     * Parent prop has priority.
-     * Otherwise read ?budget= from the URL.
-     *
-     * We intentionally avoid useSearchParams here because
-     * the component already receives everything required from
-     * its parent.
-     */
+    /* =========================================================
+     * GSAP REFS
+     * ========================================================= */
 
-    const budgetInr =
-        propBudgetInr;
+    const pageRef =
+        useRef<HTMLDivElement>(null);
 
-    /*
-     * ---------------------------------------------------------
-     * NORMALIZED ITEMS
-     * ---------------------------------------------------------
-     */
+    const bannerRef =
+        useRef<HTMLDivElement>(null);
+
+    const headerRef =
+        useRef<HTMLDivElement>(null);
+
+    const localTipRef =
+        useRef<HTMLDivElement>(null);
+
+    /* =========================================================
+     * LOCATION
+     * ========================================================= */
+
+    const hasGpsLocation =
+        typeof latitude ===
+        "number" &&
+        typeof longitude ===
+        "number" &&
+        Number.isFinite(
+            latitude,
+        ) &&
+        Number.isFinite(
+            longitude,
+        ) &&
+        latitude !== 0 &&
+        longitude !== 0;
+
+    const hasUserLocation =
+        Boolean(
+            locationQuery?.trim(),
+        );
+
+    /* =========================================================
+     * ITEMS
+     * ========================================================= */
 
     const normalizedItems =
         useMemo(
@@ -375,34 +838,36 @@ export default function FoodRecommendationList({
             [items],
         );
 
-    /*
-     * ---------------------------------------------------------
+    /* =========================================================
      * SORTED RESULTS
-     * ---------------------------------------------------------
-     */
+     * ========================================================= */
 
     const sortedRecommendations =
-        useMemo(() => {
-            if (!data) {
-                return [];
-            }
+        useMemo(
+            () => {
+                if (!data) {
+                    return [];
+                }
 
-            return sortRecommendations(
-                data.recommendations,
+                return sortRecommendations(
+                    data.recommendations,
+                    normalizedItems,
+                    budgetInr,
+                );
+            },
+            [
+                data,
                 normalizedItems,
                 budgetInr,
-            );
-        }, [
-            data,
-            normalizedItems,
-            budgetInr,
-        ]);
+            ],
+        );
 
-    /*
-     * ---------------------------------------------------------
-     * LOAD RECOMMENDATIONS
-     * ---------------------------------------------------------
-     */
+    const featuredFood =
+        sortedRecommendations[0]?.food;
+
+    /* =========================================================
+     * LOAD
+     * ========================================================= */
 
     useEffect(() => {
         let cancelled =
@@ -410,19 +875,10 @@ export default function FoodRecommendationList({
 
         async function loadRecommendations() {
             try {
-                setLoading(
-                    true,
-                );
-
+                setLoading(true);
                 setError("");
+                setData(null);
 
-                setData(
-                    null,
-                );
-
-                /*
-                 * Validate food.
-                 */
                 if (
                     items.length ===
                     0
@@ -432,82 +888,65 @@ export default function FoodRecommendationList({
                     );
                 }
 
-                /*
-                 * Validate coordinates.
-                 */
-                if (
-                    !Number.isFinite(
-                        latitude,
-                    ) ||
-                    !Number.isFinite(
-                        longitude,
-                    )
-                ) {
-                    throw new Error(
-                        "Valid latitude and longitude are required.",
-                    );
-                }
-
-                /*
-                 * Validate budget if provided.
-                 */
-                if (
-                    budgetInr !==
-                        undefined &&
-                    (
-                        !Number.isFinite(
-                            budgetInr,
-                        ) ||
-                        budgetInr < 0
-                    )
-                ) {
-                    throw new Error(
-                        "Budget must be a valid non-negative number.",
-                    );
-                }
-
-                /*
-                 * Build API request.
-                 */
                 const params =
                     new URLSearchParams();
 
-                params.set(
-                    "items",
-                    items.join(","),
-                );
+                const foodQuery =
+                    items
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                        .join(", ");
+
+                if (!foodQuery) {
+                    throw new Error(
+                        "No food items were provided.",
+                    );
+                }
 
                 params.set(
-                    "latitude",
-                    String(
-                        latitude,
-                    ),
+                    "q",
+                    foodQuery,
                 );
 
-                params.set(
-                    "longitude",
-                    String(
-                        longitude,
-                    ),
-                );
+                if (
+                    hasGpsLocation
+                ) {
+                    params.set(
+                        "latitude",
+                        String(
+                            latitude,
+                        ),
+                    );
+
+                    params.set(
+                        "longitude",
+                        String(
+                            longitude,
+                        ),
+                    );
+                }
+
+                if (
+                    hasUserLocation
+                ) {
+                    params.set(
+                        "locationQuery",
+                        locationQuery!.trim(),
+                    );
+                }
 
                 /*
-                 * 25 km discovery radius.
-                 *
-                 * Distance will NOT be the first
-                 * recommendation factor.
+                 * Keep the broader discovery
+                 * radius for citizen/local exploration.
                  */
                 params.set(
                     "radius",
                     "25000",
                 );
 
-                /*
-                 * Send budget to backend.
-                 */
                 if (
                     budgetInr !==
-                        undefined &&
+                    undefined &&
                     Number.isFinite(
                         budgetInr,
                     )
@@ -539,20 +978,17 @@ export default function FoodRecommendationList({
                         },
                     );
 
-                /*
-                 * Read body once.
-                 */
                 const rawText =
                     await response.text();
 
-                let result:
+                let parsed:
                     | ApiResponse
                     | {
-                          error?: string;
-                      };
+                        error?: string;
+                    };
 
                 try {
-                    result =
+                    parsed =
                         JSON.parse(
                             rawText,
                         );
@@ -562,37 +998,28 @@ export default function FoodRecommendationList({
                     );
                 }
 
-                /*
-                 * Server error.
-                 */
                 if (
                     !response.ok
                 ) {
-                    const serverError =
-                        "error" in
-                        result
-                            ? result.error
-                            : undefined;
-
                     throw new Error(
-                        serverError ??
-                            `Recommendation API failed with status ${response.status}.`,
+                        "error" in
+                            parsed
+                            ? parsed.error ??
+                            `Recommendation API failed with status ${response.status}.`
+                            : `Recommendation API failed with status ${response.status}.`,
                     );
                 }
 
-                const recommendationResponse =
-                    result as ApiResponse;
-
-                /*
-                 * Validate response shape.
-                 */
                 if (
                     !Array.isArray(
-                        recommendationResponse.recommendations,
+                        (
+                            parsed as ApiResponse
+                        )
+                            .recommendations,
                     )
                 ) {
                     throw new Error(
-                        "Recommendation API returned an invalid recommendations array.",
+                        "Recommendation API returned invalid recommendations.",
                     );
                 }
 
@@ -600,11 +1027,11 @@ export default function FoodRecommendationList({
                     !cancelled
                 ) {
                     setData(
-                        recommendationResponse,
+                        parsed as ApiResponse,
                     );
                 }
             } catch (
-                requestError
+            requestError
             ) {
                 console.error(
                     "[FoodRecommendationList] Failed:",
@@ -618,7 +1045,7 @@ export default function FoodRecommendationList({
                         requestError instanceof
                             Error
                             ? requestError.message
-                            : "Unable to load nearby food recommendations.",
+                            : "Unable to load food recommendations.",
                     );
                 }
             } finally {
@@ -639,65 +1066,114 @@ export default function FoodRecommendationList({
                 true;
         };
     }, [
-        /*
-         * Use primitive values here.
-         *
-         * This prevents unnecessary API requests if
-         * a parent creates a new `items` array reference.
-         */
         items.join(","),
         latitude,
         longitude,
         budgetInr,
+        locationQuery,
+        hasGpsLocation,
+        hasUserLocation,
     ]);
 
-    /*
-     * ---------------------------------------------------------
+    /* =========================================================
+     * PAGE ANIMATION
+     * ========================================================= */
+
+    useEffect(() => {
+        if (
+            loading ||
+            !data ||
+            !pageRef.current
+        ) {
+            return;
+        }
+
+        const ctx =
+            gsap.context(
+                () => {
+                    const elements = [
+                        bannerRef.current,
+                        headerRef.current,
+                        localTipRef.current,
+                    ].filter(
+                        (
+                            element,
+                        ): element is HTMLDivElement =>
+                            Boolean(
+                                element,
+                            ),
+                    );
+
+                    gsap.fromTo(
+                        elements,
+                        {
+                            opacity: 0,
+                            y: 20,
+                        },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.55,
+                            stagger: 0.08,
+                            ease:
+                                "power3.out",
+                        },
+                    );
+                },
+                pageRef,
+            );
+
+        return () => {
+            ctx.revert();
+        };
+    }, [
+        loading,
+        data,
+    ]);
+
+    /* =========================================================
      * LOADING
-     * ---------------------------------------------------------
-     */
+     * ========================================================= */
 
-    if (
-        loading
-    ) {
+    if (loading) {
         return (
-            <div className="mt-8 flex min-h-[320px] items-center justify-center rounded-[28px] bg-white">
-                <div className="text-center">
-                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-[#123c35]" />
+            <div className="mt-8 flex min-h-[360px] items-center justify-center rounded-[30px] bg-white">
+                <div className="px-6 text-center">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#e8f58d]">
+                        <Loader2 className="h-7 w-7 animate-spin text-[#123c35]" />
+                    </div>
 
-                    <p className="mt-4 text-sm font-black text-[#123c35]">
-                        Finding the best food
-                        options...
+                    <p className="mt-5 text-base font-black text-[#123c35]">
+                        Understanding food
+                        and finding places...
                     </p>
 
-                    <p className="mt-1 text-xs leading-5 text-[#6d7974]">
+                    <p className="mx-auto mt-2 max-w-sm text-xs leading-5 text-[#6d7974]">
                         Checking food match,
-                        price and nearby
-                        places.
+                        food characteristics,
+                        popularity, ratings,
+                        real places and
+                        distance.
                     </p>
                 </div>
             </div>
         );
     }
 
-    /*
-     * ---------------------------------------------------------
+    /* =========================================================
      * ERROR
-     * ---------------------------------------------------------
-     */
+     * ========================================================= */
 
-    if (
-        error
-    ) {
+    if (error) {
         return (
-            <div className="mt-8 rounded-[24px] border border-[#b84f2c]/10 bg-[#f9dfd0] p-5">
+            <div className="mt-8 rounded-[28px] border border-[#b84f2c]/10 bg-[#f9dfd0] p-5 shadow-[0_12px_30px_rgba(184,79,44,0.07)]">
                 <div className="flex items-start gap-3">
                     <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[#b84f2c]" />
 
                     <div>
                         <p className="text-sm font-black text-[#b84f2c]">
-                            Unable to load food
-                            recommendations
+                            Couldn&apos;t load
+                            food places
                         </p>
 
                         <p className="mt-2 text-xs leading-5 text-[#8e4a35]">
@@ -709,220 +1185,211 @@ export default function FoodRecommendationList({
         );
     }
 
-    /*
-     * ---------------------------------------------------------
+    /* =========================================================
      * EMPTY
-     * ---------------------------------------------------------
-     */
+     * ========================================================= */
 
     if (
         !data ||
         sortedRecommendations.length ===
-            0
+        0
     ) {
         return (
-            <div className="mt-8 rounded-[28px] border border-[#123c35]/10 bg-white p-8 text-center">
-                <Utensils className="mx-auto h-8 w-8 text-[#6d7974]" />
+            <div
+                ref={pageRef}
+                className="mt-8"
+            >
+                <LocationStatusBanner
+                    hasGpsLocation={
+                        hasGpsLocation
+                    }
+                    hasUserLocation={
+                        hasUserLocation
+                    }
+                    locationQuery={
+                        locationQuery
+                    }
+                    bannerRef={
+                        bannerRef
+                    }
+                />
 
-                <h2 className="mt-4 text-lg font-black text-[#123c35]">
-                    No matching food places found
-                </h2>
+                <div className="mt-5 overflow-hidden rounded-[28px] border border-[#123c35]/10 bg-[#123c35] p-5 shadow-[0_14px_40px_rgba(18,60,53,0.10)]">
+                    <div className="flex items-start gap-4">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ef713d]">
+                            <Utensils className="h-5 w-5 text-white" />
+                        </div>
 
-                <p className="mt-2 text-xs leading-5 text-[#6d7974]">
-                    We couldn't find matching
-                    nearby places for this food.
-                    Try another food or increase
-                    the search radius.
-                </p>
+                        <div>
+                            <p className="text-[9px] font-black uppercase tracking-[0.14em] text-[#cbe95b]">
+                                FairTrip food
+                                guide
+                            </p>
 
-                {budgetInr !==
-                    undefined && (
-                    <p className="mt-3 text-[10px] font-bold text-[#8b9792]">
-                        Budget: ₹
-                        {budgetInr.toLocaleString(
-                            "en-IN",
-                        )}
-                    </p>
-                )}
+                            <h2 className="mt-1 text-xl font-black text-white">
+                                No confirmed
+                                place found yet
+                            </h2>
+
+                            <p className="mt-2 text-xs leading-5 text-white/65">
+                                Small local
+                                stalls and
+                                temporary
+                                vendors may not
+                                appear in map
+                                data.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 rounded-[18px] bg-white/10 p-4">
+                        <div className="flex items-start gap-3">
+                            <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#ef713d]" />
+
+                            <div>
+                                <p className="text-xs font-black text-white">
+                                    Ask a local
+                                </p>
+
+                                <p className="mt-1 text-[10px] leading-5 text-white/60">
+                                    Ask a shopkeeper,
+                                    auto driver,
+                                    hotel staff
+                                    member or
+                                    nearby
+                                    resident where
+                                    locals eat this
+                                    food.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    /*
-     * ---------------------------------------------------------
+    /* =========================================================
      * RESULTS
-     * ---------------------------------------------------------
-     */
+     * ========================================================= */
 
     return (
-        <section className="mt-8">
+        <div
+            ref={pageRef}
+            className="mt-8"
+        >
+            <LocationStatusBanner
+                hasGpsLocation={
+                    hasGpsLocation
+                }
+                hasUserLocation={
+                    hasUserLocation
+                }
+                locationQuery={
+                    locationQuery
+                }
+                bannerRef={
+                    bannerRef
+                }
+            />
+            
 
-            {/* ================================================= */}
-            {/* HEADER                                            */}
-            {/* ================================================= */}
+            {/* =================================================
+                FOOD OVERVIEW
+            ================================================= */}
 
-            <div className="mb-6">
+            {featuredFood && (
+                <FoodOverview food={featuredFood} />
+            )}
 
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-[#ef713d]">
+            {/* =================================================
+                HEADER
+            ================================================= */}
+
+            <div
+                ref={headerRef}
+                className="mb-6 mt-8"
+            >
+                <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#ef713d]">
                     <Sparkles className="h-3.5 w-3.5" />
 
-                    Smart recommendations
+                    {data.metadata?.nearbyPlaceCount ?? sortedRecommendations.length} nearby places
                 </div>
 
-                <h2 className="mt-2 text-3xl font-black tracking-[-0.04em] text-[#123c35]">
-                    Best matches for you
+                <h2 className="mt-2 text-3xl font-black tracking-[-0.045em] text-[#123c35]">
+                    Where to find {featuredFood?.name ?? "this food"}
                 </h2>
 
-                <p className="mt-2 max-w-2xl text-xs leading-5 text-[#6d7974]">
-                    FairTrip prioritizes the
-                    requested food and available
-                    price information before using
-                    distance to rank nearby places.
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6d7974]">
+                    Places close to you where this food may be available.
                 </p>
 
-                {/* FOOD */}
-
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#89938f]">
-                        Food:
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-[#f7f3ea] px-3 py-1.5 text-[9px] font-black text-[#31544d]">
+                        {data.metadata?.nearbyPlaceCount ?? sortedRecommendations.length} places found
                     </span>
-
-                    {items.map(
-                        (
-                            item,
-                            index,
-                        ) => (
-                            <span
-                                key={`${item}-${index}`}
-                                className="rounded-full bg-[#e8f58d] px-3 py-1.5 text-[10px] font-black text-[#123c35]"
-                            >
-                                {item}
-                            </span>
-                        ),
-                    )}
-                </div>
-
-                {/* CONTEXT */}
-
-                <div className="mt-4 flex flex-wrap gap-2">
-
-                    {budgetInr !==
-                        undefined && (
-                        <span className="inline-flex items-center rounded-full bg-[#123c35] px-3 py-1.5 text-[10px] font-black text-white">
-                            Budget ₹
-                            {budgetInr.toLocaleString(
-                                "en-IN",
-                            )}
-                        </span>
-                    )}
-
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f7f3ea] px-3 py-1.5 text-[10px] font-bold text-[#31544d]">
-                        <MapPin className="h-3.5 w-3.5" />
-
-                        {data.metadata
-                            ?.nearbyPlaceCount ??
-                            0}{" "}
-                        places checked
-                    </span>
-
                     {data.currentMeal && (
-                        <span className="rounded-full bg-[#f7f3ea] px-3 py-1.5 text-[10px] font-bold capitalize text-[#31544d]">
-                            Meal:{" "}
-                            {
-                                data.currentMeal
-                            }
+                        <span className="rounded-full bg-[#f7f3ea] px-3 py-1.5 text-[9px] font-black capitalize text-[#31544d]">
+                            {data.currentMeal}
                         </span>
                     )}
                 </div>
             </div>
 
-            {/* ================================================= */}
-            {/* RESULT CARDS                                      */}
-            {/* ================================================= */}
+            {/* =================================================
+                CARDS
+            ================================================= */}
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {sortedRecommendations.map(
                     (
                         recommendation,
                         index,
-                    ) => {
-                        const food =
-                            recommendation.food;
-
-                        const hasPrice =
-                            typeof food.priceInr ===
-                            "number";
-
-                        const fitsBudget =
-                            budgetInr !==
-                                undefined &&
-                            hasPrice &&
-                            food.priceInr! <=
-                                budgetInr;
-
-                        return (
-                            <div
-                                key={`${food.id}-${food.restaurantId ?? food.restaurantName ?? index}`}
-                                className="relative"
-                            >
-                                {/* BEST MATCH */}
-
-                                {index ===
-                                    0 && (
-                                    <div className="absolute -top-3 left-5 z-20 rounded-full bg-[#ef713d] px-3 py-1 text-[8px] font-black uppercase tracking-[0.12em] text-white shadow-sm">
-                                        Best match
-                                    </div>
-                                )}
-
-                                {/* BUDGET */}
-
-                                {fitsBudget && (
-                                    <div className="absolute right-5 top-4 z-20 rounded-full bg-[#e8f58d] px-3 py-1.5 text-[8px] font-black uppercase tracking-[0.08em] text-[#123c35] shadow-sm">
-                                        Within budget
-                                    </div>
-                                )}
-
-                                <FoodRecommendationCard
-                                    recommendation={
-                                        recommendation
-                                    }
-                                />
-                            </div>
-                        );
-                    },
+                    ) => (
+                        <div
+                            key={`${recommendation.food.id}-${recommendation.food.restaurantId ?? recommendation.food.restaurantName ?? index}`}
+                        >
+                            <FoodRecommendationCard
+                                recommendation={recommendation}
+                                index={index}
+                            />
+                        </div>
+                    ),
                 )}
             </div>
 
-            {/* ================================================= */}
-            {/* LOGIC                                             */}
-            {/* ================================================= */}
+            {/* =================================================
+                LOCAL TIP
+            ================================================= */}
 
-            <div className="mt-6 rounded-[20px] border border-[#123c35]/8 bg-white px-4 py-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
+            <div
+                ref={localTipRef}
+                className="mt-7 rounded-[24px] border border-[#123c35]/10 bg-[#123c35] p-5 shadow-[0_12px_35px_rgba(18,60,53,0.08)]"
+            >
+                <div className="flex items-start gap-3">
+                    <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#ef713d]" />
 
                     <div>
-                        <p className="text-[9px] font-black uppercase tracking-[0.12em] text-[#89938f]">
-                            Recommendation priority
+                        <p className="text-xs font-black text-white">
+                            Ask a local
                         </p>
 
-                        <p className="mt-1 text-[10px] leading-4 text-[#6d7974]">
-                            Food match → budget →
-                            known price → situation →
-                            distance
-                        </p>
-                    </div>
-
-                    <div className="text-right">
-                        <p className="text-[9px] font-black uppercase tracking-[0.12em] text-[#89938f]">
-                            Search radius
-                        </p>
-
-                        <p className="mt-1 text-[10px] font-bold text-[#31544d]">
-                            25 km
+                        <p className="mt-1 text-[10px] leading-5 text-white/60">
+                            Maps can miss
+                            small stalls,
+                            temporary vendors
+                            and hyper-local
+                            favorites. A
+                            nearby resident or
+                            shopkeeper can still
+                            point you toward
+                            the place locals
+                            prefer.
                         </p>
                     </div>
                 </div>
             </div>
-        </section>
+
+        </div>
     );
 }

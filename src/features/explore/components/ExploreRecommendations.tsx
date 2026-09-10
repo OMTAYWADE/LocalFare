@@ -6,6 +6,9 @@ import {
     Sparkles,
 } from "lucide-react";
 
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
+
 import type { ExploreRecommendation } from "@/features/recommendation/types";
 
 import ExploreRecommendationCard from "./ExploreRecommendationCard";
@@ -45,6 +48,8 @@ export default function ExploreRecommendations({
     setFilter,
     onPlan,
 }: ExploreRecommendationsProps) {
+    const resultsRef = useRef<HTMLElement>(null);
+
     /*
      * ------------------------------------------------------------
      * SORT RESULTS
@@ -77,8 +82,40 @@ export default function ExploreRecommendations({
         },
     );
 
+    useEffect(() => {
+        const root = resultsRef.current;
+        if (!root || loading || sortedPlaces.length === 0) {
+            return;
+        }
+
+        const cards = root.querySelectorAll(
+            "[data-explore-card]",
+        );
+
+        if (cards.length === 0) {
+            return;
+        }
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo(
+                cards,
+                { opacity: 0, y: 18 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    stagger: 0.06,
+                    ease: "power3.out",
+                    clearProps: "transform,opacity",
+                },
+            );
+        }, root);
+
+        return () => ctx.revert();
+    }, [loading, places.length, filter]);
+
     return (
-        <section className="mt-10 sm:mt-12">
+        <section ref={resultsRef} className="mt-8 sm:mt-12">
             {/* =====================================================
                 HEADER
             ====================================================== */}
@@ -145,7 +182,10 @@ export default function ExploreRecommendations({
                         w-full
                         gap-2
                         overflow-x-auto
-                        pb-1
+                        overscroll-contain
+                        pb-2
+                        -mx-1
+                        px-1
                         sm:w-auto
                     "
                 >
@@ -348,7 +388,8 @@ export default function ExploreRecommendations({
                         className="
                             mt-6
                             grid
-                            gap-5
+                            grid-cols-1
+                            gap-4
                             sm:grid-cols-2
                             lg:grid-cols-3
                         "
@@ -434,7 +475,8 @@ function LoadingGrid() {
             className="
                 mt-6
                 grid
-                gap-5
+                grid-cols-1
+                gap-4
                 sm:grid-cols-2
                 lg:grid-cols-3
             "

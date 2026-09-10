@@ -96,10 +96,14 @@ export default function FoodFilters({
 
       <div className="mt-6">
         <div className="flex items-center justify-between">
-          <label htmlFor="food-budget" className="text-[10px] font-black uppercase tracking-[0.14em] text-[#31544d]">
+          <label
+            htmlFor="food-budget"
+            className="text-[10px] font-black uppercase tracking-[0.14em] text-[#31544d]"
+          >
             Budget
           </label>
-          <span className="rounded-full bg-[#f7f3ea] px-2.5 py-1 text-[10px] font-black text-[#123c35] transition-all duration-200">
+
+          <span className="rounded-full bg-[#f7f3ea] px-2.5 py-1 text-[10px] font-black text-[#123c35]">
             ₹{budget}
           </span>
         </div>
@@ -111,8 +115,14 @@ export default function FoodFilters({
           max={2000}
           step={50}
           value={budget}
-          onChange={(event) => onBudgetChange(Number(event.target.value))}
-          className="mt-4 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#f0ede3] accent-[#123c35] transition-all"
+          onChange={(event) =>
+            onBudgetChange(
+              Number(
+                event.target.value,
+              ),
+            )
+          }
+          className="mt-4 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#f0ede3] accent-[#123c35]"
           style={{
             background: `linear-gradient(to right, #123c35 ${budgetPercent}%, #f0ede3 ${budgetPercent}%)`,
           }}
@@ -122,6 +132,12 @@ export default function FoodFilters({
           <span>₹50</span>
           <span>₹2,000</span>
         </div>
+
+        <p className="mt-2 text-[9px] leading-4 text-[#89938f]">
+          FairTrip checks whether the
+          published price range can fit
+          this budget.
+        </p>
       </div>
 
       <FilterSelect

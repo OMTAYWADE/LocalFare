@@ -1,0 +1,468 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// USER
+// ============================================================
+
+model User {
+  id String @id @default(cuid())
+
+  name  String?
+  email String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // One profile per user
+  profile TravelerProfile?
+
+  // Food preferences
+  foodPreferences UserFoodPreference[]
+
+  // Place history
+  savedPlaces   SavedPlace[]
+  visitedPlaces VisitedPlace[]
+
+  // Search / scan history
+  searchHistory SearchHistory[]
+  foodScans     FoodScan[]
+
+  // Trips
+  trips Trip[]
+}
+
+// ============================================================
+// TRAVELER PROFILE
+// ============================================================
+
+model TravelerProfile {
+  id String @id @default(cuid())
+
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  travelerType TravelerType @default(TOURIST)
+
+  // User's display currency
+  currency CurrencyCode @default(INR)
+
+  // Dietary preferences
+  vegetarian Boolean @default(false)
+  vegan      Boolean @default(false)
+
+  // Food preferences
+  preferredSpice   SpiceLevel?
+  preferredCuisine String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// USER FOOD PREFERENCE
+// ============================================================
+
+model UserFoodPreference {
+  id String @id @default(cuid())
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  foodId String
+
+  food Food @relation(fields: [foodId], references: [id], onDelete: Cascade)
+
+  // 1 = like
+  // 2 = strong preference
+  // 3 = favourite
+  preferenceScore Int @default(1)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, foodId])
+  @@index([userId])
+  @@index([foodId])
+}
+
+// ============================================================
+// FOOD
+// ============================================================
+
+model Food {
+  id String @id @default(cuid())
+
+  name String
+
+  description String?
+
+  cuisine String[]
+
+  diet FoodDiet?
+
+  spiceLevel SpiceLevel?
+
+  mealTypes String[]
+
+  imageUrl String?
+
+  ingredients String[]
+  tags        String[]
+
+  /**
+   * General/reference price.
+   * This should NOT be treated as an exact restaurant price
+   * unless there is a real source.
+   */
+  priceInr Int?
+
+  priceRange PriceRange?
+
+  priceEstimated Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  prices      FoodPrice[]
+  scans       FoodScan[]
+  preferences UserFoodPreference[]
+
+  @@index([name])
+}
+
+// ============================================================
+// PLACE
+// ============================================================
+
+model Place {
+  id String @id @default(cuid())
+
+  /**
+   * External provider ID.
+   * Example:
+   * Geoapify place ID
+   */
+  externalId String? @unique
+
+  name String
+
+  type PlaceType
+
+  address String?
+
+  city    String?
+  state   String?
+  country String?
+
+  latitude  Float
+  longitude Float
+
+  phone   String?
+  website String?
+
+  openingHours Json?
+
+  imageUrl String?
+
+  source String @default("Geoapify")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurant Restaurant?
+
+  savedBy   SavedPlace[]
+  visitedBy VisitedPlace[]
+
+  @@index([latitude, longitude])
+  @@index([type])
+  @@index([city])
+}
+
+// ============================================================
+// RESTAURANT
+// ============================================================
+
+model Restaurant {
+  id String @id @default(cuid())
+
+  placeId String @unique
+
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  foodPrices FoodPrice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// FOOD PRICE
+// ============================================================
+
+model FoodPrice {
+  id String @id @default(cuid())
+
+  foodId String
+
+  food Food @relation(fields: [foodId], references: [id], onDelete: Cascade)
+
+  restaurantId String
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  /**
+   * Canonical stored price.
+   * FairTrip stores restaurant food prices in INR.
+   */
+  priceInr Int
+
+  currency CurrencyCode @default(INR)
+
+  /**
+   * TRUE means this price was estimated,
+   * not directly verified.
+   */
+  estimated Boolean @default(false)
+
+  source PriceSource
+
+  sourceUrl String?
+
+  verifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([foodId, restaurantId])
+  @@index([foodId])
+  @@index([restaurantId])
+  @@index([priceInr])
+}
+
+// ============================================================
+// FOOD SCAN
+// ============================================================
+
+model FoodScan {
+  id String @id @default(cuid())
+
+  userId String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  foodId String?
+
+  food Food? @relation(fields: [foodId], references: [id], onDelete: SetNull)
+
+  recognizedName String
+
+  confidence Float?
+
+  imageUrl String?
+
+  mode FoodRecognitionMode
+
+  source String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([foodId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// SAVED PLACE
+// ============================================================
+
+model SavedPlace {
+  id String @id @default(cuid())
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  placeId String
+
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, placeId])
+  @@index([userId])
+  @@index([placeId])
+}
+
+// ============================================================
+// VISITED PLACE
+// ============================================================
+
+model VisitedPlace {
+  id String @id @default(cuid())
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  placeId String
+
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  visitedAt DateTime @default(now())
+
+  /**
+   * Optional short note.
+   * Example:
+   * "Best vada pav here"
+   */
+  note String?
+
+  @@index([userId])
+  @@index([placeId])
+  @@index([visitedAt])
+}
+
+// ============================================================
+// SEARCH HISTORY
+// ============================================================
+
+model SearchHistory {
+  id String @id @default(cuid())
+
+  userId String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  query String
+
+  /**
+   * User supplied area / landmark.
+   * Example:
+   * Dadar
+   * Crawford Market
+   */
+  locationQuery String?
+
+  latitude  Float?
+  longitude Float?
+
+  travelerType TravelerType?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// TRIP
+// ============================================================
+
+model Trip {
+  id String @id @default(cuid())
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name String
+
+  sourceName      String?
+  sourceLatitude  Float?
+  sourceLongitude Float?
+
+  destinationName      String?
+  destinationLatitude  Float?
+  destinationLongitude Float?
+
+  budgetInr Int?
+
+  travelerType TravelerType @default(TOURIST)
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum TravelerType {
+  TOURIST
+  CITIZEN
+}
+
+enum CurrencyCode {
+  INR
+  USD
+  EUR
+  GBP
+  JPY
+  AUD
+  CAD
+  SGD
+  AED
+}
+
+enum FoodDiet {
+  VEGETARIAN
+  NON_VEGETARIAN
+  VEGAN
+  EGG
+}
+
+enum SpiceLevel {
+  NONE
+  MILD
+  MEDIUM
+  HOT
+  VERY_HOT
+}
+
+enum PriceRange {
+  INR_1
+  INR_2
+  INR_3
+}
+
+enum PriceSource {
+  SCANNED_MENU
+  RESTAURANT_MENU
+  VERIFIED_SOURCE
+  USER_SUBMITTED
+  ESTIMATED
+}
+
+enum FoodRecognitionMode {
+  FOOD
+  MENU
+}
+
+enum PlaceType {
+  RESTAURANT
+  CAFE
+  FOOD_STALL
+  MARKET
+  ATTRACTION
+  PARK
+  MUSEUM
+  RELIGIOUS
+  HOTEL
+  LANDMARK
+  OTHER
+}

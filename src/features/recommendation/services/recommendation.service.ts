@@ -12,35 +12,40 @@ import type {
     RecommendationReason,
 } from "@/features/recommendation/types";
 
-/*
-|--------------------------------------------------------------------------
-| Configuration
-|--------------------------------------------------------------------------
-*/
-
-const DEFAULT_TRANSPORT: TransportChoice = "rapido";
+const DEFAULT_TRANSPORT: TransportChoice =
+    "rapido";
 
 /*
-|--------------------------------------------------------------------------
-| Main recommendation function
-|--------------------------------------------------------------------------
-*/
+ * This service is used by the trip-planning flow.
+ *
+ * `nearbyOnly` is optional so existing callers do not
+ * break. For the Explore/local-discovery screen, pass
+ * nearbyOnly: true and use maxDistanceKm when needed.
+ */
 
 export function getDestinationRecommendations(
     inputs: RecommendationInput[],
 ): DestinationRecommendation[] {
-    return inputs
-        .map((input) =>
-            buildDestinationRecommendation(input),
-        )
-        .sort((a, b) => b.score - a.score);
-}
+    const recommendations =
+        inputs
+            .map(
+                buildDestinationRecommendation,
+            )
+            .sort(
+                (a, b) =>
+                    b.score - a.score,
+            );
 
-/*
-|--------------------------------------------------------------------------
-| Build recommendation
-|--------------------------------------------------------------------------
-*/
+    /*
+     * Keep the output small. The UI should show
+     * a short list of strong options rather than
+     * dumping every provider result.
+     */
+    return recommendations.slice(
+        0,
+        6,
+    );
+}
 
 function buildDestinationRecommendation(
     input: RecommendationInput,
@@ -52,20 +57,8 @@ function buildDestinationRecommendation(
         preferredTransport,
     } = input;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Distance
-    |--------------------------------------------------------------------------
-    */
-
     const distanceKm =
         getDistanceKm(destination);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Transport
-    |--------------------------------------------------------------------------
-    */
 
     const requestedTransport =
         preferredTransport ??
@@ -81,33 +74,15 @@ function buildDestinationRecommendation(
         bestTravelOption?.provider ??
         requestedTransport;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cost
-    |--------------------------------------------------------------------------
-    */
-
     const estimatedCost =
         calculateDestinationCost(
             destination,
             bestTravelOption,
         );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Budget
-    |--------------------------------------------------------------------------
-    */
-
     const budgetFit =
         estimatedCost.total <=
         remainingBudget;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Time
-    |--------------------------------------------------------------------------
-    */
 
     const travelMinutes =
         calculateTravelMinutes(
@@ -123,15 +98,10 @@ function buildDestinationRecommendation(
         visitMinutes;
 
     const timeFit =
-        availableMinutes === undefined ||
+        availableMinutes ===
+            undefined ||
         totalTimeRequired <=
             availableMinutes;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Score
-    |--------------------------------------------------------------------------
-    */
 
     const score =
         calculateScore({
@@ -145,20 +115,8 @@ function buildDestinationRecommendation(
             timeFit,
         });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Recommendation level
-    |--------------------------------------------------------------------------
-    */
-
     const level =
         getRecommendationLevel(score);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Reasons
-    |--------------------------------------------------------------------------
-    */
 
     const reasons =
         buildReasons({
@@ -172,23 +130,15 @@ function buildDestinationRecommendation(
             timeFit,
         });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Remaining budget
-    |--------------------------------------------------------------------------
-    */
-
-    const budgetRemainingAfterVisit =
-        remainingBudget -
-        estimatedCost.total;
-
     return {
         destination,
         estimatedCost,
         score,
         level,
         reasons,
-        budgetRemainingAfterVisit,
+        budgetRemainingAfterVisit:
+            remainingBudget -
+            estimatedCost.total,
         budgetFit,
         timeFit,
         matchLabel:
@@ -197,147 +147,73 @@ function buildDestinationRecommendation(
     };
 }
 
-/*
-|--------------------------------------------------------------------------
-| Distance
-|--------------------------------------------------------------------------
-*/
-
 function getDistanceKm(
     destination: NearbyDestination,
 ): number {
-    const distance =
+    const value =
         destination.distanceKm;
 
-    if (
-        typeof distance === "number" &&
-        Number.isFinite(distance) &&
-        distance >= 0
-    ) {
-        return distance;
-    }
-
-    return 0;
+    return typeof value === "number" &&
+        Number.isFinite(value) &&
+        value >= 0
+        ? value
+        : 0;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Best transport option
-|--------------------------------------------------------------------------
-|
-| Priority:
-|
-| 1. User's preferred transport
-| 2. Cheapest available transport
-|
-|--------------------------------------------------------------------------
-*/
-
 function getBestTravelOption(
-    options: DestinationTravelOption[] | undefined,
+    options:
+        | DestinationTravelOption[]
+        | undefined,
     preferredTransport: TransportChoice,
 ): DestinationTravelOption | undefined {
-    if (!options || options.length === 0) {
+    if (!options?.length) {
         return undefined;
     }
 
-    const preferred = options.find(
-        (option) => option.provider === preferredTransport,
-    );
+    const preferred =
+        options.find(
+            (option) =>
+                option.provider ===
+                preferredTransport,
+        );
 
     if (preferred) {
         return preferred;
     }
 
-    return [...options].sort((a, b) => a.minPrice - b.minPrice)[0];
+    return [...options].sort(
+        (a, b) =>
+            a.minPrice -
+            b.minPrice,
+    )[0];
 }
-
-/*
-|--------------------------------------------------------------------------
-| Destination cost
-|--------------------------------------------------------------------------
-*/
 
 function calculateDestinationCost(
     destination: NearbyDestination,
-    travelOption?: DestinationTravelOption,
+    travelOption?:
+        | DestinationTravelOption,
 ): DestinationCostBreakdown {
-    /*
-    |--------------------------------------------------------------------------
-    | Travel
-    |--------------------------------------------------------------------------
-    */
-
     const travel =
-        getTravelCost(travelOption);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Entry
-    |--------------------------------------------------------------------------
-    */
+        getTravelCost(
+            travelOption,
+        );
 
     const entry =
         getEntryCost(destination);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Food
-    |--------------------------------------------------------------------------
-    |
-    | Use minimum food budget for recommendation.
-    |
-    */
-
     const food =
         getFoodCost(destination);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Local transport
-    |--------------------------------------------------------------------------
-    */
 
     const localTransport =
         getLocalTransportCost(
             destination,
         );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Other
-    |--------------------------------------------------------------------------
-    */
-
     const other =
         getOtherCost(destination);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Stay
-    |--------------------------------------------------------------------------
-    |
-    | For a normal visit, stay is zero.
-    | Stay price is only considered when stay is available.
-    |
-    */
-
     const stay =
         getStayCost(destination);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Total
-    |--------------------------------------------------------------------------
-    */
-
-    const total =
-        travel +
-        entry +
-        food +
-        localTransport +
-        other +
-        stay;
 
     return {
         travel,
@@ -346,134 +222,60 @@ function calculateDestinationCost(
         localTransport,
         other,
         stay,
-        total,
+        total:
+            travel +
+            entry +
+            food +
+            localTransport +
+            other +
+            stay,
     };
 }
 
-/*
-|--------------------------------------------------------------------------
-| Travel cost
-|--------------------------------------------------------------------------
-*/
-
 function getTravelCost(
-    travelOption?: DestinationTravelOption,
+    option?:
+        | DestinationTravelOption,
 ): number {
-    if (!travelOption) {
+    if (!option) {
         return 0;
     }
 
-    const price =
-        travelOption.minPrice;
-
-    if (
-        typeof price !== "number" ||
-        !Number.isFinite(price) ||
-        price < 0
-    ) {
-        return 0;
-    }
-
-    return price;
+    return validNonNegative(
+        option.minPrice,
+    );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Entry cost
-|--------------------------------------------------------------------------
-*/
 
 function getEntryCost(
     destination: NearbyDestination,
 ): number {
-    const value =
-        destination.entryFee;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return 0;
+    return validNonNegative(
+        destination.entryFee,
+    );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Food cost
-|--------------------------------------------------------------------------
-*/
 
 function getFoodCost(
     destination: NearbyDestination,
 ): number {
-    const value =
-        destination.foodBudgetMin;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return 0;
+    return validNonNegative(
+        destination.foodBudgetMin,
+    );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Local transport cost
-|--------------------------------------------------------------------------
-*/
 
 function getLocalTransportCost(
     destination: NearbyDestination,
 ): number {
-    const value =
-        destination.localTransportBudget;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return 0;
+    return validNonNegative(
+        destination.localTransportBudget,
+    );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Other cost
-|--------------------------------------------------------------------------
-*/
 
 function getOtherCost(
     destination: NearbyDestination,
 ): number {
-    const value =
-        destination.otherBudget;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return 0;
+    return validNonNegative(
+        destination.otherBudget,
+    );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Stay cost
-|--------------------------------------------------------------------------
-*/
 
 function getStayCost(
     destination: NearbyDestination,
@@ -482,85 +284,57 @@ function getStayCost(
         return 0;
     }
 
-    const value =
-        destination.stayMinPrice;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return 0;
+    return validNonNegative(
+        destination.stayMinPrice,
+    );
 }
 
-/*
-|--------------------------------------------------------------------------
-| Travel time
-|--------------------------------------------------------------------------
-*/
+function validNonNegative(
+    value: unknown,
+): number {
+    return typeof value ===
+        "number" &&
+        Number.isFinite(value) &&
+        value >= 0
+        ? value
+        : 0;
+}
 
 function calculateTravelMinutes(
     distanceKm: number,
-    travelOption?: DestinationTravelOption,
+    option?:
+        | DestinationTravelOption,
 ): number {
     if (distanceKm <= 0) {
         return 0;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | If the real transport service supplied duration,
-    | use it instead of calculating an artificial duration.
-    |--------------------------------------------------------------------------
-    */
-
     if (
-        travelOption &&
-        typeof travelOption.durationMinutes ===
+        option &&
+        typeof option.durationMinutes ===
             "number" &&
         Number.isFinite(
-            travelOption.durationMinutes,
+            option.durationMinutes,
         ) &&
-        travelOption.durationMinutes >= 0
+        option.durationMinutes >= 0
     ) {
-        /*
-        | Destination travel option represents one-way
-        | travel time, so calculate round trip.
-        */
-
         return Math.ceil(
-            travelOption.durationMinutes * 2,
+            option.durationMinutes * 2,
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Fallback speeds
-    |--------------------------------------------------------------------------
-    */
-
     const speed =
         getTransportSpeed(
-            travelOption?.provider ??
+            option?.provider ??
                 DEFAULT_TRANSPORT,
         );
 
-    const oneWayMinutes =
-        (distanceKm / speed) * 60;
-
     return Math.ceil(
-        oneWayMinutes * 2,
+        ((distanceKm / speed) *
+            60) *
+            2,
     );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Transport speed fallback
-|--------------------------------------------------------------------------
-*/
 
 function getTransportSpeed(
     transport: TransportChoice,
@@ -568,26 +342,16 @@ function getTransportSpeed(
     switch (transport) {
         case "rapido":
             return 25;
-
         case "uber":
             return 22;
-
         case "local":
             return 18;
-
         case "walk":
             return 5;
-
         default:
             return 20;
     }
 }
-
-/*
-|--------------------------------------------------------------------------
-| Visit duration
-|--------------------------------------------------------------------------
-*/
 
 function getVisitMinutes(
     destination: NearbyDestination,
@@ -596,27 +360,16 @@ function getVisitMinutes(
         destination.estimatedVisitMinutes;
 
     if (
-        typeof value === "number" &&
+        typeof value ===
+            "number" &&
         Number.isFinite(value) &&
         value > 0
     ) {
         return value;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Safe fallback
-    |--------------------------------------------------------------------------
-    */
-
     return 90;
 }
-
-/*
-|--------------------------------------------------------------------------
-| Score input
-|--------------------------------------------------------------------------
-*/
 
 interface ScoreInput {
     destination: NearbyDestination;
@@ -628,12 +381,6 @@ interface ScoreInput {
     budgetFit: boolean;
     timeFit: boolean;
 }
-
-/*
-|--------------------------------------------------------------------------
-| Calculate score
-|--------------------------------------------------------------------------
-*/
 
 function calculateScore({
     destination,
@@ -648,13 +395,14 @@ function calculateScore({
     let score = 0;
 
     /*
-    |--------------------------------------------------------------------------
-    | Budget
-    |--------------------------------------------------------------------------
-    */
+     * Keep trip suitability balanced:
+     * distance + budget + time are stronger signals than
+     * generic metadata. Rating and review confidence add
+     * quality without dominating the calculation.
+     */
 
     if (budgetFit) {
-        score += 30;
+        score += 25;
 
         if (remainingBudget > 0) {
             const usage =
@@ -664,38 +412,26 @@ function calculateScore({
             if (usage <= 0.25) {
                 score += 10;
             } else if (usage <= 0.5) {
-                score += 6;
+                score += 7;
             } else if (usage <= 0.75) {
-                score += 3;
+                score += 4;
             }
         }
     } else {
-        score -= 30;
+        score -= 25;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Distance
-    |--------------------------------------------------------------------------
-    */
-
     if (distanceKm <= 2) {
-        score += 25;
+        score += 30;
     } else if (distanceKm <= 5) {
-        score += 20;
+        score += 25;
     } else if (distanceKm <= 10) {
-        score += 14;
+        score += 18;
     } else if (distanceKm <= 20) {
-        score += 8;
+        score += 10;
     } else {
         score += 2;
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Time
-    |--------------------------------------------------------------------------
-    */
 
     if (timeFit) {
         score += 20;
@@ -705,27 +441,21 @@ function calculateScore({
                 undefined &&
             availableMinutes > 0
         ) {
-            const timeUsage =
+            const usage =
                 totalTimeRequired /
                 availableMinutes;
 
-            if (timeUsage <= 0.5) {
+            if (usage <= 0.5) {
                 score += 8;
-            } else if (timeUsage <= 0.75) {
+            } else if (usage <= 0.75) {
                 score += 5;
-            } else if (timeUsage <= 0.9) {
+            } else if (usage <= 0.9) {
                 score += 2;
             }
         }
     } else {
-        score -= 25;
+        score -= 20;
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Rating
-    |--------------------------------------------------------------------------
-    */
 
     const rating =
         getRating(destination);
@@ -742,12 +472,6 @@ function calculateScore({
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Review count
-    |--------------------------------------------------------------------------
-    */
-
     const reviewCount =
         getReviewCount(destination);
 
@@ -755,32 +479,17 @@ function calculateScore({
         if (reviewCount >= 1000) {
             score += 10;
         } else if (reviewCount >= 500) {
-            score += 7;
+            score += 8;
         } else if (reviewCount >= 100) {
-            score += 4;
+            score += 5;
+        } else if (reviewCount >= 25) {
+            score += 2;
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Destination relevance
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        isGoodDestination(
-            destination,
-        )
-    ) {
-        score += 10;
+    if (isGoodDestination(destination)) {
+        score += 7;
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Clamp score
-    |--------------------------------------------------------------------------
-    */
 
     return Math.max(
         0,
@@ -791,67 +500,44 @@ function calculateScore({
     );
 }
 
-/*
-|--------------------------------------------------------------------------
-| Rating
-|--------------------------------------------------------------------------
-*/
-
 function getRating(
     destination: NearbyDestination,
 ): number | undefined {
-    const value =
-        destination.rating;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return undefined;
+    return validOptional(
+        destination.rating,
+    );
 }
-
-/*
-|--------------------------------------------------------------------------
-| Review count
-|--------------------------------------------------------------------------
-*/
 
 function getReviewCount(
     destination: NearbyDestination,
 ): number | undefined {
-    const value =
-        destination.reviewCount;
-
-    if (
-        typeof value === "number" &&
-        Number.isFinite(value) &&
-        value >= 0
-    ) {
-        return value;
-    }
-
-    return undefined;
+    return validOptional(
+        destination.reviewCount,
+    );
 }
 
-/*
-|--------------------------------------------------------------------------
-| Destination relevance
-|--------------------------------------------------------------------------
-*/
+function validOptional(
+    value: unknown,
+): number | undefined {
+    return typeof value ===
+        "number" &&
+        Number.isFinite(value) &&
+        value >= 0
+        ? value
+        : undefined;
+}
 
 function isGoodDestination(
     destination: NearbyDestination,
 ): boolean {
-    const text = `
-        ${destination.name ?? ""}
-        ${destination.category ?? ""}
-        ${destination.description ?? ""}
-        ${(destination.highlights ?? []).join(" ")}
-    `.toLowerCase();
+    const text = [
+        destination.name ?? "",
+        destination.category ?? "",
+        destination.description ?? "",
+        ...(destination.highlights ?? []),
+    ]
+        .join(" ")
+        .toLowerCase();
 
     const keywords = [
         "attraction",
@@ -882,12 +568,6 @@ function isGoodDestination(
     );
 }
 
-/*
-|--------------------------------------------------------------------------
-| Recommendation level
-|--------------------------------------------------------------------------
-*/
-
 function getRecommendationLevel(
     score: number,
 ): RecommendationLevel {
@@ -906,38 +586,22 @@ function getRecommendationLevel(
     return "not-ideal";
 }
 
-/*
-|--------------------------------------------------------------------------
-| Match label
-|--------------------------------------------------------------------------
-*/
-
 function getMatchLabel(
     level: RecommendationLevel,
 ): string {
     switch (level) {
         case "best":
             return "Best match";
-
         case "good":
             return "Good match";
-
         case "possible":
             return "Possible";
-
         case "not-ideal":
             return "Not ideal";
-
         default:
             return "Recommended";
     }
 }
-
-/*
-|--------------------------------------------------------------------------
-| Recommendation reasons
-|--------------------------------------------------------------------------
-*/
 
 function buildReasons({
     destination,
@@ -951,12 +615,6 @@ function buildReasons({
 }: ScoreInput): RecommendationReason[] {
     const reasons: RecommendationReason[] =
         [];
-
-    /*
-    |--------------------------------------------------------------------------
-    | Budget
-    |--------------------------------------------------------------------------
-    */
 
     if (budgetFit) {
         const remaining =
@@ -987,12 +645,6 @@ function buildReasons({
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Distance
-    |--------------------------------------------------------------------------
-    */
-
     reasons.push({
         type: "distance",
         text:
@@ -1002,12 +654,6 @@ function buildReasons({
                       distanceKm,
                   )} from your starting point.`,
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Rating
-    |--------------------------------------------------------------------------
-    */
 
     const rating =
         getRating(destination);
@@ -1022,76 +668,42 @@ function buildReasons({
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Time
-    |--------------------------------------------------------------------------
-    */
-
     if (
-        availableMinutes !== undefined
+        availableMinutes !==
+        undefined
     ) {
-        if (timeFit) {
-            reasons.push({
-                type: "time",
-                text:
-                    `Fits within your available time of ${Math.round(
-                        availableMinutes,
-                    )} minutes.`,
-            });
-        } else {
-            reasons.push({
-                type: "time",
-                text:
-                    `May require around ${Math.round(
-                        totalTimeRequired,
-                    )} minutes.`,
-            });
-        }
+        reasons.push({
+            type: "time",
+            text: timeFit
+                ? `Fits within your available time of ${Math.round(
+                      availableMinutes,
+                  )} minutes.`
+                : `May require around ${Math.round(
+                      totalTimeRequired,
+                  )} minutes.`,
+        });
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Price
-    |--------------------------------------------------------------------------
-    */
 
     if (estimatedCost.total > 0) {
         reasons.push({
             type: "price",
             text:
-                `Estimated trip cost is around ₹${Math.round(
+                `Estimated total trip cost is around ₹${Math.round(
                     estimatedCost.total,
                 )}.`,
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Preference / relevance
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        isGoodDestination(
-            destination,
-        )
-    ) {
+    if (isGoodDestination(destination)) {
         reasons.push({
             type: "preference",
             text:
-                "Matches common tourist and discovery interests.",
+                "Matches a common local discovery category.",
         });
     }
 
     return reasons;
 }
-
-/*
-|--------------------------------------------------------------------------
-| Distance formatting
-|--------------------------------------------------------------------------
-*/
 
 function formatDistance(
     distanceKm: number,

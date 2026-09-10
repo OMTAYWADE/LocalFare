@@ -7,10 +7,12 @@ import {
     Navigation,
     SlidersHorizontal,
 } from "lucide-react";
+import gsap from "gsap";
 import { useRouter } from "next/navigation";
 import {
     useCallback,
     useEffect,
+    useRef,
     useState,
     type ReactNode,
 } from "react";
@@ -98,6 +100,43 @@ export default function ExploreContent() {
 
     const [budget, setBudget] =
         useState(1000);
+
+    const pageRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const page = pageRef.current;
+        if (!page) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo(
+                "[data-explore-reveal]",
+                { opacity: 0, y: 18 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.55,
+                    stagger: 0.07,
+                    ease: "power3.out",
+                    clearProps: "transform,opacity",
+                },
+            );
+
+            gsap.fromTo(
+                "[data-explore-map]",
+                { opacity: 0, scale: 0.98 },
+                {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.75,
+                    delay: 0.15,
+                    ease: "power3.out",
+                    clearProps: "transform,opacity",
+                },
+            );
+        }, page);
+
+        return () => ctx.revert();
+    }, []);
 
     /* =========================================================
        LOAD RECOMMENDATIONS
@@ -345,7 +384,10 @@ export default function ExploreContent() {
 
     return (
         <main
+            ref={pageRef}
             className="
+                w-full
+                overflow-x-clip
                 relative
                 min-h-screen
                 overflow-hidden
@@ -425,7 +467,7 @@ export default function ExploreContent() {
                     TRAVELER
                 ================================================= */}
 
-                <section className="mt-6">
+                <section data-explore-reveal className="mt-5 sm:mt-6">
                     {showTravelerSelector ? (
                         <TravelerTypeSelector
                             value={travelerType}
@@ -502,7 +544,7 @@ export default function ExploreContent() {
                     FILTERS
                 ================================================= */}
 
-                <section className="mt-6">
+                <section data-explore-reveal className="mt-5 sm:mt-6">
                     <div
                         className="
                             rounded-[28px]
@@ -569,7 +611,7 @@ export default function ExploreContent() {
                             className="
                                 mt-4
                                 grid
-                                grid-cols-1
+                                grid-cols-2
                                 gap-2
                                 sm:grid-cols-2
                                 lg:grid-cols-4
@@ -586,6 +628,7 @@ export default function ExploreContent() {
                                             key={
                                                 mode.value
                                             }
+                                            data-explore-reveal
                                             type="button"
                                             onClick={() =>
                                                 handleExploreModeChange(
@@ -747,7 +790,7 @@ export default function ExploreContent() {
                     LOCATION
                 ================================================= */}
 
-                <section className="mt-7 sm:mt-9">
+                <section data-explore-reveal className="mt-6 sm:mt-9">
                     <div className="mb-4">
                         <p
                             className="
@@ -926,12 +969,13 @@ export default function ExploreContent() {
                             {/* MAP */}
 
                             <div
+                                data-explore-map
                                 className="
                                     relative
-                                    h-[290px]
+                                    h-[320px]
                                     bg-[#d7e6df]
-                                    sm:h-[360px]
-                                    lg:h-[400px]
+                                    sm:h-[400px]
+                                    lg:h-[440px]
                                 "
                             >
                                 <LocationMapClient
@@ -967,7 +1011,8 @@ export default function ExploreContent() {
                     RESULTS
                 ================================================= */}
 
-                <ExploreRecommendations
+                <div data-explore-reveal>
+                    <ExploreRecommendations
                     places={places}
                     loading={loading}
                     error={error}
@@ -977,7 +1022,8 @@ export default function ExploreContent() {
                     filter={filter}
                     setFilter={setFilter}
                     onPlan={handlePlan}
-                />
+                    />
+                </div>
             </div>
         </main>
     );

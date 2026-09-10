@@ -23,752 +23,579 @@ import type {
     ExploreRecommendationType,
 } from "../types";
 
+/*
+ * Explore rule:
+ *
+ * This screen is NOT a general "anything nearby" search.
+ * It should surface a small number of high-value, well-known
+ * places that are genuinely close to the user.
+ *
+ * Distance is a hard constraint.
+ * Quality + popularity + landmark/heritage relevance decide
+ * which nearby places survive.
+ */
 
-/* =========================================================
-   CONFIGURATION
-   ========================================================= */
+const TOURIST_RADIUS_KM = 8;
+const CITIZEN_RADIUS_KM = 10;
 
-const TOURIST_RADIUS_KM = 20;
+const TOURIST_LIMIT = 6;
+const CITIZEN_LIMIT = 6;
 
-const CITIZEN_RADIUS_KM = 25;
+const MIN_RATING = 4.0;
+const MIN_REVIEW_COUNT_FOR_UNRATED = 100;
 
-const TOURIST_LIMIT = 8;
+/*
+ * Multiple discovery queries are used because a single generic
+ * "tourist attractions" query can return ordinary parks,
+ * unnamed forts, small museums, etc.
+ *
+ * Results are merged and de-duplicated before ranking.
+ */
+const DISCOVERY_QUERIES = [
+    "famous landmarks iconic tourist attractions",
+    "heritage monuments historical landmarks",
+    "top tourist attractions famous places",
+];
 
-const CITIZEN_LIMIT = 10;
+/*
+ * Strong name/category signals for places people commonly
+ * recognize as destination-level landmarks.
+ *
+ * These are ranking signals only. A place must still be
+ * returned by the real provider and pass the local-radius
+ * filter before it can be shown.
+ */
+const ICONIC_TERMS = [
+    "gateway of india",
+    "gateway",
+    "mahalaxmi",
+    "mahalakshmi",
+    "chhatrapati shivaji maharaj terminus",
+    "victoria terminus",
+    "cst",
+    "elephanta",
+    "ajanta",
+    "ellora",
+    "siddhivinayak",
+    "haji ali",
+    "kanheri",
+    "bibi ka maqbara",
+    "shaniwar wada",
+    "aga khan palace",
+    "lal mahal",
+    "shaniwarwada",
+    "palace",
+    "fort",
+    "monument",
+    "memorial",
+    "landmark",
+    "heritage",
+    "historic",
+    "temple",
+    "cathedral",
+    "mosque",
+    "church",
+];
 
+const HERITAGE_TERMS = [
+    "unesco",
+    "heritage",
+    "historic",
+    "historical",
+    "monument",
+    "fort",
+    "palace",
+    "old",
+    "ancient",
+    "terminus",
+];
 
-/* =========================================================
-   MAIN
-   ========================================================= */
+const GENERIC_ONLY_NAMES = new Set([
+    "fort",
+    "garden",
+    "park",
+    "museum",
+    "temple",
+    "church",
+    "mosque",
+    "palace",
+    "market",
+    "monument",
+    "attraction",
+    "tourist attraction",
+]);
 
 export async function getExploreRecommendations(
     input: ExploreRecommendationInput,
 ): Promise<ExploreRecommendationResponse> {
-
     const {
         latitude,
         longitude,
         travelerType,
         visitedPlaceIds = [],
-        savedPlaceIds = [],
         plannedPlaceIds = [],
-        intent = "discover",
+        savedPlaceIds = [],
         limit,
     } = input;
-
-
-    const resultLimit =
-        limit ??
-        (
-            travelerType === "tourist"
-                ? TOURIST_LIMIT
-                : CITIZEN_LIMIT
-        );
-
-
-    /* =====================================================
-       EXCLUDED PLACES
-       ===================================================== */
-
-    const excludedIds = new Set([
-        ...visitedPlaceIds,
-        ...plannedPlaceIds,
-    ]);
-
-
-    /* =====================================================
-       SEARCH QUERY
-       ===================================================== */
-
-    const searchQuery =
-        travelerType === "tourist"
-            ? getTouristSearchTerm(intent)
-            : getCitizenSearchTerm(intent);
-
 
     const radiusKm =
         travelerType === "tourist"
             ? TOURIST_RADIUS_KM
             : CITIZEN_RADIUS_KM;
 
-
-    console.log(
-        "[Explore] Searching Geoapify places",
+    const resultLimit = Math.min(
+        limit ??
+            (travelerType === "tourist"
+                ? TOURIST_LIMIT
+                : CITIZEN_LIMIT),
+        6,
     );
 
-    console.log(
-        "[Explore] Coordinates:",
-        latitude,
-        longitude,
-    );
-
-    console.log(
-        "[Explore] Search:",
-        searchQuery,
-    );
-
-    console.log(
-        "[Explore] Traveler:",
-        travelerType,
-    );
-
-
-    try {
-
-        /* =================================================
-           1. GEOAPIFY PLACES
-           ================================================= */
-
-        const geoapifyPlaces =
-            await searchPlaces(
-                searchQuery,
-                latitude,
-                longitude,
-                radiusKm * 1000,
-            );
-
-
-        console.log(
-            "[Explore] Geoapify returned:",
-            geoapifyPlaces.length,
-        );
-
-
-        /* =================================================
-           2. NORMALIZE
-           ================================================= */
-
-        const places: RealPlaceResult[] =
-            geoapifyPlaces
-                .map(normalizeGeoapifyPlace)
-                .filter(
-                    (
-                        place,
-                    ): place is RealPlaceResult =>
-                        place !== null,
-                );
-
-
-        console.log(
-            "[Explore] Normalized:",
-            places.length,
-        );
-
-
-        /* =================================================
-           3. REMOVE VISITED / PLANNED
-           ================================================= */
-
-        const freshPlaces =
-            places.filter(
-                (place) =>
-                    !excludedIds.has(
-                        place.id,
-                    ),
-            );
-
-
-        console.log(
-            "[Explore] Fresh places:",
-            freshPlaces.length,
-        );
-
-
-        /* =================================================
-           4. DESTINATION FILTER
-           ================================================= */
-
-        const destinationPlaces =
-            freshPlaces.filter(
-                isDestination,
-            );
-
-
-        /*
-         * If Geoapify does not give enough
-         * destination categories, use all
-         * returned places instead.
-         */
-
-        const usablePlaces =
-            destinationPlaces.length > 0
-                ? destinationPlaces
-                : freshPlaces;
-
-
-        /* =================================================
-           5. BUILD RECOMMENDATIONS
-           ================================================= */
-
-        const recommendations =
-            usablePlaces
-                .map(
-                    (place) =>
-                        buildRecommendation(
-                            place,
-                            {
-                                latitude,
-                                longitude,
-                            },
-                            travelerType,
-                            savedPlaceIds,
-                        ),
-                )
-                .sort(
-                    (first, second) =>
-                        second.recommendationScore -
-                        first.recommendationScore,
-                )
-                .slice(
-                    0,
-                    resultLimit,
-                );
-
-
-        console.log(
-            "[Explore] Recommendations:",
-            recommendations.length,
-        );
-
-
-        /* =================================================
-           6. RESPONSE
-           ================================================= */
-
-        return {
-            results:
-                recommendations,
-
-            travelerType,
-
-            metadata: {
-                radiusKm,
-
-                resultCount:
-                    recommendations.length,
-
-                generatedAt:
-                    new Date().toISOString(),
-            },
-        };
-
-    } catch (error) {
-
-        console.error(
-            "[Explore] Geoapify recommendation search failed:",
-            error,
-        );
-
-        throw error;
-    }
-}
-
-
-/* =========================================================
-   SEARCH TERMS
-   ========================================================= */
-
-function getTouristSearchTerm(
-    intent: string,
-): string {
-
-    switch (intent) {
-
-        case "popular":
-            return "popular tourist attractions";
-
-        case "nearby":
-            return "tourist attractions";
-
-        case "weekend":
-            return "tourist attractions landmarks";
-
-        case "new":
-            return "interesting places to visit";
-
-        case "discover":
-        default:
-            return "tourist attractions landmarks";
-    }
-}
-
-
-function getCitizenSearchTerm(
-    intent: string,
-): string {
-
-    switch (intent) {
-
-        case "popular":
-            return "popular places to visit";
-
-        case "nearby":
-            return "interesting places";
-
-        case "weekend":
-            return "places to visit weekend";
-
-        case "new":
-            return "new places to explore";
-
-        case "discover":
-        default:
-            return "interesting places to visit";
-    }
-}
-
-
-/* =========================================================
-   DESTINATION FILTER
-   ========================================================= */
-
-function isDestination(
-    place: RealPlaceResult,
-): boolean {
-
-    const category =
-        place.category
-            .toLowerCase()
-            .trim();
-
-
-    const destinationCategories =
-        new Set([
-            "attraction",
-            "tourism",
-            "museum",
-            "park",
-            "beach",
-            "place_of_worship",
-            "monument",
-            "memorial",
-            "gallery",
-            "art_gallery",
-            "zoo",
-            "aquarium",
-            "amusement_park",
-            "historical_landmark",
-            "landmark",
-            "tourist_attraction",
-            "fort",
-            "castle",
-            "palace",
-            "historic",
-            "heritage",
-            "viewpoint",
-            "garden",
-            "waterfall",
-        ]);
-
-
-    if (
-        destinationCategories.has(
-            category,
-        )
-    ) {
-        return true;
-    }
-
+    const excludedIds = new Set([
+        ...visitedPlaceIds,
+        ...plannedPlaceIds,
+    ]);
 
     /*
-     * Geoapify categories can vary.
-     * Therefore also inspect the actual
-     * place text.
+     * Search several real categories/intent terms and merge them.
+     * This gives the ranking engine a better candidate pool for
+     * iconic places than relying on one provider query.
      */
-
-    const text = `
-        ${place.name}
-        ${place.category}
-        ${place.address ?? ""}
-    `.toLowerCase();
-
-
-    const keywords = [
-        "gateway",
-        "fort",
-        "palace",
-        "temple",
-        "mosque",
-        "church",
-        "cathedral",
-        "museum",
-        "monument",
-        "memorial",
-        "beach",
-        "lake",
-        "waterfall",
-        "viewpoint",
-        "garden",
-        "park",
-        "heritage",
-        "historic",
-        "mahal",
-        "mandir",
-        "dargah",
-        "shrine",
-        "promenade",
-        "waterfront",
-        "landmark",
-        "tourist",
-        "attraction",
-    ];
-
-
-    return keywords.some(
-        (keyword) =>
-            text.includes(keyword),
+    const queryResults = await Promise.all(
+        DISCOVERY_QUERIES.map(
+            (query) =>
+                searchPlaces(
+                    query,
+                    latitude,
+                    longitude,
+                    radiusKm * 1000,
+                ),
+        ),
     );
+
+    const rawPlaces = queryResults.flat();
+
+    const normalizedPlaces =
+        rawPlaces
+            .map(normalizeGeoapifyPlace)
+            .filter(
+                (
+                    place,
+                ): place is RealPlaceResult =>
+                    place !== null,
+            );
+
+    /*
+     * De-duplicate before ranking.
+     */
+    const uniquePlaces =
+        Array.from(
+            new Map(
+                normalizedPlaces.map(
+                    (place) => [
+                        place.id,
+                        place,
+                    ],
+                ),
+            ).values(),
+        );
+
+    /*
+     * HARD LOCAL FILTER
+     *
+     * A famous place outside the user's local area must NOT
+     * appear on this Explore screen.
+     */
+    const nearbyLandmarks =
+        uniquePlaces.filter((place) => {
+            if (excludedIds.has(place.id)) {
+                return false;
+            }
+
+            const distanceKm =
+                calculateStraightLineDistanceKm(
+                    latitude,
+                    longitude,
+                    place.latitude,
+                    place.longitude,
+                );
+
+            if (
+                !Number.isFinite(
+                    distanceKm,
+                ) ||
+                distanceKm > radiusKm
+            ) {
+                return false;
+            }
+
+            if (!isDestination(place)) {
+                return false;
+            }
+
+            if (
+                typeof place.rating ===
+                    "number" &&
+                place.rating < MIN_RATING
+            ) {
+                return false;
+            }
+
+            /*
+             * Places without rating/review evidence are allowed only
+             * when their name strongly signals a landmark/heritage
+             * destination. Otherwise they are usually too generic
+             * for a "top places" result.
+             */
+            if (
+                place.rating ===
+                    undefined &&
+                (place.reviewCount ??
+                    0) <
+                    MIN_REVIEW_COUNT_FOR_UNRATED &&
+                !isStrongLandmark(place)
+            ) {
+                return false;
+            }
+
+            /*
+             * Reject provider results whose only useful information
+             * is a generic category such as "Fort" or "Park".
+             */
+            if (
+                isGenericOnlyName(place) &&
+                !isStrongLandmark(place)
+            ) {
+                return false;
+            }
+
+            return true;
+        });
+
+    const recommendations =
+        nearbyLandmarks
+            .map((place) =>
+                buildRecommendation(
+                    place,
+                    latitude,
+                    longitude,
+                    travelerType,
+                    savedPlaceIds,
+                ),
+            )
+            .sort(compareRecommendations)
+            .slice(0, resultLimit);
+
+    return {
+        results:
+            recommendations,
+        travelerType,
+        metadata: {
+            radiusKm,
+            resultCount:
+                recommendations.length,
+            generatedAt:
+                new Date().toISOString(),
+        },
+    };
 }
-
-
-/* =========================================================
-   RECOMMENDATION BUILDER
-   ========================================================= */
 
 function buildRecommendation(
     place: RealPlaceResult,
-
-    source: {
-        latitude: number;
-        longitude: number;
-    },
-
+    latitude: number,
+    longitude: number,
     travelerType: TravelerType,
-
     savedPlaceIds: string[],
 ): ExploreRecommendation {
-
-    /* =====================================================
-       DISTANCE
-       ===================================================== */
-
     const distanceKm =
         calculateStraightLineDistanceKm(
-            source.latitude,
-            source.longitude,
+            latitude,
+            longitude,
             place.latitude,
             place.longitude,
         );
-
-
-    /* =====================================================
-       SAVED
-       ===================================================== */
 
     const isSaved =
         savedPlaceIds.includes(
             place.id,
         );
 
-
-    /* =====================================================
-       SCORE
-       ===================================================== */
-
     const recommendationScore =
-        calculateExploreScore({
+        calculateExploreScore(
             place,
             distanceKm,
             travelerType,
             isSaved,
-        });
-
-
-    /* =====================================================
-       TYPE
-       ===================================================== */
-
-    const recommendationType =
-        getRecommendationType(
-            distanceKm,
-            travelerType,
         );
-
-
-    /* =====================================================
-       REASON
-       ===================================================== */
-
-    const recommendationReason =
-        buildRecommendationReason(
-            place,
-            distanceKm,
-            travelerType,
-            recommendationType,
-        );
-
 
     return {
         ...place,
-
         distanceKm,
-
         recommendationScore,
-
-        recommendationReason,
-
-        recommendationType,
-
+        recommendationReason:
+            buildRecommendationReason(
+                place,
+                distanceKm,
+                recommendationScore,
+            ),
+        recommendationType:
+            "nearby" as ExploreRecommendationType,
         isNew: true,
     };
 }
 
-
-/* =========================================================
-   SCORING
-   ========================================================= */
-
-function calculateExploreScore({
-    place,
-    distanceKm,
-    travelerType,
-    isSaved,
-}: {
-    place: RealPlaceResult;
-
-    distanceKm: number;
-
-    travelerType: TravelerType;
-
-    isSaved: boolean;
-}): number {
+function calculateExploreScore(
+    place: RealPlaceResult,
+    distanceKm: number,
+    travelerType: TravelerType,
+    isSaved: boolean,
+): number {
+    const radiusKm =
+        travelerType === "tourist"
+            ? TOURIST_RADIUS_KM
+            : CITIZEN_RADIUS_KM;
 
     let score = 0;
 
+    /*
+     * DISTANCE — 30
+     *
+     * Still important, but a truly iconic place gets enough
+     * quality weight to beat an ordinary place that happens
+     * to be 200 metres closer.
+     */
+    score += Math.max(
+        0,
+        Math.round(
+            30 *
+                (1 -
+                    distanceKm /
+                        radiusKm),
+        ),
+    );
 
-    /* =====================================================
-       RATING
-       ===================================================== */
-
+    /*
+     * RATING — 25
+     */
     if (
-        typeof place.rating === "number"
+        typeof place.rating ===
+        "number"
     ) {
-
-        score += Math.min(
-            25,
-            place.rating * 5,
+        score += Math.round(
+            Math.min(
+                25,
+                Math.max(
+                    0,
+                    ((place.rating -
+                        3.5) /
+                        1.5) *
+                        25,
+                ),
+            ),
         );
     }
 
-
-    /* =====================================================
-       REVIEW COUNT
-       ===================================================== */
-
+    /*
+     * REVIEW CONFIDENCE — 20
+     */
     const reviews =
         place.reviewCount ?? 0;
 
-
-    if (reviews >= 1000) {
-
+    if (reviews >= 5000) {
         score += 20;
-
+    } else if (reviews >= 2000) {
+        score += 18;
+    } else if (reviews >= 1000) {
+        score += 16;
     } else if (reviews >= 500) {
-
-        score += 15;
-
+        score += 13;
     } else if (reviews >= 100) {
-
-        score += 10;
+        score += 9;
+    } else if (reviews >= 25) {
+        score += 4;
     }
 
-
-    /* =====================================================
-       DISTANCE
-       ===================================================== */
-
-    if (
-        travelerType === "tourist"
-    ) {
-
-        if (distanceKm <= 5) {
-
-            score += 30;
-
-        } else if (distanceKm <= 10) {
-
-            score += 25;
-
-        } else if (distanceKm <= 20) {
-
-            score += 15;
-
-        } else {
-
-            score += 5;
-        }
-
-    } else {
-
-        if (distanceKm <= 3) {
-
-            score += 30;
-
-        } else if (distanceKm <= 10) {
-
-            score += 25;
-
-        } else if (distanceKm <= 20) {
-
-            score += 15;
-
-        } else {
-
-            score += 5;
-        }
-    }
-
-
-    /* =====================================================
-       DESTINATION RELEVANCE
-       ===================================================== */
-
-    if (
-        isDestination(place)
-    ) {
-
+    /*
+     * ICONIC LANDMARK SIGNAL — 20
+     */
+    if (isStrongLandmark(place)) {
         score += 20;
+    } else if (isHeritagePlace(place)) {
+        score += 14;
+    } else if (isDestination(place)) {
+        score += 7;
     }
 
-
-    /* =====================================================
-       SAVED PREFERENCE
-       ===================================================== */
-
+    /*
+     * SAVED — small bonus only
+     */
     if (isSaved) {
-
-        score += 5;
+        score += 2;
     }
 
-
-    return Math.min(
-        100,
-        Math.round(score),
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            Math.round(score),
+        ),
     );
 }
 
-
-/* =========================================================
-   RECOMMENDATION TYPE
-   ========================================================= */
-
-function getRecommendationType(
-    distanceKm: number,
-    travelerType: TravelerType,
-): ExploreRecommendationType {
-
-    if (distanceKm <= 20) {
-
-        return "nearby";
+function compareRecommendations(
+    first: ExploreRecommendation,
+    second: ExploreRecommendation,
+): number {
+    if (
+        second.recommendationScore !==
+        first.recommendationScore
+    ) {
+        return (
+            second.recommendationScore -
+            first.recommendationScore
+        );
     }
-
-
-    if (distanceKm <= 80) {
-
-        return "day_trip";
-    }
-
 
     if (
-        travelerType === "tourist"
+        second.distanceKm !==
+        first.distanceKm
     ) {
-
-        return "weekend_trip";
+        return (
+            first.distanceKm -
+            second.distanceKm
+        );
     }
 
-
-    return "long_trip";
+    return (
+        (second.rating ?? 0) -
+        (first.rating ?? 0)
+    );
 }
 
+function isDestination(
+    place: RealPlaceResult,
+): boolean {
+    const text = getPlaceText(
+        place,
+    );
 
-/* =========================================================
-   REASON
-   ========================================================= */
+    const destinationTerms = [
+        ...ICONIC_TERMS,
+        ...HERITAGE_TERMS,
+        "attraction",
+        "tourist",
+        "museum",
+        "gallery",
+        "park",
+        "garden",
+        "beach",
+        "lake",
+        "waterfall",
+        "viewpoint",
+        "zoo",
+        "aquarium",
+        "market",
+        "promenade",
+        "waterfront",
+        "shrine",
+        "dargah",
+    ];
+
+    return destinationTerms.some(
+        (term) =>
+            text.includes(term),
+    );
+}
+
+function isStrongLandmark(
+    place: RealPlaceResult,
+): boolean {
+    const text =
+        getPlaceText(place);
+
+    return ICONIC_TERMS.some(
+        (term) =>
+            text.includes(term),
+    );
+}
+
+function isHeritagePlace(
+    place: RealPlaceResult,
+): boolean {
+    const text =
+        getPlaceText(place);
+
+    return HERITAGE_TERMS.some(
+        (term) =>
+            text.includes(term),
+    );
+}
+
+function isGenericOnlyName(
+    place: RealPlaceResult,
+): boolean {
+    const name =
+        place.name
+            .trim()
+            .toLowerCase();
+
+    return GENERIC_ONLY_NAMES.has(
+        name,
+    );
+}
+
+function getPlaceText(
+    place: RealPlaceResult,
+): string {
+    return [
+        place.name,
+        place.category,
+        place.address ?? "",
+    ]
+        .join(" ")
+        .toLowerCase();
+}
 
 function buildRecommendationReason(
     place: RealPlaceResult,
-
     distanceKm: number,
-
-    travelerType: TravelerType,
-
-    recommendationType: ExploreRecommendationType,
+    score: number,
 ): string {
-
     const distanceText =
-        `${Math.round(distanceKm)} km away`;
+        distanceKm < 1
+            ? `${Math.round(
+                  distanceKm *
+                      1000,
+              )} m away`
+            : `${distanceKm.toFixed(
+                  1,
+              )} km away`;
 
-
-    if (
-        travelerType === "tourist"
-    ) {
-
-        if (
-            recommendationType ===
-            "nearby"
-        ) {
-
-            return (
-                `${place.name} is a notable ` +
-                `place to explore nearby ` +
-                `(${distanceText}).`
-            );
-        }
-
-
-        if (
-            recommendationType ===
-            "day_trip"
-        ) {
-
-            return (
-                `${place.name} could be a ` +
-                `worthwhile day trip from ` +
-                `your location ` +
-                `(${distanceText}).`
-            );
-        }
-
-
-        return (
-            `${place.name} could be suitable ` +
-            `for a longer trip ` +
-            `(${distanceText}).`
-        );
-    }
-
+    const ratingText =
+        typeof place.rating ===
+        "number"
+            ? ` · ${place.rating.toFixed(
+                  1,
+              )}/5`
+            : "";
 
     if (
-        recommendationType ===
-        "nearby"
+        isStrongLandmark(
+            place,
+        )
     ) {
-
-        return (
-            `${place.name} is a nearby ` +
-            `place you can discover ` +
-            `(${distanceText}).`
-        );
+        return `Top local landmark · ${distanceText}${ratingText}`;
     }
-
 
     if (
-        recommendationType ===
-        "day_trip"
+        isHeritagePlace(place)
     ) {
-
-        return (
-            `${place.name} is outside your ` +
-            `immediate area and could make ` +
-            `a good day trip ` +
-            `(${distanceText}).`
-        );
+        return `Heritage / historic place · ${distanceText}${ratingText}`;
     }
 
+    if (score >= 75) {
+        return `Highly rated nearby destination · ${distanceText}${ratingText}`;
+    }
 
-    return (
-        `${place.name} is a longer-distance ` +
-        `destination that could suit a ` +
-        `weekend trip ` +
-        `(${distanceText}).`
-    );
+    return `Nearby destination · ${distanceText}${ratingText}`;
 }

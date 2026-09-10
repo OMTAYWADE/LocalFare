@@ -9,6 +9,9 @@ import {
     Star,
 } from "lucide-react";
 
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
+
 import type { RealPlaceResult } from "@/features/search/types";
 
 interface ExploreRecommendationCardProps {
@@ -21,9 +24,33 @@ export default function ExploreRecommendationCard({
     onPlan,
 }: ExploreRecommendationCardProps) {
     const priceLabel = getPriceLabel(place.priceLevel);
+    const cardRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const card = cardRef.current;
+        if (!card) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo(
+                card,
+                { opacity: 0, y: 18 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    ease: "power3.out",
+                    clearProps: "transform,opacity",
+                },
+            );
+        }, card);
+
+        return () => ctx.revert();
+    }, []);
 
     return (
         <article
+            ref={cardRef}
+            data-explore-card
             className="
                 group
                 overflow-hidden
@@ -45,14 +72,15 @@ export default function ExploreRecommendationCard({
             <div
                 className="
                     relative
-                    h-[175px]
+                    h-[180px]
                     overflow-hidden
                     bg-[#06483f]
-                    sm:h-[190px]
+                    sm:h-[200px]
                 "
             >
                 {place.imageUrl ? (
                     <img
+                        data-place-image
                         src={place.imageUrl}
                         alt={place.name}
                         loading="lazy"
@@ -232,7 +260,9 @@ export default function ExploreRecommendationCard({
                     <h3
                         className="
                             min-w-0
+                            max-w-full
                             flex-1
+                            break-words
                             text-[17px]
                             font-black
                             leading-[1.15]

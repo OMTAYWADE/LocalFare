@@ -17,19 +17,34 @@ import {
     formatCurrency,
 } from "../currency.utils";
 
+import {
+    useCurrency,
+} from "./CurrencyProvider";
+
 interface PriceDisplayProps {
     inr: number;
+
     currency?: CurrencyCode;
+
     showInr?: boolean;
+
     className?: string;
 }
 
 export default function PriceDisplay({
     inr,
-    currency = "USD",
+    currency: providedCurrency,
     showInr = true,
     className = "",
 }: PriceDisplayProps) {
+    const {
+        currency: userCurrency,
+    } = useCurrency();
+
+    const currency =
+        providedCurrency ??
+        userCurrency;
+
     const [
         convertedAmount,
         setConvertedAmount,
@@ -42,8 +57,40 @@ export default function PriceDisplay({
     useEffect(() => {
         let cancelled = false;
 
-        if (currency === "INR") {
-            return;
+        /*
+         * INR doesn't need conversion.
+         */
+
+        if (
+            currency === "INR"
+        ) {
+            setConvertedAmount(
+                inr,
+            );
+
+            return () => {
+                cancelled =
+                    true;
+            };
+        }
+
+        /*
+         * Validate price.
+         */
+
+        if (
+            !Number.isFinite(
+                inr,
+            )
+        ) {
+            setConvertedAmount(
+                null,
+            );
+
+            return () => {
+                cancelled =
+                    true;
+            };
         }
 
         async function loadConversion() {
@@ -54,13 +101,24 @@ export default function PriceDisplay({
                         currency,
                     );
 
-                if (!cancelled) {
+                if (
+                    !cancelled
+                ) {
                     setConvertedAmount(
                         amount,
                     );
                 }
-            } catch {
-                if (!cancelled) {
+            } catch (
+                error
+            ) {
+                console.error(
+                    "Currency conversion failed:",
+                    error,
+                );
+
+                if (
+                    !cancelled
+                ) {
                     setConvertedAmount(
                         null,
                     );
@@ -71,11 +129,24 @@ export default function PriceDisplay({
         void loadConversion();
 
         return () => {
-            cancelled = true;
+            cancelled =
+                true;
         };
-    }, [inr, currency]);
+    }, [
+        inr,
+        currency,
+    ]);
 
-    if (currency === "INR") {
+    /*
+     * =========================================================
+     * INR
+     * =========================================================
+     */
+
+    if (
+        currency ===
+        "INR"
+    ) {
         return (
             <span
                 className={[
@@ -91,7 +162,16 @@ export default function PriceDisplay({
         );
     }
 
-    if (convertedAmount === null) {
+    /*
+     * =========================================================
+     * CONVERSION LOADING / FAILED
+     * =========================================================
+     */
+
+    if (
+        convertedAmount ===
+        null
+    ) {
         return (
             <span
                 className={[
@@ -114,6 +194,12 @@ export default function PriceDisplay({
             </span>
         );
     }
+
+    /*
+     * =========================================================
+     * FINAL DISPLAY
+     * =========================================================
+     */
 
     return (
         <span

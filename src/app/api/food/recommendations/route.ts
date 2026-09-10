@@ -5,12 +5,15 @@ import {
 } from "@/features/food/services/foodEnrichment.service";
 
 import {
+    searchFoursquareFood,
+} from "@/features/food/services/foursquareFood.service";
+
+import {
     searchRealFood,
 } from "@/features/food/services/geoapifyFood.service";
 
 import {
     getFoodRecommendations,
-    type FoodRecommendation,
 } from "@/features/food/services/foodRecommendation.service";
 
 import type {
@@ -18,42 +21,11 @@ import type {
     MealType,
 } from "@/features/food/types/food.types";
 
-interface ApiResponse {
-    detectedFoods: string[];
-
-    currentMeal: MealType;
-
-    recommendations: FoodRecommendation[];
-
-    metadata: {
-        source: string;
-        retrievedAt: string;
-        nearbyPlaceCount: number;
-        budgetInr?: number;
-        priceFiltered: boolean;
-    };
-}
-
-function parseItems(
-    value: string | null,
-): string[] {
-    if (!value) {
-        return [];
-    }
-
-    return [
-        ...new Set(
-            value
-                .split(",")
-                .map((item) =>
-                    decodeURIComponent(
-                        item,
-                    ).trim(),
-                )
-                .filter(Boolean),
-        ),
-    ];
-}
+/*
+ * =========================================================
+ * CURRENT MEAL
+ * =========================================================
+ */
 
 function getCurrentMeal(): MealType {
     const hour =
@@ -90,10 +62,17 @@ function getCurrentMeal(): MealType {
     return "late-night";
 }
 
-function normalizeFoodName(
+/*
+ * =========================================================
+ * NORMALIZE
+ * =========================================================
+ */
+
+function normalize(
     value: string,
 ): string {
     return value
+        .trim()
         .toLowerCase()
         .replace(
             /[^a-z0-9\s]/g,
@@ -102,165 +81,210 @@ function normalizeFoodName(
         .replace(
             /\s+/g,
             " ",
-        )
-        .trim();
+        );
 }
 
-function foodMatches(
-    food: FoodItem,
-    requestedItems: string[],
-): boolean {
-    const foodName =
-        normalizeFoodName(
-            food.name,
-        );
+/*
+ * =========================================================
+ * BUILD GEOAPIFY FALLBACK
+ * =========================================================
+ */
 
-    const foodTags =
-        (food.tags ?? []).map(
-            normalizeFoodName,
-        );
+function buildGeoapifyCandidates(
+    foodName: string,
+    enrichedFood: FoodItem,
+    places: FoodItem[],
+): FoodItem[] {
+    return places.map(
+        (place) => ({
+            ...enrichedFood,
 
-    return requestedItems.some(
-        (requested) => {
-            const query =
-                normalizeFoodName(
-                    requested,
-                );
+            id:
+                `geo-food-${place.id}`,
 
-            if (!query) {
-                return false;
-            }
+            /*
+             * IMPORTANT:
+             * Candidate food name is the requested
+             * food, not restaurant name.
+             */
+            name:
+                foodName,
 
-            return (
-                foodName === query ||
-                foodName.includes(query) ||
-                query.includes(foodName) ||
-                foodTags.some(
-                    (tag) =>
-                        tag === query ||
-                        tag.includes(query) ||
-                        query.includes(tag),
-                )
-            );
-        },
+            restaurantId:
+                place.restaurantId,
+
+            restaurantName:
+                place.restaurantName ??
+                place.name,
+
+            latitude:
+                place.latitude,
+
+            longitude:
+                place.longitude,
+
+            distanceKm:
+                place.distanceKm,
+
+            website:
+                place.website,
+
+            phone:
+                place.phone,
+
+            mapUrl:
+                place.mapUrl,
+
+            openingHours:
+                place.openingHours,
+
+            rating:
+                place.rating,
+
+            cuisine:
+                enrichedFood
+                    .cuisine
+                    .length > 0
+                    ? enrichedFood.cuisine
+                    : place.cuisine,
+
+            mealTypes:
+                enrichedFood
+                    .mealTypes
+                    .length > 0
+                    ? enrichedFood.mealTypes
+                    : place.mealTypes,
+
+            foodMatchConfirmed:
+                false,
+
+            foodMatchSource:
+                "geoapify",
+
+            placeProvider:
+                "geoapify",
+
+            tags: [
+                ...(enrichedFood.tags ??
+                    []),
+
+                "search",
+
+                "geoapify",
+            ],
+        }),
     );
 }
 
-function buildCandidateFood(
-    enrichedFood: FoodItem,
-    place: FoodItem,
-): FoodItem {
-    return {
-        ...enrichedFood,
+/*
+ * =========================================================
+ * MERGE PLACE DATA
+ * =========================================================
+ */
 
-        /*
-         * Keep the detected food as the actual
-         * food name.
-         */
-        name: enrichedFood.name,
-
-        /*
-         * Real nearby restaurant.
-         */
-        restaurantId:
-            place.restaurantId,
-
-        restaurantName:
-            place.restaurantName ??
-            place.name,
-
-        latitude:
-            place.latitude,
-
-        longitude:
-            place.longitude,
-
-        distanceKm:
-            place.distanceKm,
-
-        website:
-            place.website,
-
-        phone:
-            place.phone,
-
-        openingHours:
-            place.openingHours,
-
-        mapUrl:
-            place.mapUrl,
-
-        /*
-         * IMPORTANT:
-         *
-         * Price comes from enrichedFood/local food data.
-         * Do NOT copy Geoapify's estimated restaurant
-         * category price.
-         */
-        priceInr:
-            enrichedFood.priceInr,
-
-        priceRange:
-            enrichedFood.priceRange,
-
-        priceEstimated:
-            enrichedFood.priceEstimated,
-
-        priceRangeEstimated:
-            enrichedFood.priceRangeEstimated,
-
-        tags: [
-            ...(enrichedFood.tags ?? []),
-            ...(place.tags ?? []),
-            "geoapify-nearby",
-        ],
-    };
-}
-
-function filterByBudget(
-    foods: FoodItem[],
-    budgetInr?: number,
+function mergeCandidates(
+    foursquareCandidates: FoodItem[],
+    geoapifyCandidates: FoodItem[],
 ): FoodItem[] {
-    if (
-        budgetInr === undefined
-    ) {
-        return foods;
-    }
-
-    const knownPrices =
-        foods.filter(
-            (food) =>
-                typeof food.priceInr ===
-                    "number" &&
-                food.priceInr <=
-                    budgetInr,
-        );
+    const merged =
+        new Map<
+            string,
+            FoodItem
+        >();
 
     /*
-     * If we have at least one known price
-     * inside the user's budget, only show those.
+     * Foursquare first because its
+     * query is actually related to
+     * the requested food.
      */
-    if (
-        knownPrices.length > 0
+    for (
+        const food of
+            foursquareCandidates
     ) {
-        return knownPrices;
+        const key =
+            food.restaurantId ??
+            normalize(
+                food.restaurantName ??
+                    food.name,
+            );
+
+        merged.set(
+            key,
+            food,
+        );
     }
 
     /*
-     * No known price fits.
-     *
-     * Keep foods whose price is unknown rather
-     * than inventing or misrepresenting a price.
+     * Geoapify supplements missing
+     * places.
      */
-    const unknownPriceFoods =
-        foods.filter(
-            (food) =>
-                food.priceInr ===
-                undefined,
-        );
+    for (
+        const food of
+            geoapifyCandidates
+    ) {
+        const key =
+            food.restaurantId ??
+            normalize(
+                food.restaurantName ??
+                    food.name,
+            );
 
-    return unknownPriceFoods;
+        const existing =
+            merged.get(
+                key,
+            );
+
+        if (!existing) {
+            merged.set(
+                key,
+                food,
+            );
+
+            continue;
+        }
+
+        merged.set(
+            key,
+            {
+                ...existing,
+
+                address:
+                    existing.description ??
+                    food.description,
+
+                website:
+                    existing.website ??
+                    food.website,
+
+                phone:
+                    existing.phone ??
+                    food.phone,
+
+                openingHours:
+                    existing.openingHours ??
+                    food.openingHours,
+
+                mapUrl:
+                    existing.mapUrl ??
+                    food.mapUrl,
+
+                distanceKm:
+                    existing.distanceKm ??
+                    food.distanceKm,
+            },
+        );
+    }
+
+    return Array.from(
+        merged.values(),
+    );
 }
+
+/*
+ * =========================================================
+ * GET /api/food/recommendations
+ * =========================================================
+ */
 
 export async function GET(
     request: Request,
@@ -268,16 +292,16 @@ export async function GET(
     try {
         const {
             searchParams,
-        } = new URL(
-            request.url,
-        );
-
-        const items =
-            parseItems(
-                searchParams.get(
-                    "items",
-                ),
+        } =
+            new URL(
+                request.url,
             );
+
+        const query =
+            searchParams
+                .get("q")
+                ?.trim() ??
+            "";
 
         const latitude =
             Number(
@@ -293,456 +317,346 @@ export async function GET(
                 ),
             );
 
-        const budgetParam =
+        const vegetarian =
             searchParams.get(
-                "budget",
+                "vegetarian",
+            ) === "true";
+
+        const radius =
+            Number(
+                searchParams.get(
+                    "radius",
+                ) ??
+                    "10000",
             );
 
-        const radiusParam =
-            searchParams.get(
-                "radius",
+        if (!query) {
+            return NextResponse.json(
+                {
+                    error:
+                        "A food search query is required.",
+                },
+                {
+                    status: 400,
+                },
             );
+        }
 
-        const budgetInr =
-            budgetParam !== null &&
-            budgetParam.trim() !== ""
-                ? Number(
-                      budgetParam,
-                  )
-                : undefined;
-
-        const requestedRadius =
-            radiusParam !== null
-                ? Number(
-                      radiusParam,
-                  )
-                : 25_000;
-
-        const radiusMeters =
+        /*
+         * Treat 0,0 as missing GPS.
+         * Your frontend was previously sending
+         * latitude=0&longitude=0.
+         */
+        const hasLocation =
             Number.isFinite(
-                requestedRadius,
+                latitude,
+            ) &&
+            Number.isFinite(
+                longitude,
+            ) &&
+            latitude >= -90 &&
+            latitude <= 90 &&
+            longitude >= -180 &&
+            longitude <= 180 &&
+            !(
+                latitude ===
+                    0 &&
+                longitude ===
+                    0
+            );
+
+        /*
+         * Don't silently search the ocean when
+         * GPS is unavailable.
+         */
+        if (!hasLocation) {
+            return NextResponse.json({
+                query,
+
+                currentMeal:
+                    getCurrentMeal(),
+
+                recommendations:
+                    [],
+
+                metadata: {
+                    source:
+                        "Food enrichment",
+
+                    retrievedAt:
+                        new Date().toISOString(),
+
+                    nearbyPlaceCount:
+                        0,
+
+                    foodMatchCount:
+                        0,
+
+                    locationSource:
+                        "none",
+
+                    locationRequired:
+                        true,
+
+                    message:
+                        "Location is required to find nearby food places. Food guidance is still available.",
+                },
+            });
+        }
+
+        const safeRadius =
+            Number.isFinite(
+                radius,
             )
                 ? Math.min(
                       Math.max(
-                          requestedRadius,
+                          radius,
                           500,
                       ),
-                      25_000,
+                      25000,
                   )
-                : 25_000;
-
-        /*
-         * ---------------------------------------------------------
-         * VALIDATION
-         * ---------------------------------------------------------
-         */
-
-        if (
-            items.length === 0
-        ) {
-            return NextResponse.json(
-                {
-                    error:
-                        "At least one food item is required.",
-                },
-                {
-                    status: 400,
-                },
-            );
-        }
-
-        if (
-            !Number.isFinite(
-                latitude,
-            ) ||
-            !Number.isFinite(
-                longitude,
-            )
-        ) {
-            return NextResponse.json(
-                {
-                    error:
-                        "Valid latitude and longitude are required.",
-                },
-                {
-                    status: 400,
-                },
-            );
-        }
-
-        if (
-            budgetInr !==
-                undefined &&
-            (!Number.isFinite(
-                budgetInr,
-            ) ||
-                budgetInr < 0)
-        ) {
-            return NextResponse.json(
-                {
-                    error:
-                        "Budget must be a valid positive number.",
-                },
-                {
-                    status: 400,
-                },
-            );
-        }
-
-        const currentMeal =
-            getCurrentMeal();
+                : 10000;
 
         console.log(
-            "[Food Recommendations] Request",
+            "[Food Recommendations] Request:",
             {
-                items,
+                query,
                 latitude,
                 longitude,
-                budgetInr,
-                radiusMeters,
-                currentMeal,
+                radius:
+                    safeRadius,
+                currentMeal:
+                    getCurrentMeal(),
             },
         );
 
         /*
-         * ---------------------------------------------------------
-         * 1. ENRICH THE REQUESTED FOOD
-         * ---------------------------------------------------------
-         *
-         * This gives us:
-         *
-         * - known food name
-         * - description
-         * - image
-         * - cuisine
-         * - known price
-         * - meal information
+         * =====================================================
+         * 1. GENERAL FOOD INFORMATION
+         * =====================================================
          */
 
-        const enrichedFoods =
-            await Promise.all(
-                items.map(
-                    async (
-                        item,
-                    ) => {
-                        try {
-                            return await enrichRecognizedFood(
-                                item,
-                            );
-                        } catch (
-                            enrichmentError
-                        ) {
-                            console.error(
-                                "[Food Recommendations] Food enrichment failed:",
-                                item,
-                                enrichmentError,
-                            );
-
-                            return null;
-                        }
-                    },
-                ),
+        const enrichedFood =
+            await enrichRecognizedFood(
+                query,
             );
-
-        const validEnrichedFoods =
-            enrichedFoods.filter(
-                (
-                    food,
-                ): food is FoodItem =>
-                    food !== null,
-            );
-
-        if (
-            validEnrichedFoods.length ===
-            0
-        ) {
-            return NextResponse.json(
-                {
-                    detectedFoods:
-                        items,
-
-                    currentMeal,
-
-                    recommendations:
-                        [],
-
-                    metadata: {
-                        source:
-                            "Food enrichment + Geoapify",
-                        retrievedAt:
-                            new Date().toISOString(),
-                        nearbyPlaceCount:
-                            0,
-                        ...(budgetInr !==
-                        undefined
-                            ? {
-                                  budgetInr,
-                              }
-                            : {}),
-                        priceFiltered:
-                            false,
-                    },
-                } satisfies ApiResponse,
-            );
-        }
 
         /*
-         * ---------------------------------------------------------
-         * 2. SEARCH REAL NEARBY FOOD PLACES
-         * ---------------------------------------------------------
+         * =====================================================
+         * 2. FOOD-SPECIFIC PLACE SEARCH
+         * =====================================================
          *
-         * Geoapify supplies the real restaurant/cafe locations.
+         * Foursquare gets the actual food query.
          *
-         * It does NOT become the source of dish price.
+         * Example:
+         *     "samosa"
+         *
+         * rather than:
+         *     restaurant name = "samosa"
          */
 
-        const nearbyPlaces =
-            await searchRealFood({
-                latitude,
-                longitude,
-
-                radiusMeters,
-
-                query:
-                    items.join(" "),
-            });
-
-        console.log(
-            "[Food Recommendations] Nearby places:",
-            nearbyPlaces.length,
-        );
-
-        /*
-         * ---------------------------------------------------------
-         * 3. MAKE FOOD + RESTAURANT CANDIDATES
-         * ---------------------------------------------------------
-         */
-
-        const candidates: FoodItem[] =
+        let foursquareResults =
             [];
 
-        for (
-            const enrichedFood of
-                validEnrichedFoods
-        ) {
-            for (
-                const place of nearbyPlaces
-            ) {
-                /*
-                 * The restaurant is nearby;
-                 * the food identity comes from the
-                 * detected/enriched food.
-                 */
-                const candidate =
-                    buildCandidateFood(
-                        enrichedFood,
-                        place,
-                    );
-
-                candidates.push(
-                    candidate,
+        try {
+            foursquareResults =
+                await searchFoursquareFood(
+                    query,
+                    latitude,
+                    longitude,
+                    safeRadius,
                 );
-            }
+        } catch (
+            foursquareError
+        ) {
+            console.error(
+                "[Food Recommendations] Foursquare failed:",
+                foursquareError,
+            );
+
+            /*
+             * Keep Geoapify fallback alive.
+             */
+            foursquareResults =
+                [];
         }
 
         /*
-         * ---------------------------------------------------------
-         * 4. KEEP ONLY REQUESTED FOOD MATCHES
-         * ---------------------------------------------------------
+         * =====================================================
+         * 3. GENERIC NEARBY RESTAURANTS
+         * =====================================================
          *
-         * This prevents unrelated nearby places from being
-         * treated as the requested dish.
+         * IMPORTANT:
+         * Do NOT pass query to Geoapify's `name`
+         * parameter here.
+         *
+         * `name` is a place-name filter.
          */
 
-        const matchingCandidates =
-            candidates.filter(
-                (food) =>
-                    foodMatches(
-                        food,
-                        items,
-                    ),
+        let nearbyPlaces:
+            FoodItem[] = [];
+
+        try {
+            nearbyPlaces =
+                await searchRealFood({
+                    latitude,
+
+                    longitude,
+
+                    radiusMeters:
+                        safeRadius,
+
+                    vegetarian,
+
+                    /*
+                     * Intentionally omitted.
+                     *
+                     * Geoapify cannot use its `name`
+                     * parameter as a dish search.
+                     */
+                });
+        } catch (
+            geoapifyError
+        ) {
+            console.error(
+                "[Food Recommendations] Geoapify failed:",
+                geoapifyError,
             );
 
-        /*
-         * If the enrichment name cannot match due to
-         * spelling differences, keep the enriched candidates.
-         */
-        const foodCandidates =
-            matchingCandidates.length >
-            0
-                ? matchingCandidates
-                : candidates;
+            nearbyPlaces =
+                [];
+        }
 
         /*
-         * ---------------------------------------------------------
-         * 5. PRICE FIRST
-         * ---------------------------------------------------------
+         * =====================================================
+         *  4. BUILD FOOD CANDIDATES
+         * =====================================================
          */
 
-        const budgetFiltered =
-            filterByBudget(
-                foodCandidates,
-                budgetInr,
-            );
+        const foursquareCandidates =
+            foursquareResults.map(
+                (
+                    result,
+                ) => ({
+                    ...result.food,
 
-        console.log(
-            "[Food Recommendations] Price candidates:",
-            budgetFiltered.length,
-        );
+                    /*
+                     * Preserve the food information
+                     * returned by Wikipedia/Wikimedia.
+                     */
+                    description:
+                        enrichedFood.description ??
+                        result.food.description,
 
-        /*
-         * ---------------------------------------------------------
-         * 6. RECOMMENDATION ENGINE
-         * ---------------------------------------------------------
-         */
+                    imageUrl:
+                        enrichedFood.imageUrl ??
+                        result.food.imageUrl,
 
-        const recommendationInputs =
-            budgetFiltered.map(
-                (food) => ({
-                    food,
+                    tags: [
+                        ...(
+                            enrichedFood.tags ??
+                            []
+                        ),
 
-                    preferredFood:
-                        items[0],
-
-                    currentMeal,
-
-                    budgetInr,
+                        ...(
+                            result.food.tags ??
+                            []
+                        ),
+                    ],
                 }),
             );
 
-        const recommendations =
-            getFoodRecommendations(
-                recommendationInputs,
+        const geoapifyCandidates =
+            buildGeoapifyCandidates(
+                query,
+                enrichedFood,
+                nearbyPlaces,
             );
 
         /*
-         * ---------------------------------------------------------
-         * 7. FINAL SORT
-         * ---------------------------------------------------------
-         *
-         * Explicit order:
-         *
-         * 1. requested food
-         * 2. fits budget
-         * 3. known price
-         * 4. lower price
-         * 5. recommendation score
-         * 6. distance
+         * =====================================================
+         * 5. MERGE
+         * =====================================================
          */
 
-        const sorted =
-            [...recommendations].sort(
-                (
-                    a,
-                    b,
-                ) => {
-                    const aPrice =
-                        a.food.priceInr;
+        const candidates =
+            mergeCandidates(
+                foursquareCandidates,
+                geoapifyCandidates,
+            );
 
-                    const bPrice =
-                        b.food.priceInr;
+        console.log(
+            "[Food Recommendations] Foursquare matches:",
+            foursquareCandidates.length,
+        );
 
-                    if (
-                        budgetInr !==
-                        undefined
-                    ) {
-                        const aFits =
-                            typeof aPrice ===
-                                "number" &&
-                            aPrice <=
-                                budgetInr;
+        console.log(
+            "[Food Recommendations] Geoapify nearby places:",
+            nearbyPlaces.length,
+        );
 
-                        const bFits =
-                            typeof bPrice ===
-                                "number" &&
-                            bPrice <=
-                                budgetInr;
+        console.log(
+            "[Food Recommendations] Final candidates:",
+            candidates.length,
+        );
 
-                        if (
-                            aFits !==
-                            bFits
-                        ) {
-                            return aFits
-                                ? -1
-                                : 1;
-                        }
-                    }
+        /*
+         * =====================================================
+         * 6. RANK
+         * =====================================================
+         */
 
-                    const aKnown =
-                        typeof aPrice ===
-                        "number";
+        const recommendations =
+            getFoodRecommendations(
+                candidates.map(
+                    (
+                        food,
+                    ) => ({
+                        food,
 
-                    const bKnown =
-                        typeof bPrice ===
-                        "number";
+                        preferredFood:
+                            query,
 
-                    if (
-                        aKnown !==
-                        bKnown
-                    ) {
-                        return aKnown
-                            ? -1
-                            : 1;
-                    }
+                        vegetarian,
 
-                    if (
-                        aKnown &&
-                        bKnown &&
-                        aPrice !==
-                            bPrice
-                    ) {
-                        return (
-                            aPrice -
-                            bPrice
-                        );
-                    }
+                        currentMeal:
+                            getCurrentMeal(),
 
-                    if (
-                        a.score !==
-                        b.score
-                    ) {
-                        return (
-                            b.score -
-                            a.score
-                        );
-                    }
+                        maxDistanceKm:
+                            safeRadius /
+                            1000,
 
-                    return (
-                        (
-                            a.food
-                                .distanceKm ??
-                            Number.POSITIVE_INFINITY
-                        ) -
-                        (
-                            b.food
-                                .distanceKm ??
-                            Number.POSITIVE_INFINITY
-                        )
-                    );
-                },
+                        travelerType:
+                            "tourist",
+                    }),
+                ),
             );
 
         /*
-         * ---------------------------------------------------------
-         * 8. REMOVE DUPLICATES
-         * ---------------------------------------------------------
+         * =====================================================
+         * 7. REMOVE DUPLICATES
+         * =====================================================
          */
 
         const unique =
             new Map<
                 string,
-                FoodRecommendation
+                (typeof recommendations)[number]
             >();
 
         for (
             const recommendation of
-                sorted
+                recommendations
         ) {
-            const food =
-                recommendation.food;
-
             const key =
-                `${food.name}|${food.restaurantId ?? food.restaurantName ?? food.id}`;
+                recommendation.food
+                    .restaurantId ??
+                normalize(
+                    recommendation.food
+                        .restaurantName ??
+                        recommendation.food
+                            .name,
+                );
 
             if (
                 !unique.has(
@@ -756,6 +670,12 @@ export async function GET(
             }
         }
 
+        /*
+         * =====================================================
+         * 8. FINAL RESPONSE
+         * =====================================================
+         */
+
         const finalRecommendations =
             Array.from(
                 unique.values(),
@@ -764,24 +684,18 @@ export async function GET(
                 20,
             );
 
-        /*
-         * ---------------------------------------------------------
-         * RESPONSE
-         * ---------------------------------------------------------
-         */
-
         return NextResponse.json({
-            detectedFoods:
-                items,
+            query,
 
-            currentMeal,
+            currentMeal:
+                getCurrentMeal(),
 
             recommendations:
                 finalRecommendations,
 
             metadata: {
                 source:
-                    "Food enrichment + Geoapify Places",
+                    "Foursquare Places + Geoapify Places + Food enrichment",
 
                 retrievedAt:
                     new Date().toISOString(),
@@ -789,35 +703,34 @@ export async function GET(
                 nearbyPlaceCount:
                     nearbyPlaces.length,
 
-                ...(budgetInr !==
-                undefined
-                    ? {
-                          budgetInr,
-                      }
-                    : {}),
+                foodMatchCount:
+                    foursquareCandidates.length,
 
-                priceFiltered:
-                    budgetInr !==
-                        undefined &&
-                    foodCandidates.some(
-                        (food) =>
-                            typeof food.priceInr ===
-                            "number",
-                    ),
+                finalCandidateCount:
+                    candidates.length,
+
+                locationSource:
+                    "gps",
+
+                radiusMeters:
+                    safeRadius,
             },
-        } satisfies ApiResponse);
-    } catch (error) {
+        });
+    } catch (
+        error
+    ) {
         console.error(
-            "[Food Recommendations] Failed:",
+            "[Food Recommendations] Search failed:",
             error,
         );
 
         return NextResponse.json(
             {
                 error:
-                    error instanceof Error
+                    error instanceof
+                    Error
                         ? error.message
-                        : "Unable to generate food recommendations.",
+                        : "Unable to search for food.",
             },
             {
                 status: 500,
