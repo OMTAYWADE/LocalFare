@@ -237,7 +237,7 @@ function mergeCandidates(
         if (!existing) {
             merged.set(
                 key,
-                food, G ;
+                food,
             );
 
             continue;
@@ -247,10 +247,6 @@ function mergeCandidates(
             key,
             {
                 ...existing,
-
-                address:
-                    existing.description ??
-                    food.description,
 
                 website:
                     existing.website ??
@@ -455,8 +451,7 @@ export async function GET(
          *     restaurant name = "samosa"
          */
 
-        let foursquareResults =
-            [];
+        let foursquareResults: Awaited<ReturnType<typeof searchFoursquareFood>> = [];
 
         try {
             foursquareResults =
