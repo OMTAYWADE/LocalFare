@@ -11,7 +11,7 @@ import {
     Utensils,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import FoodFilters, { type FoodRestriction } from "@/features/food/components/FoodFilters";
 import { getFoodRecommendations } from "@/features/food/services/foodRecommendation.service";
@@ -31,6 +31,12 @@ interface ApiRecommendation {
 interface ApiResponse {
     recommendations?: ApiRecommendation[];
     error?: string;
+}
+
+interface MenuScanResultsProps {
+    items: string;
+    latitude?: string;
+    longitude?: string;
 }
 
 function getCurrentMeal(): MealType {
@@ -249,16 +255,16 @@ function DishCard({
     );
 }
 
-export default function MenuScanResults() {
+export default function MenuScanResults({
+    items,
+    latitude,
+    longitude,
+}: MenuScanResultsProps) {
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const scannedItems = useMemo(
-        () =>
-            readItems(
-                searchParams.get("items"),
-            ),
-        [searchParams],
+        () => readItems(items),
+        [items],
     );
 
     const currentMeal = useMemo(
@@ -684,29 +690,9 @@ export default function MenuScanResults() {
                 .join(","),
         );
 
-        const latitude =
-            searchParams.get(
-                "latitude",
-            );
-
-        const longitude =
-            searchParams.get(
-                "longitude",
-            );
-
-        if (
-            latitude &&
-            longitude
-        ) {
-            params.set(
-                "latitude",
-                latitude,
-            );
-
-            params.set(
-                "longitude",
-                longitude,
-            );
+        if (latitude && longitude) {
+            params.set("latitude", latitude);
+            params.set("longitude", longitude);
         }
 
         router.push(
