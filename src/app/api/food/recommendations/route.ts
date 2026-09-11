@@ -237,7 +237,7 @@ function mergeCandidates(
         if (!existing) {
             merged.set(
                 key,
-                food,
+                food, G ;
             );
 
             continue;

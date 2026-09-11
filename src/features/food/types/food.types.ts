@@ -56,6 +56,10 @@ export interface FoodNutrition {
     sodiumMg?: number;
 }
 
+export type FoodRecognitionMode =
+    | "food"
+    | "menu";
+
 export interface FoodItem {
     /* =========================================================
      * BASIC FOOD
@@ -243,4 +247,16 @@ export interface FoodItem {
      * ========================================================= */
 
     informationSources?: string[];
+}
+
+export interface FoodRecognitionResult {
+    items: string[];
+
+    foods?: FoodItem[];
+
+    confidence?: number;
+
+    source?: string;
+
+    message?: string;
 }
