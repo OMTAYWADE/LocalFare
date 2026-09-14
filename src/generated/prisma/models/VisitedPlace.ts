@@ -615,12 +615,6 @@ export type $VisitedPlacePayload<ExtArgs extends runtime.Types.Extensions.Intern
     userId: string
     placeId: string
     visitedAt: Date
-    /**
-     * *
-     *    * Optional short note.
-     *    * Example:
-     *    * "Best vada pav here"
-     */
     note: string | null
   }, ExtArgs["result"]["visitedPlace"]>
   composites: {}

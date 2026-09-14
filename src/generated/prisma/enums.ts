@@ -9,12 +9,102 @@
 * 🟢 You can import this file directly.
 */
 
-export const TravelerType = {
-  TOURIST: 'TOURIST',
-  CITIZEN: 'CITIZEN'
+export const TripStatus = {
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  ARCHIVED: 'ARCHIVED'
 } as const
 
-export type TravelerType = (typeof TravelerType)[keyof typeof TravelerType]
+export type TripStatus = (typeof TripStatus)[keyof typeof TripStatus]
+
+
+export const TravelSourcePlatform = {
+  YOUTUBE: 'YOUTUBE',
+  INSTAGRAM: 'INSTAGRAM'
+} as const
+
+export type TravelSourcePlatform = (typeof TravelSourcePlatform)[keyof typeof TravelSourcePlatform]
+
+
+export const TravelSourceType = {
+  CHANNEL: 'CHANNEL',
+  PROFILE: 'PROFILE',
+  VIDEO: 'VIDEO',
+  POST: 'POST'
+} as const
+
+export type TravelSourceType = (typeof TravelSourceType)[keyof typeof TravelSourceType]
+
+
+export const TravelProcessingStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type TravelProcessingStatus = (typeof TravelProcessingStatus)[keyof typeof TravelProcessingStatus]
+
+
+export const TravelTransportMode = {
+  WALK: 'WALK',
+  BUS: 'BUS',
+  TRAIN: 'TRAIN',
+  METRO: 'METRO',
+  SHARED_AUTO: 'SHARED_AUTO',
+  METER_AUTO: 'METER_AUTO',
+  TAXI: 'TAXI',
+  APP_TAXI: 'APP_TAXI',
+  FERRY: 'FERRY',
+  FLIGHT: 'FLIGHT',
+  OTHER: 'OTHER',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type TravelTransportMode = (typeof TravelTransportMode)[keyof typeof TravelTransportMode]
+
+
+export const FareSource = {
+  EXPLICIT: 'EXPLICIT',
+  CALCULATED: 'CALCULATED',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type FareSource = (typeof FareSource)[keyof typeof FareSource]
+
+
+export const TravelExpenseCategory = {
+  TRANSPORT: 'TRANSPORT',
+  FOOD: 'FOOD',
+  SHOPPING: 'SHOPPING',
+  HOTEL: 'HOTEL',
+  ATTRACTION: 'ATTRACTION',
+  SERVICE: 'SERVICE',
+  OTHER: 'OTHER'
+} as const
+
+export type TravelExpenseCategory = (typeof TravelExpenseCategory)[keyof typeof TravelExpenseCategory]
+
+
+export const TravelExperienceType = {
+  POSITIVE: 'POSITIVE',
+  NEGATIVE: 'NEGATIVE',
+  NEUTRAL: 'NEUTRAL',
+  WARNING: 'WARNING',
+  POSSIBLE_OVERCHARGE: 'POSSIBLE_OVERCHARGE',
+  REPORTED_SCAM: 'REPORTED_SCAM'
+} as const
+
+export type TravelExperienceType = (typeof TravelExperienceType)[keyof typeof TravelExperienceType]
+
+
+export const TravelVisibility = {
+  PRIVATE: 'PRIVATE',
+  FAIRTRIP_CANDIDATE: 'FAIRTRIP_CANDIDATE',
+  FAIRTRIP_PUBLIC: 'FAIRTRIP_PUBLIC'
+} as const
+
+export type TravelVisibility = (typeof TravelVisibility)[keyof typeof TravelVisibility]
 
 
 export const CurrencyCode = {
@@ -30,6 +120,14 @@ export const CurrencyCode = {
 } as const
 
 export type CurrencyCode = (typeof CurrencyCode)[keyof typeof CurrencyCode]
+
+
+export const TravelerType = {
+  TOURIST: 'TOURIST',
+  CITIZEN: 'CITIZEN'
+} as const
+
+export type TravelerType = (typeof TravelerType)[keyof typeof TravelerType]
 
 
 export const FoodDiet = {

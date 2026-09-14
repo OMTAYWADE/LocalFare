@@ -460,6 +460,176 @@ export type EnumTravelerTypeNullableWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumTravelerTypeNullableFilter<$PrismaModel>
 }
 
+export type EnumTripStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.TripStatus | Prisma.EnumTripStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTripStatusFilter<$PrismaModel> | $Enums.TripStatus
+}
+
+export type EnumTripStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TripStatus | Prisma.EnumTripStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTripStatusWithAggregatesFilter<$PrismaModel> | $Enums.TripStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTripStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTripStatusFilter<$PrismaModel>
+}
+
+export type EnumTravelSourcePlatformFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourcePlatform | Prisma.EnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourcePlatformFilter<$PrismaModel> | $Enums.TravelSourcePlatform
+}
+
+export type EnumTravelSourceTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourceType | Prisma.EnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourceTypeFilter<$PrismaModel> | $Enums.TravelSourceType
+}
+
+export type EnumTravelProcessingStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelProcessingStatus | Prisma.EnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelProcessingStatusFilter<$PrismaModel> | $Enums.TravelProcessingStatus
+}
+
+export type EnumTravelSourcePlatformWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourcePlatform | Prisma.EnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourcePlatformWithAggregatesFilter<$PrismaModel> | $Enums.TravelSourcePlatform
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelSourcePlatformFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelSourcePlatformFilter<$PrismaModel>
+}
+
+export type EnumTravelSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourceType | Prisma.EnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourceTypeWithAggregatesFilter<$PrismaModel> | $Enums.TravelSourceType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelSourceTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelSourceTypeFilter<$PrismaModel>
+}
+
+export type EnumTravelProcessingStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelProcessingStatus | Prisma.EnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelProcessingStatusWithAggregatesFilter<$PrismaModel> | $Enums.TravelProcessingStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelProcessingStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelProcessingStatusFilter<$PrismaModel>
+}
+
+export type EnumTravelTransportModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelTransportModeFilter<$PrismaModel> | $Enums.TravelTransportMode
+}
+
+export type EnumFareSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.FareSource | Prisma.EnumFareSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFareSourceFilter<$PrismaModel> | $Enums.FareSource
+}
+
+export type EnumTravelTransportModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelTransportModeWithAggregatesFilter<$PrismaModel> | $Enums.TravelTransportMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelTransportModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelTransportModeFilter<$PrismaModel>
+}
+
+export type EnumFareSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FareSource | Prisma.EnumFareSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFareSourceWithAggregatesFilter<$PrismaModel> | $Enums.FareSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFareSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFareSourceFilter<$PrismaModel>
+}
+
+export type EnumTravelExpenseCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExpenseCategory | Prisma.EnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExpenseCategoryFilter<$PrismaModel> | $Enums.TravelExpenseCategory
+}
+
+export type EnumTravelExpenseCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExpenseCategory | Prisma.EnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExpenseCategoryWithAggregatesFilter<$PrismaModel> | $Enums.TravelExpenseCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelExpenseCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelExpenseCategoryFilter<$PrismaModel>
+}
+
+export type EnumTravelExperienceTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExperienceType | Prisma.EnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExperienceTypeFilter<$PrismaModel> | $Enums.TravelExperienceType
+}
+
+export type EnumTravelTransportModeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumTravelTransportModeNullableFilter<$PrismaModel> | $Enums.TravelTransportMode | null
+}
+
+export type EnumTravelVisibilityFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelVisibility | Prisma.EnumTravelVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelVisibilityFilter<$PrismaModel> | $Enums.TravelVisibility
+}
+
+export type EnumTravelExperienceTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExperienceType | Prisma.EnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExperienceTypeWithAggregatesFilter<$PrismaModel> | $Enums.TravelExperienceType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelExperienceTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelExperienceTypeFilter<$PrismaModel>
+}
+
+export type EnumTravelTransportModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumTravelTransportModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.TravelTransportMode | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelTransportModeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelTransportModeNullableFilter<$PrismaModel>
+}
+
+export type EnumTravelVisibilityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelVisibility | Prisma.EnumTravelVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelVisibilityWithAggregatesFilter<$PrismaModel> | $Enums.TravelVisibility
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelVisibilityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelVisibilityFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -868,6 +1038,176 @@ export type NestedEnumTravelerTypeNullableWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumTravelerTypeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumTravelerTypeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumTripStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.TripStatus | Prisma.EnumTripStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTripStatusFilter<$PrismaModel> | $Enums.TripStatus
+}
+
+export type NestedEnumTripStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TripStatus | Prisma.EnumTripStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TripStatus[] | Prisma.ListEnumTripStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTripStatusWithAggregatesFilter<$PrismaModel> | $Enums.TripStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTripStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTripStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelSourcePlatformFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourcePlatform | Prisma.EnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourcePlatformFilter<$PrismaModel> | $Enums.TravelSourcePlatform
+}
+
+export type NestedEnumTravelSourceTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourceType | Prisma.EnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourceTypeFilter<$PrismaModel> | $Enums.TravelSourceType
+}
+
+export type NestedEnumTravelProcessingStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelProcessingStatus | Prisma.EnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelProcessingStatusFilter<$PrismaModel> | $Enums.TravelProcessingStatus
+}
+
+export type NestedEnumTravelSourcePlatformWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourcePlatform | Prisma.EnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourcePlatform[] | Prisma.ListEnumTravelSourcePlatformFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourcePlatformWithAggregatesFilter<$PrismaModel> | $Enums.TravelSourcePlatform
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelSourcePlatformFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelSourcePlatformFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelSourceType | Prisma.EnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelSourceType[] | Prisma.ListEnumTravelSourceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelSourceTypeWithAggregatesFilter<$PrismaModel> | $Enums.TravelSourceType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelSourceTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelSourceTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelProcessingStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelProcessingStatus | Prisma.EnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelProcessingStatus[] | Prisma.ListEnumTravelProcessingStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelProcessingStatusWithAggregatesFilter<$PrismaModel> | $Enums.TravelProcessingStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelProcessingStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelProcessingStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelTransportModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelTransportModeFilter<$PrismaModel> | $Enums.TravelTransportMode
+}
+
+export type NestedEnumFareSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.FareSource | Prisma.EnumFareSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFareSourceFilter<$PrismaModel> | $Enums.FareSource
+}
+
+export type NestedEnumTravelTransportModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelTransportModeWithAggregatesFilter<$PrismaModel> | $Enums.TravelTransportMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelTransportModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelTransportModeFilter<$PrismaModel>
+}
+
+export type NestedEnumFareSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FareSource | Prisma.EnumFareSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FareSource[] | Prisma.ListEnumFareSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFareSourceWithAggregatesFilter<$PrismaModel> | $Enums.FareSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFareSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFareSourceFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelExpenseCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExpenseCategory | Prisma.EnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExpenseCategoryFilter<$PrismaModel> | $Enums.TravelExpenseCategory
+}
+
+export type NestedEnumTravelExpenseCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExpenseCategory | Prisma.EnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExpenseCategory[] | Prisma.ListEnumTravelExpenseCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExpenseCategoryWithAggregatesFilter<$PrismaModel> | $Enums.TravelExpenseCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelExpenseCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelExpenseCategoryFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelExperienceTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExperienceType | Prisma.EnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExperienceTypeFilter<$PrismaModel> | $Enums.TravelExperienceType
+}
+
+export type NestedEnumTravelTransportModeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumTravelTransportModeNullableFilter<$PrismaModel> | $Enums.TravelTransportMode | null
+}
+
+export type NestedEnumTravelVisibilityFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelVisibility | Prisma.EnumTravelVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelVisibilityFilter<$PrismaModel> | $Enums.TravelVisibility
+}
+
+export type NestedEnumTravelExperienceTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelExperienceType | Prisma.EnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelExperienceType[] | Prisma.ListEnumTravelExperienceTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelExperienceTypeWithAggregatesFilter<$PrismaModel> | $Enums.TravelExperienceType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelExperienceTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelExperienceTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelTransportModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelTransportMode | Prisma.EnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.TravelTransportMode[] | Prisma.ListEnumTravelTransportModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumTravelTransportModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.TravelTransportMode | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelTransportModeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelTransportModeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumTravelVisibilityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TravelVisibility | Prisma.EnumTravelVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TravelVisibility[] | Prisma.ListEnumTravelVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTravelVisibilityWithAggregatesFilter<$PrismaModel> | $Enums.TravelVisibility
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTravelVisibilityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTravelVisibilityFilter<$PrismaModel>
 }
 
 

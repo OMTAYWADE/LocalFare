@@ -648,13 +648,6 @@ export type $SearchHistoryPayload<ExtArgs extends runtime.Types.Extensions.Inter
     id: string
     userId: string | null
     query: string
-    /**
-     * *
-     *    * User supplied area / landmark.
-     *    * Example:
-     *    * Dadar
-     *    * Crawford Market
-     */
     locationQuery: string | null
     latitude: number | null
     longitude: number | null

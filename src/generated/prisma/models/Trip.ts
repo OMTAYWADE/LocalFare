@@ -32,6 +32,15 @@ export type TripAvgAggregateOutputType = {
   destinationLatitude: number | null
   destinationLongitude: number | null
   budgetInr: number | null
+  totalKnownSpendInr: number | null
+  totalTransportSpendInr: number | null
+  totalOtherSpendInr: number | null
+  knownDistanceMeters: number | null
+  knownDurationMinutes: number | null
+  sourceCount: number | null
+  placeCount: number | null
+  routeCount: number | null
+  expenseCount: number | null
 }
 
 export type TripSumAggregateOutputType = {
@@ -40,6 +49,15 @@ export type TripSumAggregateOutputType = {
   destinationLatitude: number | null
   destinationLongitude: number | null
   budgetInr: number | null
+  totalKnownSpendInr: number | null
+  totalTransportSpendInr: number | null
+  totalOtherSpendInr: number | null
+  knownDistanceMeters: number | null
+  knownDurationMinutes: number | null
+  sourceCount: number | null
+  placeCount: number | null
+  routeCount: number | null
+  expenseCount: number | null
 }
 
 export type TripMinAggregateOutputType = {
@@ -56,6 +74,16 @@ export type TripMinAggregateOutputType = {
   travelerType: $Enums.TravelerType | null
   startDate: Date | null
   endDate: Date | null
+  status: $Enums.TripStatus | null
+  totalKnownSpendInr: number | null
+  totalTransportSpendInr: number | null
+  totalOtherSpendInr: number | null
+  knownDistanceMeters: number | null
+  knownDurationMinutes: number | null
+  sourceCount: number | null
+  placeCount: number | null
+  routeCount: number | null
+  expenseCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -74,6 +102,16 @@ export type TripMaxAggregateOutputType = {
   travelerType: $Enums.TravelerType | null
   startDate: Date | null
   endDate: Date | null
+  status: $Enums.TripStatus | null
+  totalKnownSpendInr: number | null
+  totalTransportSpendInr: number | null
+  totalOtherSpendInr: number | null
+  knownDistanceMeters: number | null
+  knownDurationMinutes: number | null
+  sourceCount: number | null
+  placeCount: number | null
+  routeCount: number | null
+  expenseCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -92,6 +130,16 @@ export type TripCountAggregateOutputType = {
   travelerType: number
   startDate: number
   endDate: number
+  status: number
+  totalKnownSpendInr: number
+  totalTransportSpendInr: number
+  totalOtherSpendInr: number
+  knownDistanceMeters: number
+  knownDurationMinutes: number
+  sourceCount: number
+  placeCount: number
+  routeCount: number
+  expenseCount: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +152,15 @@ export type TripAvgAggregateInputType = {
   destinationLatitude?: true
   destinationLongitude?: true
   budgetInr?: true
+  totalKnownSpendInr?: true
+  totalTransportSpendInr?: true
+  totalOtherSpendInr?: true
+  knownDistanceMeters?: true
+  knownDurationMinutes?: true
+  sourceCount?: true
+  placeCount?: true
+  routeCount?: true
+  expenseCount?: true
 }
 
 export type TripSumAggregateInputType = {
@@ -112,6 +169,15 @@ export type TripSumAggregateInputType = {
   destinationLatitude?: true
   destinationLongitude?: true
   budgetInr?: true
+  totalKnownSpendInr?: true
+  totalTransportSpendInr?: true
+  totalOtherSpendInr?: true
+  knownDistanceMeters?: true
+  knownDurationMinutes?: true
+  sourceCount?: true
+  placeCount?: true
+  routeCount?: true
+  expenseCount?: true
 }
 
 export type TripMinAggregateInputType = {
@@ -128,6 +194,16 @@ export type TripMinAggregateInputType = {
   travelerType?: true
   startDate?: true
   endDate?: true
+  status?: true
+  totalKnownSpendInr?: true
+  totalTransportSpendInr?: true
+  totalOtherSpendInr?: true
+  knownDistanceMeters?: true
+  knownDurationMinutes?: true
+  sourceCount?: true
+  placeCount?: true
+  routeCount?: true
+  expenseCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -146,6 +222,16 @@ export type TripMaxAggregateInputType = {
   travelerType?: true
   startDate?: true
   endDate?: true
+  status?: true
+  totalKnownSpendInr?: true
+  totalTransportSpendInr?: true
+  totalOtherSpendInr?: true
+  knownDistanceMeters?: true
+  knownDurationMinutes?: true
+  sourceCount?: true
+  placeCount?: true
+  routeCount?: true
+  expenseCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -164,6 +250,16 @@ export type TripCountAggregateInputType = {
   travelerType?: true
   startDate?: true
   endDate?: true
+  status?: true
+  totalKnownSpendInr?: true
+  totalTransportSpendInr?: true
+  totalOtherSpendInr?: true
+  knownDistanceMeters?: true
+  knownDurationMinutes?: true
+  sourceCount?: true
+  placeCount?: true
+  routeCount?: true
+  expenseCount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -269,6 +365,16 @@ export type TripGroupByOutputType = {
   travelerType: $Enums.TravelerType
   startDate: Date | null
   endDate: Date | null
+  status: $Enums.TripStatus
+  totalKnownSpendInr: number
+  totalTransportSpendInr: number
+  totalOtherSpendInr: number
+  knownDistanceMeters: number | null
+  knownDurationMinutes: number | null
+  sourceCount: number
+  placeCount: number
+  routeCount: number
+  expenseCount: number
   createdAt: Date
   updatedAt: Date
   _count: TripCountAggregateOutputType | null
@@ -310,9 +416,24 @@ export type TripWhereInput = {
   travelerType?: Prisma.EnumTravelerTypeFilter<"Trip"> | $Enums.TravelerType
   startDate?: Prisma.DateTimeNullableFilter<"Trip"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Trip"> | Date | string | null
+  status?: Prisma.EnumTripStatusFilter<"Trip"> | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFilter<"Trip"> | number
+  totalTransportSpendInr?: Prisma.IntFilter<"Trip"> | number
+  totalOtherSpendInr?: Prisma.IntFilter<"Trip"> | number
+  knownDistanceMeters?: Prisma.IntNullableFilter<"Trip"> | number | null
+  knownDurationMinutes?: Prisma.IntNullableFilter<"Trip"> | number | null
+  sourceCount?: Prisma.IntFilter<"Trip"> | number
+  placeCount?: Prisma.IntFilter<"Trip"> | number
+  routeCount?: Prisma.IntFilter<"Trip"> | number
+  expenseCount?: Prisma.IntFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  sources?: Prisma.TravelSourceListRelationFilter
+  places?: Prisma.TravelPlaceListRelationFilter
+  routes?: Prisma.TravelRouteListRelationFilter
+  expenses?: Prisma.TravelExpenseListRelationFilter
+  experiences?: Prisma.TravelExperienceListRelationFilter
 }
 
 export type TripOrderByWithRelationInput = {
@@ -329,9 +450,24 @@ export type TripOrderByWithRelationInput = {
   travelerType?: Prisma.SortOrder
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrderInput | Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  sources?: Prisma.TravelSourceOrderByRelationAggregateInput
+  places?: Prisma.TravelPlaceOrderByRelationAggregateInput
+  routes?: Prisma.TravelRouteOrderByRelationAggregateInput
+  expenses?: Prisma.TravelExpenseOrderByRelationAggregateInput
+  experiences?: Prisma.TravelExperienceOrderByRelationAggregateInput
 }
 
 export type TripWhereUniqueInput = Prisma.AtLeast<{
@@ -351,9 +487,24 @@ export type TripWhereUniqueInput = Prisma.AtLeast<{
   travelerType?: Prisma.EnumTravelerTypeFilter<"Trip"> | $Enums.TravelerType
   startDate?: Prisma.DateTimeNullableFilter<"Trip"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Trip"> | Date | string | null
+  status?: Prisma.EnumTripStatusFilter<"Trip"> | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFilter<"Trip"> | number
+  totalTransportSpendInr?: Prisma.IntFilter<"Trip"> | number
+  totalOtherSpendInr?: Prisma.IntFilter<"Trip"> | number
+  knownDistanceMeters?: Prisma.IntNullableFilter<"Trip"> | number | null
+  knownDurationMinutes?: Prisma.IntNullableFilter<"Trip"> | number | null
+  sourceCount?: Prisma.IntFilter<"Trip"> | number
+  placeCount?: Prisma.IntFilter<"Trip"> | number
+  routeCount?: Prisma.IntFilter<"Trip"> | number
+  expenseCount?: Prisma.IntFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  sources?: Prisma.TravelSourceListRelationFilter
+  places?: Prisma.TravelPlaceListRelationFilter
+  routes?: Prisma.TravelRouteListRelationFilter
+  expenses?: Prisma.TravelExpenseListRelationFilter
+  experiences?: Prisma.TravelExperienceListRelationFilter
 }, "id">
 
 export type TripOrderByWithAggregationInput = {
@@ -370,6 +521,16 @@ export type TripOrderByWithAggregationInput = {
   travelerType?: Prisma.SortOrder
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrderInput | Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TripCountOrderByAggregateInput
@@ -396,6 +557,16 @@ export type TripScalarWhereWithAggregatesInput = {
   travelerType?: Prisma.EnumTravelerTypeWithAggregatesFilter<"Trip"> | $Enums.TravelerType
   startDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Trip"> | Date | string | null
   endDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Trip"> | Date | string | null
+  status?: Prisma.EnumTripStatusWithAggregatesFilter<"Trip"> | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  totalTransportSpendInr?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  totalOtherSpendInr?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  knownDistanceMeters?: Prisma.IntNullableWithAggregatesFilter<"Trip"> | number | null
+  knownDurationMinutes?: Prisma.IntNullableWithAggregatesFilter<"Trip"> | number | null
+  sourceCount?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  placeCount?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  routeCount?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  expenseCount?: Prisma.IntWithAggregatesFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Trip"> | Date | string
 }
@@ -413,9 +584,24 @@ export type TripCreateInput = {
   travelerType?: $Enums.TravelerType
   startDate?: Date | string | null
   endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTripsInput
+  sources?: Prisma.TravelSourceCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceCreateNestedManyWithoutTripInput
 }
 
 export type TripUncheckedCreateInput = {
@@ -432,8 +618,23 @@ export type TripUncheckedCreateInput = {
   travelerType?: $Enums.TravelerType
   startDate?: Date | string | null
   endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  sources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutTripInput
 }
 
 export type TripUpdateInput = {
@@ -449,9 +650,24 @@ export type TripUpdateInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTripsNestedInput
+  sources?: Prisma.TravelSourceUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUpdateManyWithoutTripNestedInput
 }
 
 export type TripUncheckedUpdateInput = {
@@ -468,8 +684,23 @@ export type TripUncheckedUpdateInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUncheckedUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUncheckedUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUncheckedUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutTripNestedInput
 }
 
 export type TripCreateManyInput = {
@@ -486,6 +717,16 @@ export type TripCreateManyInput = {
   travelerType?: $Enums.TravelerType
   startDate?: Date | string | null
   endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -503,6 +744,16 @@ export type TripUpdateManyMutationInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -521,6 +772,16 @@ export type TripUncheckedUpdateManyInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -549,6 +810,16 @@ export type TripCountOrderByAggregateInput = {
   travelerType?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -559,6 +830,15 @@ export type TripAvgOrderByAggregateInput = {
   destinationLatitude?: Prisma.SortOrder
   destinationLongitude?: Prisma.SortOrder
   budgetInr?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
 }
 
 export type TripMaxOrderByAggregateInput = {
@@ -575,6 +855,16 @@ export type TripMaxOrderByAggregateInput = {
   travelerType?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -593,6 +883,16 @@ export type TripMinOrderByAggregateInput = {
   travelerType?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -603,6 +903,20 @@ export type TripSumOrderByAggregateInput = {
   destinationLatitude?: Prisma.SortOrder
   destinationLongitude?: Prisma.SortOrder
   budgetInr?: Prisma.SortOrder
+  totalKnownSpendInr?: Prisma.SortOrder
+  totalTransportSpendInr?: Prisma.SortOrder
+  totalOtherSpendInr?: Prisma.SortOrder
+  knownDistanceMeters?: Prisma.SortOrder
+  knownDurationMinutes?: Prisma.SortOrder
+  sourceCount?: Prisma.SortOrder
+  placeCount?: Prisma.SortOrder
+  routeCount?: Prisma.SortOrder
+  expenseCount?: Prisma.SortOrder
+}
+
+export type TripScalarRelationFilter = {
+  is?: Prisma.TripWhereInput
+  isNot?: Prisma.TripWhereInput
 }
 
 export type TripCreateNestedManyWithoutUserInput = {
@@ -647,6 +961,80 @@ export type TripUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.TripScalarWhereInput | Prisma.TripScalarWhereInput[]
 }
 
+export type EnumTripStatusFieldUpdateOperationsInput = {
+  set?: $Enums.TripStatus
+}
+
+export type TripCreateNestedOneWithoutSourcesInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutSourcesInput, Prisma.TripUncheckedCreateWithoutSourcesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutSourcesInput
+  connect?: Prisma.TripWhereUniqueInput
+}
+
+export type TripUpdateOneRequiredWithoutSourcesNestedInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutSourcesInput, Prisma.TripUncheckedCreateWithoutSourcesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutSourcesInput
+  upsert?: Prisma.TripUpsertWithoutSourcesInput
+  connect?: Prisma.TripWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutSourcesInput, Prisma.TripUpdateWithoutSourcesInput>, Prisma.TripUncheckedUpdateWithoutSourcesInput>
+}
+
+export type TripCreateNestedOneWithoutPlacesInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutPlacesInput, Prisma.TripUncheckedCreateWithoutPlacesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutPlacesInput
+  connect?: Prisma.TripWhereUniqueInput
+}
+
+export type TripUpdateOneRequiredWithoutPlacesNestedInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutPlacesInput, Prisma.TripUncheckedCreateWithoutPlacesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutPlacesInput
+  upsert?: Prisma.TripUpsertWithoutPlacesInput
+  connect?: Prisma.TripWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutPlacesInput, Prisma.TripUpdateWithoutPlacesInput>, Prisma.TripUncheckedUpdateWithoutPlacesInput>
+}
+
+export type TripCreateNestedOneWithoutRoutesInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutRoutesInput, Prisma.TripUncheckedCreateWithoutRoutesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutRoutesInput
+  connect?: Prisma.TripWhereUniqueInput
+}
+
+export type TripUpdateOneRequiredWithoutRoutesNestedInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutRoutesInput, Prisma.TripUncheckedCreateWithoutRoutesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutRoutesInput
+  upsert?: Prisma.TripUpsertWithoutRoutesInput
+  connect?: Prisma.TripWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutRoutesInput, Prisma.TripUpdateWithoutRoutesInput>, Prisma.TripUncheckedUpdateWithoutRoutesInput>
+}
+
+export type TripCreateNestedOneWithoutExpensesInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutExpensesInput, Prisma.TripUncheckedCreateWithoutExpensesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutExpensesInput
+  connect?: Prisma.TripWhereUniqueInput
+}
+
+export type TripUpdateOneRequiredWithoutExpensesNestedInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutExpensesInput, Prisma.TripUncheckedCreateWithoutExpensesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutExpensesInput
+  upsert?: Prisma.TripUpsertWithoutExpensesInput
+  connect?: Prisma.TripWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutExpensesInput, Prisma.TripUpdateWithoutExpensesInput>, Prisma.TripUncheckedUpdateWithoutExpensesInput>
+}
+
+export type TripCreateNestedOneWithoutExperiencesInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutExperiencesInput, Prisma.TripUncheckedCreateWithoutExperiencesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutExperiencesInput
+  connect?: Prisma.TripWhereUniqueInput
+}
+
+export type TripUpdateOneRequiredWithoutExperiencesNestedInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutExperiencesInput, Prisma.TripUncheckedCreateWithoutExperiencesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutExperiencesInput
+  upsert?: Prisma.TripUpsertWithoutExperiencesInput
+  connect?: Prisma.TripWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutExperiencesInput, Prisma.TripUpdateWithoutExperiencesInput>, Prisma.TripUncheckedUpdateWithoutExperiencesInput>
+}
+
 export type TripCreateWithoutUserInput = {
   id?: string
   name: string
@@ -660,8 +1048,23 @@ export type TripCreateWithoutUserInput = {
   travelerType?: $Enums.TravelerType
   startDate?: Date | string | null
   endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  sources?: Prisma.TravelSourceCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceCreateNestedManyWithoutTripInput
 }
 
 export type TripUncheckedCreateWithoutUserInput = {
@@ -677,8 +1080,23 @@ export type TripUncheckedCreateWithoutUserInput = {
   travelerType?: $Enums.TravelerType
   startDate?: Date | string | null
   endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  sources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutTripInput
 }
 
 export type TripCreateOrConnectWithoutUserInput = {
@@ -724,8 +1142,738 @@ export type TripScalarWhereInput = {
   travelerType?: Prisma.EnumTravelerTypeFilter<"Trip"> | $Enums.TravelerType
   startDate?: Prisma.DateTimeNullableFilter<"Trip"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Trip"> | Date | string | null
+  status?: Prisma.EnumTripStatusFilter<"Trip"> | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFilter<"Trip"> | number
+  totalTransportSpendInr?: Prisma.IntFilter<"Trip"> | number
+  totalOtherSpendInr?: Prisma.IntFilter<"Trip"> | number
+  knownDistanceMeters?: Prisma.IntNullableFilter<"Trip"> | number | null
+  knownDurationMinutes?: Prisma.IntNullableFilter<"Trip"> | number | null
+  sourceCount?: Prisma.IntFilter<"Trip"> | number
+  placeCount?: Prisma.IntFilter<"Trip"> | number
+  routeCount?: Prisma.IntFilter<"Trip"> | number
+  expenseCount?: Prisma.IntFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
+}
+
+export type TripCreateWithoutSourcesInput = {
+  id?: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTripsInput
+  places?: Prisma.TravelPlaceCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceCreateNestedManyWithoutTripInput
+}
+
+export type TripUncheckedCreateWithoutSourcesInput = {
+  id?: string
+  userId: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  places?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutTripInput
+}
+
+export type TripCreateOrConnectWithoutSourcesInput = {
+  where: Prisma.TripWhereUniqueInput
+  create: Prisma.XOR<Prisma.TripCreateWithoutSourcesInput, Prisma.TripUncheckedCreateWithoutSourcesInput>
+}
+
+export type TripUpsertWithoutSourcesInput = {
+  update: Prisma.XOR<Prisma.TripUpdateWithoutSourcesInput, Prisma.TripUncheckedUpdateWithoutSourcesInput>
+  create: Prisma.XOR<Prisma.TripCreateWithoutSourcesInput, Prisma.TripUncheckedCreateWithoutSourcesInput>
+  where?: Prisma.TripWhereInput
+}
+
+export type TripUpdateToOneWithWhereWithoutSourcesInput = {
+  where?: Prisma.TripWhereInput
+  data: Prisma.XOR<Prisma.TripUpdateWithoutSourcesInput, Prisma.TripUncheckedUpdateWithoutSourcesInput>
+}
+
+export type TripUpdateWithoutSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTripsNestedInput
+  places?: Prisma.TravelPlaceUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUpdateManyWithoutTripNestedInput
+}
+
+export type TripUncheckedUpdateWithoutSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  places?: Prisma.TravelPlaceUncheckedUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUncheckedUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutTripNestedInput
+}
+
+export type TripCreateWithoutPlacesInput = {
+  id?: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTripsInput
+  sources?: Prisma.TravelSourceCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceCreateNestedManyWithoutTripInput
+}
+
+export type TripUncheckedCreateWithoutPlacesInput = {
+  id?: string
+  userId: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutTripInput
+}
+
+export type TripCreateOrConnectWithoutPlacesInput = {
+  where: Prisma.TripWhereUniqueInput
+  create: Prisma.XOR<Prisma.TripCreateWithoutPlacesInput, Prisma.TripUncheckedCreateWithoutPlacesInput>
+}
+
+export type TripUpsertWithoutPlacesInput = {
+  update: Prisma.XOR<Prisma.TripUpdateWithoutPlacesInput, Prisma.TripUncheckedUpdateWithoutPlacesInput>
+  create: Prisma.XOR<Prisma.TripCreateWithoutPlacesInput, Prisma.TripUncheckedCreateWithoutPlacesInput>
+  where?: Prisma.TripWhereInput
+}
+
+export type TripUpdateToOneWithWhereWithoutPlacesInput = {
+  where?: Prisma.TripWhereInput
+  data: Prisma.XOR<Prisma.TripUpdateWithoutPlacesInput, Prisma.TripUncheckedUpdateWithoutPlacesInput>
+}
+
+export type TripUpdateWithoutPlacesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTripsNestedInput
+  sources?: Prisma.TravelSourceUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUpdateManyWithoutTripNestedInput
+}
+
+export type TripUncheckedUpdateWithoutPlacesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUncheckedUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUncheckedUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutTripNestedInput
+}
+
+export type TripCreateWithoutRoutesInput = {
+  id?: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTripsInput
+  sources?: Prisma.TravelSourceCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceCreateNestedManyWithoutTripInput
+}
+
+export type TripUncheckedCreateWithoutRoutesInput = {
+  id?: string
+  userId: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutTripInput
+}
+
+export type TripCreateOrConnectWithoutRoutesInput = {
+  where: Prisma.TripWhereUniqueInput
+  create: Prisma.XOR<Prisma.TripCreateWithoutRoutesInput, Prisma.TripUncheckedCreateWithoutRoutesInput>
+}
+
+export type TripUpsertWithoutRoutesInput = {
+  update: Prisma.XOR<Prisma.TripUpdateWithoutRoutesInput, Prisma.TripUncheckedUpdateWithoutRoutesInput>
+  create: Prisma.XOR<Prisma.TripCreateWithoutRoutesInput, Prisma.TripUncheckedCreateWithoutRoutesInput>
+  where?: Prisma.TripWhereInput
+}
+
+export type TripUpdateToOneWithWhereWithoutRoutesInput = {
+  where?: Prisma.TripWhereInput
+  data: Prisma.XOR<Prisma.TripUpdateWithoutRoutesInput, Prisma.TripUncheckedUpdateWithoutRoutesInput>
+}
+
+export type TripUpdateWithoutRoutesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTripsNestedInput
+  sources?: Prisma.TravelSourceUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUpdateManyWithoutTripNestedInput
+}
+
+export type TripUncheckedUpdateWithoutRoutesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUncheckedUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUncheckedUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutTripNestedInput
+}
+
+export type TripCreateWithoutExpensesInput = {
+  id?: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTripsInput
+  sources?: Prisma.TravelSourceCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceCreateNestedManyWithoutTripInput
+}
+
+export type TripUncheckedCreateWithoutExpensesInput = {
+  id?: string
+  userId: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutTripInput
+  experiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutTripInput
+}
+
+export type TripCreateOrConnectWithoutExpensesInput = {
+  where: Prisma.TripWhereUniqueInput
+  create: Prisma.XOR<Prisma.TripCreateWithoutExpensesInput, Prisma.TripUncheckedCreateWithoutExpensesInput>
+}
+
+export type TripUpsertWithoutExpensesInput = {
+  update: Prisma.XOR<Prisma.TripUpdateWithoutExpensesInput, Prisma.TripUncheckedUpdateWithoutExpensesInput>
+  create: Prisma.XOR<Prisma.TripCreateWithoutExpensesInput, Prisma.TripUncheckedCreateWithoutExpensesInput>
+  where?: Prisma.TripWhereInput
+}
+
+export type TripUpdateToOneWithWhereWithoutExpensesInput = {
+  where?: Prisma.TripWhereInput
+  data: Prisma.XOR<Prisma.TripUpdateWithoutExpensesInput, Prisma.TripUncheckedUpdateWithoutExpensesInput>
+}
+
+export type TripUpdateWithoutExpensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTripsNestedInput
+  sources?: Prisma.TravelSourceUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUpdateManyWithoutTripNestedInput
+}
+
+export type TripUncheckedUpdateWithoutExpensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUncheckedUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUncheckedUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUncheckedUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutTripNestedInput
+}
+
+export type TripCreateWithoutExperiencesInput = {
+  id?: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTripsInput
+  sources?: Prisma.TravelSourceCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseCreateNestedManyWithoutTripInput
+}
+
+export type TripUncheckedCreateWithoutExperiencesInput = {
+  id?: string
+  userId: string
+  name: string
+  sourceName?: string | null
+  sourceLatitude?: number | null
+  sourceLongitude?: number | null
+  destinationName?: string | null
+  destinationLatitude?: number | null
+  destinationLongitude?: number | null
+  budgetInr?: number | null
+  travelerType?: $Enums.TravelerType
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutTripInput
+  places?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutTripInput
+  routes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutTripInput
+  expenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutTripInput
+}
+
+export type TripCreateOrConnectWithoutExperiencesInput = {
+  where: Prisma.TripWhereUniqueInput
+  create: Prisma.XOR<Prisma.TripCreateWithoutExperiencesInput, Prisma.TripUncheckedCreateWithoutExperiencesInput>
+}
+
+export type TripUpsertWithoutExperiencesInput = {
+  update: Prisma.XOR<Prisma.TripUpdateWithoutExperiencesInput, Prisma.TripUncheckedUpdateWithoutExperiencesInput>
+  create: Prisma.XOR<Prisma.TripCreateWithoutExperiencesInput, Prisma.TripUncheckedCreateWithoutExperiencesInput>
+  where?: Prisma.TripWhereInput
+}
+
+export type TripUpdateToOneWithWhereWithoutExperiencesInput = {
+  where?: Prisma.TripWhereInput
+  data: Prisma.XOR<Prisma.TripUpdateWithoutExperiencesInput, Prisma.TripUncheckedUpdateWithoutExperiencesInput>
+}
+
+export type TripUpdateWithoutExperiencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTripsNestedInput
+  sources?: Prisma.TravelSourceUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUpdateManyWithoutTripNestedInput
+}
+
+export type TripUncheckedUpdateWithoutExperiencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  sourceLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationLatitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  destinationLongitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  budgetInr?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUncheckedUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUncheckedUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUncheckedUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutTripNestedInput
 }
 
 export type TripCreateManyUserInput = {
@@ -741,6 +1889,16 @@ export type TripCreateManyUserInput = {
   travelerType?: $Enums.TravelerType
   startDate?: Date | string | null
   endDate?: Date | string | null
+  status?: $Enums.TripStatus
+  totalKnownSpendInr?: number
+  totalTransportSpendInr?: number
+  totalOtherSpendInr?: number
+  knownDistanceMeters?: number | null
+  knownDurationMinutes?: number | null
+  sourceCount?: number
+  placeCount?: number
+  routeCount?: number
+  expenseCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -758,8 +1916,23 @@ export type TripUpdateWithoutUserInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUpdateManyWithoutTripNestedInput
 }
 
 export type TripUncheckedUpdateWithoutUserInput = {
@@ -775,8 +1948,23 @@ export type TripUncheckedUpdateWithoutUserInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.TravelSourceUncheckedUpdateManyWithoutTripNestedInput
+  places?: Prisma.TravelPlaceUncheckedUpdateManyWithoutTripNestedInput
+  routes?: Prisma.TravelRouteUncheckedUpdateManyWithoutTripNestedInput
+  expenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutTripNestedInput
+  experiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutTripNestedInput
 }
 
 export type TripUncheckedUpdateManyWithoutUserInput = {
@@ -792,10 +1980,85 @@ export type TripUncheckedUpdateManyWithoutUserInput = {
   travelerType?: Prisma.EnumTravelerTypeFieldUpdateOperationsInput | $Enums.TravelerType
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  totalKnownSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalTransportSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOtherSpendInr?: Prisma.IntFieldUpdateOperationsInput | number
+  knownDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  knownDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceCount?: Prisma.IntFieldUpdateOperationsInput | number
+  placeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  routeCount?: Prisma.IntFieldUpdateOperationsInput | number
+  expenseCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type TripCountOutputType
+ */
+
+export type TripCountOutputType = {
+  sources: number
+  places: number
+  routes: number
+  expenses: number
+  experiences: number
+}
+
+export type TripCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  sources?: boolean | TripCountOutputTypeCountSourcesArgs
+  places?: boolean | TripCountOutputTypeCountPlacesArgs
+  routes?: boolean | TripCountOutputTypeCountRoutesArgs
+  expenses?: boolean | TripCountOutputTypeCountExpensesArgs
+  experiences?: boolean | TripCountOutputTypeCountExperiencesArgs
+}
+
+/**
+ * TripCountOutputType without action
+ */
+export type TripCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TripCountOutputType
+   */
+  select?: Prisma.TripCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TripCountOutputType without action
+ */
+export type TripCountOutputTypeCountSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelSourceWhereInput
+}
+
+/**
+ * TripCountOutputType without action
+ */
+export type TripCountOutputTypeCountPlacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelPlaceWhereInput
+}
+
+/**
+ * TripCountOutputType without action
+ */
+export type TripCountOutputTypeCountRoutesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelRouteWhereInput
+}
+
+/**
+ * TripCountOutputType without action
+ */
+export type TripCountOutputTypeCountExpensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelExpenseWhereInput
+}
+
+/**
+ * TripCountOutputType without action
+ */
+export type TripCountOutputTypeCountExperiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelExperienceWhereInput
+}
 
 
 export type TripSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -812,9 +2075,25 @@ export type TripSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   travelerType?: boolean
   startDate?: boolean
   endDate?: boolean
+  status?: boolean
+  totalKnownSpendInr?: boolean
+  totalTransportSpendInr?: boolean
+  totalOtherSpendInr?: boolean
+  knownDistanceMeters?: boolean
+  knownDurationMinutes?: boolean
+  sourceCount?: boolean
+  placeCount?: boolean
+  routeCount?: boolean
+  expenseCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sources?: boolean | Prisma.Trip$sourcesArgs<ExtArgs>
+  places?: boolean | Prisma.Trip$placesArgs<ExtArgs>
+  routes?: boolean | Prisma.Trip$routesArgs<ExtArgs>
+  expenses?: boolean | Prisma.Trip$expensesArgs<ExtArgs>
+  experiences?: boolean | Prisma.Trip$experiencesArgs<ExtArgs>
+  _count?: boolean | Prisma.TripCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["trip"]>
 
 export type TripSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -831,6 +2110,16 @@ export type TripSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   travelerType?: boolean
   startDate?: boolean
   endDate?: boolean
+  status?: boolean
+  totalKnownSpendInr?: boolean
+  totalTransportSpendInr?: boolean
+  totalOtherSpendInr?: boolean
+  knownDistanceMeters?: boolean
+  knownDurationMinutes?: boolean
+  sourceCount?: boolean
+  placeCount?: boolean
+  routeCount?: boolean
+  expenseCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -850,6 +2139,16 @@ export type TripSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   travelerType?: boolean
   startDate?: boolean
   endDate?: boolean
+  status?: boolean
+  totalKnownSpendInr?: boolean
+  totalTransportSpendInr?: boolean
+  totalOtherSpendInr?: boolean
+  knownDistanceMeters?: boolean
+  knownDurationMinutes?: boolean
+  sourceCount?: boolean
+  placeCount?: boolean
+  routeCount?: boolean
+  expenseCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -869,13 +2168,29 @@ export type TripSelectScalar = {
   travelerType?: boolean
   startDate?: boolean
   endDate?: boolean
+  status?: boolean
+  totalKnownSpendInr?: boolean
+  totalTransportSpendInr?: boolean
+  totalOtherSpendInr?: boolean
+  knownDistanceMeters?: boolean
+  knownDurationMinutes?: boolean
+  sourceCount?: boolean
+  placeCount?: boolean
+  routeCount?: boolean
+  expenseCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TripOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "sourceName" | "sourceLatitude" | "sourceLongitude" | "destinationName" | "destinationLatitude" | "destinationLongitude" | "budgetInr" | "travelerType" | "startDate" | "endDate" | "createdAt" | "updatedAt", ExtArgs["result"]["trip"]>
+export type TripOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "sourceName" | "sourceLatitude" | "sourceLongitude" | "destinationName" | "destinationLatitude" | "destinationLongitude" | "budgetInr" | "travelerType" | "startDate" | "endDate" | "status" | "totalKnownSpendInr" | "totalTransportSpendInr" | "totalOtherSpendInr" | "knownDistanceMeters" | "knownDurationMinutes" | "sourceCount" | "placeCount" | "routeCount" | "expenseCount" | "createdAt" | "updatedAt", ExtArgs["result"]["trip"]>
 export type TripInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sources?: boolean | Prisma.Trip$sourcesArgs<ExtArgs>
+  places?: boolean | Prisma.Trip$placesArgs<ExtArgs>
+  routes?: boolean | Prisma.Trip$routesArgs<ExtArgs>
+  expenses?: boolean | Prisma.Trip$expensesArgs<ExtArgs>
+  experiences?: boolean | Prisma.Trip$experiencesArgs<ExtArgs>
+  _count?: boolean | Prisma.TripCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TripIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -888,6 +2203,11 @@ export type $TripPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Trip"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    sources: Prisma.$TravelSourcePayload<ExtArgs>[]
+    places: Prisma.$TravelPlacePayload<ExtArgs>[]
+    routes: Prisma.$TravelRoutePayload<ExtArgs>[]
+    expenses: Prisma.$TravelExpensePayload<ExtArgs>[]
+    experiences: Prisma.$TravelExperiencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -903,6 +2223,16 @@ export type $TripPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     travelerType: $Enums.TravelerType
     startDate: Date | null
     endDate: Date | null
+    status: $Enums.TripStatus
+    totalKnownSpendInr: number
+    totalTransportSpendInr: number
+    totalOtherSpendInr: number
+    knownDistanceMeters: number | null
+    knownDurationMinutes: number | null
+    sourceCount: number
+    placeCount: number
+    routeCount: number
+    expenseCount: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["trip"]>
@@ -1300,6 +2630,11 @@ readonly fields: TripFieldRefs;
 export interface Prisma__TripClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  sources<T extends Prisma.Trip$sourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$sourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  places<T extends Prisma.Trip$placesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$placesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelPlacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  routes<T extends Prisma.Trip$routesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$routesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelRoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  expenses<T extends Prisma.Trip$expensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  experiences<T extends Prisma.Trip$experiencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$experiencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelExperiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1342,6 +2677,16 @@ export interface TripFieldRefs {
   readonly travelerType: Prisma.FieldRef<"Trip", 'TravelerType'>
   readonly startDate: Prisma.FieldRef<"Trip", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"Trip", 'DateTime'>
+  readonly status: Prisma.FieldRef<"Trip", 'TripStatus'>
+  readonly totalKnownSpendInr: Prisma.FieldRef<"Trip", 'Int'>
+  readonly totalTransportSpendInr: Prisma.FieldRef<"Trip", 'Int'>
+  readonly totalOtherSpendInr: Prisma.FieldRef<"Trip", 'Int'>
+  readonly knownDistanceMeters: Prisma.FieldRef<"Trip", 'Int'>
+  readonly knownDurationMinutes: Prisma.FieldRef<"Trip", 'Int'>
+  readonly sourceCount: Prisma.FieldRef<"Trip", 'Int'>
+  readonly placeCount: Prisma.FieldRef<"Trip", 'Int'>
+  readonly routeCount: Prisma.FieldRef<"Trip", 'Int'>
+  readonly expenseCount: Prisma.FieldRef<"Trip", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Trip", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Trip", 'DateTime'>
 }
@@ -1742,6 +3087,126 @@ export type TripDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Trips to delete.
    */
   limit?: number
+}
+
+/**
+ * Trip.sources
+ */
+export type Trip$sourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelSource
+   */
+  select?: Prisma.TravelSourceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelSource
+   */
+  omit?: Prisma.TravelSourceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelSourceInclude<ExtArgs> | null
+  where?: Prisma.TravelSourceWhereInput
+  orderBy?: Prisma.TravelSourceOrderByWithRelationInput | Prisma.TravelSourceOrderByWithRelationInput[]
+  cursor?: Prisma.TravelSourceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelSourceScalarFieldEnum | Prisma.TravelSourceScalarFieldEnum[]
+}
+
+/**
+ * Trip.places
+ */
+export type Trip$placesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelPlace
+   */
+  select?: Prisma.TravelPlaceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelPlace
+   */
+  omit?: Prisma.TravelPlaceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelPlaceInclude<ExtArgs> | null
+  where?: Prisma.TravelPlaceWhereInput
+  orderBy?: Prisma.TravelPlaceOrderByWithRelationInput | Prisma.TravelPlaceOrderByWithRelationInput[]
+  cursor?: Prisma.TravelPlaceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelPlaceScalarFieldEnum | Prisma.TravelPlaceScalarFieldEnum[]
+}
+
+/**
+ * Trip.routes
+ */
+export type Trip$routesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelRoute
+   */
+  select?: Prisma.TravelRouteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelRoute
+   */
+  omit?: Prisma.TravelRouteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelRouteInclude<ExtArgs> | null
+  where?: Prisma.TravelRouteWhereInput
+  orderBy?: Prisma.TravelRouteOrderByWithRelationInput | Prisma.TravelRouteOrderByWithRelationInput[]
+  cursor?: Prisma.TravelRouteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelRouteScalarFieldEnum | Prisma.TravelRouteScalarFieldEnum[]
+}
+
+/**
+ * Trip.expenses
+ */
+export type Trip$expensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelExpense
+   */
+  select?: Prisma.TravelExpenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelExpense
+   */
+  omit?: Prisma.TravelExpenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelExpenseInclude<ExtArgs> | null
+  where?: Prisma.TravelExpenseWhereInput
+  orderBy?: Prisma.TravelExpenseOrderByWithRelationInput | Prisma.TravelExpenseOrderByWithRelationInput[]
+  cursor?: Prisma.TravelExpenseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelExpenseScalarFieldEnum | Prisma.TravelExpenseScalarFieldEnum[]
+}
+
+/**
+ * Trip.experiences
+ */
+export type Trip$experiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelExperience
+   */
+  select?: Prisma.TravelExperienceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelExperience
+   */
+  omit?: Prisma.TravelExperienceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelExperienceInclude<ExtArgs> | null
+  where?: Prisma.TravelExperienceWhereInput
+  orderBy?: Prisma.TravelExperienceOrderByWithRelationInput | Prisma.TravelExperienceOrderByWithRelationInput[]
+  cursor?: Prisma.TravelExperienceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelExperienceScalarFieldEnum | Prisma.TravelExperienceScalarFieldEnum[]
 }
 
 /**

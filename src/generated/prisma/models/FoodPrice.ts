@@ -906,18 +906,8 @@ export type $FoodPricePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: string
     foodId: string
     restaurantId: string
-    /**
-     * *
-     *    * Canonical stored price.
-     *    * FairTrip stores restaurant food prices in INR.
-     */
     priceInr: number
     currency: $Enums.CurrencyCode
-    /**
-     * *
-     *    * TRUE means this price was estimated,
-     *    * not directly verified.
-     */
     estimated: boolean
     source: $Enums.PriceSource
     sourceUrl: string | null

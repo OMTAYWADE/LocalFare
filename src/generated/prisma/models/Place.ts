@@ -1148,12 +1148,6 @@ export type $PlacePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    /**
-     * *
-     *    * External provider ID.
-     *    * Example:
-     *    * Geoapify place ID
-     */
     externalId: string | null
     name: string
     type: $Enums.PlaceType

@@ -54,7 +54,8 @@ export default function ExploreRecommendationCard({
             className="
                 group
                 overflow-hidden
-                rounded-[26px]
+                h-full
+                rounded-[22px]
                 border
                 border-[#123c35]/8
                 bg-white
@@ -62,6 +63,7 @@ export default function ExploreRecommendationCard({
                 transition-all
                 duration-300
                 hover:-translate-y-1
+                hover:border-[#123c35]/15
                 hover:shadow-[0_22px_55px_rgba(18,60,53,0.11)]
             "
         >
@@ -72,10 +74,11 @@ export default function ExploreRecommendationCard({
             <div
                 className="
                     relative
-                    h-[180px]
+                    h-[170px]
                     overflow-hidden
                     bg-[#06483f]
-                    sm:h-[200px]
+                    sm:h-[195px]
+                    lg:h-[205px]
                 "
             >
                 {place.imageUrl ? (
@@ -253,7 +256,7 @@ export default function ExploreRecommendationCard({
                 CONTENT
             ====================================================== */}
 
-            <div className="p-4 sm:p-5">
+            <div className="flex flex-col p-4 sm:p-5">
                 {/* Name */}
 
                 <div className="flex items-start justify-between gap-3">
@@ -263,7 +266,7 @@ export default function ExploreRecommendationCard({
                             max-w-full
                             flex-1
                             break-words
-                            text-[17px]
+                            text-[16px]
                             font-black
                             leading-[1.15]
                             tracking-[-0.04em]
@@ -301,7 +304,8 @@ export default function ExploreRecommendationCard({
                         flex
                         flex-wrap
                         items-center
-                        gap-2
+                        gap-1.5
+                        sm:gap-2
                     "
                 >
                     {/* Travel time */}
@@ -426,7 +430,7 @@ export default function ExploreRecommendationCard({
                         group/button
                         mt-4
                         flex
-                        min-h-11
+                        min-h-12
                         w-full
                         items-center
                         justify-center

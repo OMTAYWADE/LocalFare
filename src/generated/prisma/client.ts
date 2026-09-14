@@ -101,3 +101,28 @@ export type SearchHistory = Prisma.SearchHistoryModel
  * 
  */
 export type Trip = Prisma.TripModel
+/**
+ * Model TravelSource
+ * 
+ */
+export type TravelSource = Prisma.TravelSourceModel
+/**
+ * Model TravelPlace
+ * 
+ */
+export type TravelPlace = Prisma.TravelPlaceModel
+/**
+ * Model TravelRoute
+ * 
+ */
+export type TravelRoute = Prisma.TravelRouteModel
+/**
+ * Model TravelExpense
+ * 
+ */
+export type TravelExpense = Prisma.TravelExpenseModel
+/**
+ * Model TravelExperience
+ * 
+ */
+export type TravelExperience = Prisma.TravelExperienceModel

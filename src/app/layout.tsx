@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 
+import Providers from "./providers";
+
 import {
     CurrencyProvider,
 } from "@/features/currency/components/CurrencyProvider";
@@ -20,9 +22,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <CurrencyProvider>
-                    {children}
-                </CurrencyProvider>
+                <Providers>
+                    <CurrencyProvider>
+                        {children}
+                    </CurrencyProvider>
+                </Providers>
             </body>
         </html>
     );

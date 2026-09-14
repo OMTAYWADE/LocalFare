@@ -1121,12 +1121,6 @@ export type $FoodPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     imageUrl: string | null
     ingredients: string[]
     tags: string[]
-    /**
-     * *
-     *    * General/reference price.
-     *    * This should NOT be treated as an exact restaurant price
-     *    * unless there is a real source.
-     */
     priceInr: number | null
     priceRange: $Enums.PriceRange | null
     priceEstimated: boolean

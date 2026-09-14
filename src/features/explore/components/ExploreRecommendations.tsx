@@ -115,7 +115,7 @@ export default function ExploreRecommendations({
     }, [loading, places.length, filter]);
 
     return (
-        <section ref={resultsRef} className="mt-8 sm:mt-12">
+        <section ref={resultsRef} className="mt-8 sm:mt-12 lg:mt-14">
             {/* =====================================================
                 HEADER
             ====================================================== */}
@@ -124,10 +124,11 @@ export default function ExploreRecommendations({
                 className="
                     flex
                     flex-col
-                    gap-4
+                    gap-3
                     sm:flex-row
                     sm:items-end
                     sm:justify-between
+                    sm:gap-5
                 "
             >
                 <div>
@@ -182,11 +183,13 @@ export default function ExploreRecommendations({
                         w-full
                         gap-2
                         overflow-x-auto
+                        rounded-full
                         overscroll-contain
                         pb-2
                         -mx-1
                         px-1
                         sm:w-auto
+                        sm:justify-end
                     "
                 >
                     <FilterButton
@@ -389,9 +392,9 @@ export default function ExploreRecommendations({
                             mt-6
                             grid
                             grid-cols-1
-                            gap-4
+                            gap-3.5
                             sm:grid-cols-2
-                            lg:grid-cols-3
+                            xl:grid-cols-3
                         "
                     >
                         {sortedPlaces.map(
@@ -476,9 +479,9 @@ function LoadingGrid() {
                 mt-6
                 grid
                 grid-cols-1
-                gap-4
+                gap-3.5
                 sm:grid-cols-2
-                lg:grid-cols-3
+                xl:grid-cols-3
             "
         >
             {Array.from({
@@ -592,12 +595,13 @@ function EmptyState() {
         <div
             className="
                 mt-6
-                rounded-[26px]
+                rounded-[22px]
                 border
                 border-[#123c35]/10
                 bg-white
-                p-8
+                p-6
                 text-center
+                sm:p-8
                 shadow-[0_10px_30px_rgba(18,60,53,0.04)]
             "
         >

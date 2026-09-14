@@ -392,6 +392,8 @@ export default function ExploreContent() {
                 min-h-screen
                 overflow-hidden
                 bg-[#f7f3ea]
+                selection:bg-[#e8f58d]
+                selection:text-[#123c35]
             "
         >
             {/* BACKGROUND */}
@@ -402,8 +404,9 @@ export default function ExploreContent() {
                     absolute
                     inset-x-0
                     top-0
-                    h-[460px]
+                    h-[520px]
                     overflow-hidden
+                    sm:h-[580px]
                 "
             >
                 <div
@@ -452,13 +455,15 @@ export default function ExploreContent() {
                     relative
                     mx-auto
                     w-full
-                    max-w-[1280px]
-                    px-4
-                    py-5
-                    sm:px-6
-                    sm:py-8
+                    max-w-[1320px]
+                    px-3.5
+                    py-4
+                    sm:px-5
+                    sm:py-7
+                    md:px-7
                     lg:px-8
-                    lg:py-10
+                    lg:py-9
+                    xl:px-10
                 "
             >
                 <ExploreHeader />
@@ -467,7 +472,7 @@ export default function ExploreContent() {
                     TRAVELER
                 ================================================= */}
 
-                <section data-explore-reveal className="mt-5 sm:mt-6">
+                <section data-explore-reveal className="mt-4 sm:mt-6">
                     {showTravelerSelector ? (
                         <TravelerTypeSelector
                             value={travelerType}
@@ -544,7 +549,7 @@ export default function ExploreContent() {
                     FILTERS
                 ================================================= */}
 
-                <section data-explore-reveal className="mt-5 sm:mt-6">
+                <section data-explore-reveal className="mt-5 sm:mt-7">
                     <div
                         className="
                             rounded-[28px]
@@ -790,8 +795,8 @@ export default function ExploreContent() {
                     LOCATION
                 ================================================= */}
 
-                <section data-explore-reveal className="mt-6 sm:mt-9">
-                    <div className="mb-4">
+                <section data-explore-reveal className="mt-7 sm:mt-10 lg:mt-12">
+                    <div className="mb-4 px-1 sm:mb-5">
                         <p
                             className="
                                 text-[9px]
@@ -835,7 +840,7 @@ export default function ExploreContent() {
                     <div
                         className="
                             overflow-hidden
-                            rounded-[30px]
+                            rounded-[24px]
                             bg-[#06483f]
                             shadow-[0_24px_70px_rgba(6,72,63,0.16)]
                         "
@@ -843,12 +848,12 @@ export default function ExploreContent() {
                         <div
                             className="
                                 grid
-                                lg:grid-cols-[390px_minmax(0,1fr)]
+                                lg:grid-cols-[minmax(340px,390px)_minmax(0,1fr)]
                             "
                         >
                             {/* LOCATION PANEL */}
 
-                            <div className="relative p-5 sm:p-6 lg:p-7">
+                            <div className="relative p-4 sm:p-6 lg:p-7 xl:p-8">
                                 <div
                                     className="
                                         absolute
@@ -972,9 +977,10 @@ export default function ExploreContent() {
                                 data-explore-map
                                 className="
                                     relative
-                                    h-[320px]
+                                    h-[260px]
                                     bg-[#d7e6df]
-                                    sm:h-[400px]
+                                    sm:h-[340px]
+                                    md:h-[400px]
                                     lg:h-[440px]
                                 "
                             >
@@ -987,9 +993,11 @@ export default function ExploreContent() {
                                     className="
                                         pointer-events-none
                                         absolute
-                                        left-4
-                                        top-4
+                                        left-3
+                                        top-3
                                         rounded-full
+                                        sm:left-4
+                                        sm:top-4
                                         bg-white/90
                                         px-3
                                         py-2
@@ -1011,7 +1019,7 @@ export default function ExploreContent() {
                     RESULTS
                 ================================================= */}
 
-                <div data-explore-reveal>
+                <div data-explore-reveal className="mt-1 sm:mt-2">
                     <ExploreRecommendations
                     places={places}
                     loading={loading}

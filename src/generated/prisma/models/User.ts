@@ -28,6 +28,7 @@ export type UserMinAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
+  passwordHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +37,7 @@ export type UserMaxAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
+  passwordHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,7 @@ export type UserCountAggregateOutputType = {
   id: number
   name: number
   email: number
+  passwordHash: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,6 +57,7 @@ export type UserMinAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  passwordHash?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +66,7 @@ export type UserMaxAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  passwordHash?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +75,7 @@ export type UserCountAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  passwordHash?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +157,7 @@ export type UserGroupByOutputType = {
   id: string
   name: string | null
   email: string | null
+  passwordHash: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -180,6 +187,7 @@ export type UserWhereInput = {
   id?: Prisma.StringFilter<"User"> | string
   name?: Prisma.StringNullableFilter<"User"> | string | null
   email?: Prisma.StringNullableFilter<"User"> | string | null
+  passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   profile?: Prisma.XOR<Prisma.TravelerProfileNullableScalarRelationFilter, Prisma.TravelerProfileWhereInput> | null
@@ -189,12 +197,18 @@ export type UserWhereInput = {
   searchHistory?: Prisma.SearchHistoryListRelationFilter
   foodScans?: Prisma.FoodScanListRelationFilter
   trips?: Prisma.TripListRelationFilter
+  travelSources?: Prisma.TravelSourceListRelationFilter
+  travelPlaces?: Prisma.TravelPlaceListRelationFilter
+  travelRoutes?: Prisma.TravelRouteListRelationFilter
+  travelExpenses?: Prisma.TravelExpenseListRelationFilter
+  travelExperiences?: Prisma.TravelExperienceListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   profile?: Prisma.TravelerProfileOrderByWithRelationInput
@@ -204,6 +218,11 @@ export type UserOrderByWithRelationInput = {
   searchHistory?: Prisma.SearchHistoryOrderByRelationAggregateInput
   foodScans?: Prisma.FoodScanOrderByRelationAggregateInput
   trips?: Prisma.TripOrderByRelationAggregateInput
+  travelSources?: Prisma.TravelSourceOrderByRelationAggregateInput
+  travelPlaces?: Prisma.TravelPlaceOrderByRelationAggregateInput
+  travelRoutes?: Prisma.TravelRouteOrderByRelationAggregateInput
+  travelExpenses?: Prisma.TravelExpenseOrderByRelationAggregateInput
+  travelExperiences?: Prisma.TravelExperienceOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -213,6 +232,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   name?: Prisma.StringNullableFilter<"User"> | string | null
+  passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   profile?: Prisma.XOR<Prisma.TravelerProfileNullableScalarRelationFilter, Prisma.TravelerProfileWhereInput> | null
@@ -222,12 +242,18 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   searchHistory?: Prisma.SearchHistoryListRelationFilter
   foodScans?: Prisma.FoodScanListRelationFilter
   trips?: Prisma.TripListRelationFilter
+  travelSources?: Prisma.TravelSourceListRelationFilter
+  travelPlaces?: Prisma.TravelPlaceListRelationFilter
+  travelRoutes?: Prisma.TravelRouteListRelationFilter
+  travelExpenses?: Prisma.TravelExpenseListRelationFilter
+  travelExperiences?: Prisma.TravelExperienceListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -242,6 +268,7 @@ export type UserScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   name?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -250,6 +277,7 @@ export type UserCreateInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -259,12 +287,18 @@ export type UserCreateInput = {
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -274,12 +308,18 @@ export type UserUncheckedCreateInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -289,12 +329,18 @@ export type UserUpdateInput = {
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -304,12 +350,18 @@ export type UserUncheckedUpdateInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -318,6 +370,7 @@ export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -326,6 +379,7 @@ export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -334,6 +388,7 @@ export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -342,6 +397,7 @@ export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -350,6 +406,7 @@ export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -478,10 +535,81 @@ export type UserUpdateOneRequiredWithoutTripsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTripsInput, Prisma.UserUpdateWithoutTripsInput>, Prisma.UserUncheckedUpdateWithoutTripsInput>
 }
 
+export type UserCreateNestedOneWithoutTravelSourcesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelSourcesInput, Prisma.UserUncheckedCreateWithoutTravelSourcesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelSourcesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTravelSourcesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelSourcesInput, Prisma.UserUncheckedCreateWithoutTravelSourcesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelSourcesInput
+  upsert?: Prisma.UserUpsertWithoutTravelSourcesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelSourcesInput, Prisma.UserUpdateWithoutTravelSourcesInput>, Prisma.UserUncheckedUpdateWithoutTravelSourcesInput>
+}
+
+export type UserCreateNestedOneWithoutTravelPlacesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelPlacesInput, Prisma.UserUncheckedCreateWithoutTravelPlacesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelPlacesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTravelPlacesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelPlacesInput, Prisma.UserUncheckedCreateWithoutTravelPlacesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelPlacesInput
+  upsert?: Prisma.UserUpsertWithoutTravelPlacesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelPlacesInput, Prisma.UserUpdateWithoutTravelPlacesInput>, Prisma.UserUncheckedUpdateWithoutTravelPlacesInput>
+}
+
+export type UserCreateNestedOneWithoutTravelRoutesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelRoutesInput, Prisma.UserUncheckedCreateWithoutTravelRoutesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelRoutesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTravelRoutesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelRoutesInput, Prisma.UserUncheckedCreateWithoutTravelRoutesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelRoutesInput
+  upsert?: Prisma.UserUpsertWithoutTravelRoutesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelRoutesInput, Prisma.UserUpdateWithoutTravelRoutesInput>, Prisma.UserUncheckedUpdateWithoutTravelRoutesInput>
+}
+
+export type UserCreateNestedOneWithoutTravelExpensesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelExpensesInput, Prisma.UserUncheckedCreateWithoutTravelExpensesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelExpensesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTravelExpensesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelExpensesInput, Prisma.UserUncheckedCreateWithoutTravelExpensesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelExpensesInput
+  upsert?: Prisma.UserUpsertWithoutTravelExpensesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelExpensesInput, Prisma.UserUpdateWithoutTravelExpensesInput>, Prisma.UserUncheckedUpdateWithoutTravelExpensesInput>
+}
+
+export type UserCreateNestedOneWithoutTravelExperiencesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelExperiencesInput, Prisma.UserUncheckedCreateWithoutTravelExperiencesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelExperiencesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTravelExperiencesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTravelExperiencesInput, Prisma.UserUncheckedCreateWithoutTravelExperiencesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTravelExperiencesInput
+  upsert?: Prisma.UserUpsertWithoutTravelExperiencesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTravelExperiencesInput, Prisma.UserUpdateWithoutTravelExperiencesInput>, Prisma.UserUncheckedUpdateWithoutTravelExperiencesInput>
+}
+
 export type UserCreateWithoutProfileInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   foodPreferences?: Prisma.UserFoodPreferenceCreateNestedManyWithoutUserInput
@@ -490,12 +618,18 @@ export type UserCreateWithoutProfileInput = {
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   foodPreferences?: Prisma.UserFoodPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -504,6 +638,11 @@ export type UserUncheckedCreateWithoutProfileInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -526,6 +665,7 @@ export type UserUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   foodPreferences?: Prisma.UserFoodPreferenceUpdateManyWithoutUserNestedInput
@@ -534,12 +674,18 @@ export type UserUpdateWithoutProfileInput = {
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   foodPreferences?: Prisma.UserFoodPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -548,12 +694,18 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFoodPreferencesInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -562,12 +714,18 @@ export type UserCreateWithoutFoodPreferencesInput = {
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFoodPreferencesInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -576,6 +734,11 @@ export type UserUncheckedCreateWithoutFoodPreferencesInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFoodPreferencesInput = {
@@ -598,6 +761,7 @@ export type UserUpdateWithoutFoodPreferencesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -606,12 +770,18 @@ export type UserUpdateWithoutFoodPreferencesInput = {
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFoodPreferencesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -620,12 +790,18 @@ export type UserUncheckedUpdateWithoutFoodPreferencesInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFoodScansInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -634,12 +810,18 @@ export type UserCreateWithoutFoodScansInput = {
   visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFoodScansInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -648,6 +830,11 @@ export type UserUncheckedCreateWithoutFoodScansInput = {
   visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFoodScansInput = {
@@ -670,6 +857,7 @@ export type UserUpdateWithoutFoodScansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -678,12 +866,18 @@ export type UserUpdateWithoutFoodScansInput = {
   visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFoodScansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -692,12 +886,18 @@ export type UserUncheckedUpdateWithoutFoodScansInput = {
   visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSavedPlacesInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -706,12 +906,18 @@ export type UserCreateWithoutSavedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSavedPlacesInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -720,6 +926,11 @@ export type UserUncheckedCreateWithoutSavedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSavedPlacesInput = {
@@ -742,6 +953,7 @@ export type UserUpdateWithoutSavedPlacesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -750,12 +962,18 @@ export type UserUpdateWithoutSavedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSavedPlacesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -764,12 +982,18 @@ export type UserUncheckedUpdateWithoutSavedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutVisitedPlacesInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -778,12 +1002,18 @@ export type UserCreateWithoutVisitedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutVisitedPlacesInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -792,6 +1022,11 @@ export type UserUncheckedCreateWithoutVisitedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutVisitedPlacesInput = {
@@ -814,6 +1049,7 @@ export type UserUpdateWithoutVisitedPlacesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -822,12 +1058,18 @@ export type UserUpdateWithoutVisitedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVisitedPlacesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -836,12 +1078,18 @@ export type UserUncheckedUpdateWithoutVisitedPlacesInput = {
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSearchHistoryInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -850,12 +1098,18 @@ export type UserCreateWithoutSearchHistoryInput = {
   visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
   trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSearchHistoryInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -864,6 +1118,11 @@ export type UserUncheckedCreateWithoutSearchHistoryInput = {
   visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSearchHistoryInput = {
@@ -886,6 +1145,7 @@ export type UserUpdateWithoutSearchHistoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -894,12 +1154,18 @@ export type UserUpdateWithoutSearchHistoryInput = {
   visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSearchHistoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -908,12 +1174,18 @@ export type UserUncheckedUpdateWithoutSearchHistoryInput = {
   visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTripsInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
@@ -922,12 +1194,18 @@ export type UserCreateWithoutTripsInput = {
   visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
   searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTripsInput = {
   id?: string
   name?: string | null
   email?: string | null
+  passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
@@ -936,6 +1214,11 @@ export type UserUncheckedCreateWithoutTripsInput = {
   visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
   searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTripsInput = {
@@ -958,6 +1241,7 @@ export type UserUpdateWithoutTripsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
@@ -966,12 +1250,18 @@ export type UserUpdateWithoutTripsInput = {
   visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
   searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTripsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -980,6 +1270,491 @@ export type UserUncheckedUpdateWithoutTripsInput = {
   visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
   searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTravelSourcesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTravelSourcesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTravelSourcesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelSourcesInput, Prisma.UserUncheckedCreateWithoutTravelSourcesInput>
+}
+
+export type UserUpsertWithoutTravelSourcesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTravelSourcesInput, Prisma.UserUncheckedUpdateWithoutTravelSourcesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelSourcesInput, Prisma.UserUncheckedCreateWithoutTravelSourcesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTravelSourcesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTravelSourcesInput, Prisma.UserUncheckedUpdateWithoutTravelSourcesInput>
+}
+
+export type UserUpdateWithoutTravelSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTravelSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTravelPlacesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTravelPlacesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTravelPlacesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelPlacesInput, Prisma.UserUncheckedCreateWithoutTravelPlacesInput>
+}
+
+export type UserUpsertWithoutTravelPlacesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTravelPlacesInput, Prisma.UserUncheckedUpdateWithoutTravelPlacesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelPlacesInput, Prisma.UserUncheckedCreateWithoutTravelPlacesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTravelPlacesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTravelPlacesInput, Prisma.UserUncheckedUpdateWithoutTravelPlacesInput>
+}
+
+export type UserUpdateWithoutTravelPlacesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTravelPlacesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTravelRoutesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTravelRoutesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTravelRoutesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelRoutesInput, Prisma.UserUncheckedCreateWithoutTravelRoutesInput>
+}
+
+export type UserUpsertWithoutTravelRoutesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTravelRoutesInput, Prisma.UserUncheckedUpdateWithoutTravelRoutesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelRoutesInput, Prisma.UserUncheckedCreateWithoutTravelRoutesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTravelRoutesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTravelRoutesInput, Prisma.UserUncheckedUpdateWithoutTravelRoutesInput>
+}
+
+export type UserUpdateWithoutTravelRoutesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTravelRoutesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTravelExpensesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTravelExpensesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTravelExpensesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelExpensesInput, Prisma.UserUncheckedCreateWithoutTravelExpensesInput>
+}
+
+export type UserUpsertWithoutTravelExpensesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTravelExpensesInput, Prisma.UserUncheckedUpdateWithoutTravelExpensesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelExpensesInput, Prisma.UserUncheckedCreateWithoutTravelExpensesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTravelExpensesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTravelExpensesInput, Prisma.UserUncheckedUpdateWithoutTravelExpensesInput>
+}
+
+export type UserUpdateWithoutTravelExpensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTravelExpensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExperiences?: Prisma.TravelExperienceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTravelExperiencesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTravelExperiencesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile?: Prisma.TravelerProfileUncheckedCreateNestedOneWithoutUserInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedCreateNestedManyWithoutUserInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedCreateNestedManyWithoutUserInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedCreateNestedManyWithoutUserInput
+  searchHistory?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  foodScans?: Prisma.FoodScanUncheckedCreateNestedManyWithoutUserInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutUserInput
+  travelSources?: Prisma.TravelSourceUncheckedCreateNestedManyWithoutUserInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedCreateNestedManyWithoutUserInput
+  travelRoutes?: Prisma.TravelRouteUncheckedCreateNestedManyWithoutUserInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTravelExperiencesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelExperiencesInput, Prisma.UserUncheckedCreateWithoutTravelExperiencesInput>
+}
+
+export type UserUpsertWithoutTravelExperiencesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTravelExperiencesInput, Prisma.UserUncheckedUpdateWithoutTravelExperiencesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTravelExperiencesInput, Prisma.UserUncheckedCreateWithoutTravelExperiencesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTravelExperiencesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTravelExperiencesInput, Prisma.UserUncheckedUpdateWithoutTravelExperiencesInput>
+}
+
+export type UserUpdateWithoutTravelExperiencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTravelExperiencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.TravelerProfileUncheckedUpdateOneWithoutUserNestedInput
+  foodPreferences?: Prisma.UserFoodPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  savedPlaces?: Prisma.SavedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  visitedPlaces?: Prisma.VisitedPlaceUncheckedUpdateManyWithoutUserNestedInput
+  searchHistory?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  foodScans?: Prisma.FoodScanUncheckedUpdateManyWithoutUserNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutUserNestedInput
+  travelSources?: Prisma.TravelSourceUncheckedUpdateManyWithoutUserNestedInput
+  travelPlaces?: Prisma.TravelPlaceUncheckedUpdateManyWithoutUserNestedInput
+  travelRoutes?: Prisma.TravelRouteUncheckedUpdateManyWithoutUserNestedInput
+  travelExpenses?: Prisma.TravelExpenseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -994,6 +1769,11 @@ export type UserCountOutputType = {
   searchHistory: number
   foodScans: number
   trips: number
+  travelSources: number
+  travelPlaces: number
+  travelRoutes: number
+  travelExpenses: number
+  travelExperiences: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1003,6 +1783,11 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   searchHistory?: boolean | UserCountOutputTypeCountSearchHistoryArgs
   foodScans?: boolean | UserCountOutputTypeCountFoodScansArgs
   trips?: boolean | UserCountOutputTypeCountTripsArgs
+  travelSources?: boolean | UserCountOutputTypeCountTravelSourcesArgs
+  travelPlaces?: boolean | UserCountOutputTypeCountTravelPlacesArgs
+  travelRoutes?: boolean | UserCountOutputTypeCountTravelRoutesArgs
+  travelExpenses?: boolean | UserCountOutputTypeCountTravelExpensesArgs
+  travelExperiences?: boolean | UserCountOutputTypeCountTravelExperiencesArgs
 }
 
 /**
@@ -1057,11 +1842,47 @@ export type UserCountOutputTypeCountTripsArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.TripWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTravelSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelSourceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTravelPlacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelPlaceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTravelRoutesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelRouteWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTravelExpensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelExpenseWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTravelExperiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TravelExperienceWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   email?: boolean
+  passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   profile?: boolean | Prisma.User$profileArgs<ExtArgs>
@@ -1071,6 +1892,11 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   searchHistory?: boolean | Prisma.User$searchHistoryArgs<ExtArgs>
   foodScans?: boolean | Prisma.User$foodScansArgs<ExtArgs>
   trips?: boolean | Prisma.User$tripsArgs<ExtArgs>
+  travelSources?: boolean | Prisma.User$travelSourcesArgs<ExtArgs>
+  travelPlaces?: boolean | Prisma.User$travelPlacesArgs<ExtArgs>
+  travelRoutes?: boolean | Prisma.User$travelRoutesArgs<ExtArgs>
+  travelExpenses?: boolean | Prisma.User$travelExpensesArgs<ExtArgs>
+  travelExperiences?: boolean | Prisma.User$travelExperiencesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1078,6 +1904,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   email?: boolean
+  passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1086,6 +1913,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   email?: boolean
+  passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1094,11 +1922,12 @@ export type UserSelectScalar = {
   id?: boolean
   name?: boolean
   email?: boolean
+  passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "passwordHash" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.User$profileArgs<ExtArgs>
   foodPreferences?: boolean | Prisma.User$foodPreferencesArgs<ExtArgs>
@@ -1107,6 +1936,11 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   searchHistory?: boolean | Prisma.User$searchHistoryArgs<ExtArgs>
   foodScans?: boolean | Prisma.User$foodScansArgs<ExtArgs>
   trips?: boolean | Prisma.User$tripsArgs<ExtArgs>
+  travelSources?: boolean | Prisma.User$travelSourcesArgs<ExtArgs>
+  travelPlaces?: boolean | Prisma.User$travelPlacesArgs<ExtArgs>
+  travelRoutes?: boolean | Prisma.User$travelRoutesArgs<ExtArgs>
+  travelExpenses?: boolean | Prisma.User$travelExpensesArgs<ExtArgs>
+  travelExperiences?: boolean | Prisma.User$travelExperiencesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1122,11 +1956,17 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     searchHistory: Prisma.$SearchHistoryPayload<ExtArgs>[]
     foodScans: Prisma.$FoodScanPayload<ExtArgs>[]
     trips: Prisma.$TripPayload<ExtArgs>[]
+    travelSources: Prisma.$TravelSourcePayload<ExtArgs>[]
+    travelPlaces: Prisma.$TravelPlacePayload<ExtArgs>[]
+    travelRoutes: Prisma.$TravelRoutePayload<ExtArgs>[]
+    travelExpenses: Prisma.$TravelExpensePayload<ExtArgs>[]
+    travelExperiences: Prisma.$TravelExperiencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string | null
     email: string | null
+    passwordHash: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1530,6 +2370,11 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   searchHistory<T extends Prisma.User$searchHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$searchHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SearchHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   foodScans<T extends Prisma.User$foodScansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$foodScansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FoodScanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   trips<T extends Prisma.User$tripsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tripsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  travelSources<T extends Prisma.User$travelSourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$travelSourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  travelPlaces<T extends Prisma.User$travelPlacesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$travelPlacesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelPlacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  travelRoutes<T extends Prisma.User$travelRoutesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$travelRoutesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelRoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  travelExpenses<T extends Prisma.User$travelExpensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$travelExpensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  travelExperiences<T extends Prisma.User$travelExperiencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$travelExperiencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TravelExperiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1562,6 +2407,7 @@ export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -2117,6 +2963,126 @@ export type User$tripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.TripScalarFieldEnum | Prisma.TripScalarFieldEnum[]
+}
+
+/**
+ * User.travelSources
+ */
+export type User$travelSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelSource
+   */
+  select?: Prisma.TravelSourceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelSource
+   */
+  omit?: Prisma.TravelSourceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelSourceInclude<ExtArgs> | null
+  where?: Prisma.TravelSourceWhereInput
+  orderBy?: Prisma.TravelSourceOrderByWithRelationInput | Prisma.TravelSourceOrderByWithRelationInput[]
+  cursor?: Prisma.TravelSourceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelSourceScalarFieldEnum | Prisma.TravelSourceScalarFieldEnum[]
+}
+
+/**
+ * User.travelPlaces
+ */
+export type User$travelPlacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelPlace
+   */
+  select?: Prisma.TravelPlaceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelPlace
+   */
+  omit?: Prisma.TravelPlaceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelPlaceInclude<ExtArgs> | null
+  where?: Prisma.TravelPlaceWhereInput
+  orderBy?: Prisma.TravelPlaceOrderByWithRelationInput | Prisma.TravelPlaceOrderByWithRelationInput[]
+  cursor?: Prisma.TravelPlaceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelPlaceScalarFieldEnum | Prisma.TravelPlaceScalarFieldEnum[]
+}
+
+/**
+ * User.travelRoutes
+ */
+export type User$travelRoutesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelRoute
+   */
+  select?: Prisma.TravelRouteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelRoute
+   */
+  omit?: Prisma.TravelRouteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelRouteInclude<ExtArgs> | null
+  where?: Prisma.TravelRouteWhereInput
+  orderBy?: Prisma.TravelRouteOrderByWithRelationInput | Prisma.TravelRouteOrderByWithRelationInput[]
+  cursor?: Prisma.TravelRouteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelRouteScalarFieldEnum | Prisma.TravelRouteScalarFieldEnum[]
+}
+
+/**
+ * User.travelExpenses
+ */
+export type User$travelExpensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelExpense
+   */
+  select?: Prisma.TravelExpenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelExpense
+   */
+  omit?: Prisma.TravelExpenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelExpenseInclude<ExtArgs> | null
+  where?: Prisma.TravelExpenseWhereInput
+  orderBy?: Prisma.TravelExpenseOrderByWithRelationInput | Prisma.TravelExpenseOrderByWithRelationInput[]
+  cursor?: Prisma.TravelExpenseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelExpenseScalarFieldEnum | Prisma.TravelExpenseScalarFieldEnum[]
+}
+
+/**
+ * User.travelExperiences
+ */
+export type User$travelExperiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TravelExperience
+   */
+  select?: Prisma.TravelExperienceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TravelExperience
+   */
+  omit?: Prisma.TravelExperienceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TravelExperienceInclude<ExtArgs> | null
+  where?: Prisma.TravelExperienceWhereInput
+  orderBy?: Prisma.TravelExperienceOrderByWithRelationInput | Prisma.TravelExperienceOrderByWithRelationInput[]
+  cursor?: Prisma.TravelExperienceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TravelExperienceScalarFieldEnum | Prisma.TravelExperienceScalarFieldEnum[]
 }
 
 /**

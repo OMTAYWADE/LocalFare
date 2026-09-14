@@ -62,7 +62,12 @@ export const ModelName = {
   SavedPlace: 'SavedPlace',
   VisitedPlace: 'VisitedPlace',
   SearchHistory: 'SearchHistory',
-  Trip: 'Trip'
+  Trip: 'Trip',
+  TravelSource: 'TravelSource',
+  TravelPlace: 'TravelPlace',
+  TravelRoute: 'TravelRoute',
+  TravelExpense: 'TravelExpense',
+  TravelExperience: 'TravelExperience'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -85,6 +90,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
+  passwordHash: 'passwordHash',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -254,11 +260,132 @@ export const TripScalarFieldEnum = {
   travelerType: 'travelerType',
   startDate: 'startDate',
   endDate: 'endDate',
+  status: 'status',
+  totalKnownSpendInr: 'totalKnownSpendInr',
+  totalTransportSpendInr: 'totalTransportSpendInr',
+  totalOtherSpendInr: 'totalOtherSpendInr',
+  knownDistanceMeters: 'knownDistanceMeters',
+  knownDurationMinutes: 'knownDurationMinutes',
+  sourceCount: 'sourceCount',
+  placeCount: 'placeCount',
+  routeCount: 'routeCount',
+  expenseCount: 'expenseCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type TripScalarFieldEnum = (typeof TripScalarFieldEnum)[keyof typeof TripScalarFieldEnum]
+
+
+export const TravelSourceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tripId: 'tripId',
+  platform: 'platform',
+  sourceUrl: 'sourceUrl',
+  sourceId: 'sourceId',
+  sourceType: 'sourceType',
+  title: 'title',
+  channelName: 'channelName',
+  publishedAt: 'publishedAt',
+  thumbnailUrl: 'thumbnailUrl',
+  contentId: 'contentId',
+  transcriptProvided: 'transcriptProvided',
+  processingStatus: 'processingStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TravelSourceScalarFieldEnum = (typeof TravelSourceScalarFieldEnum)[keyof typeof TravelSourceScalarFieldEnum]
+
+
+export const TravelPlaceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tripId: 'tripId',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  country: 'country',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  sequence: 'sequence',
+  confidence: 'confidence',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TravelPlaceScalarFieldEnum = (typeof TravelPlaceScalarFieldEnum)[keyof typeof TravelPlaceScalarFieldEnum]
+
+
+export const TravelRouteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tripId: 'tripId',
+  sequence: 'sequence',
+  fromName: 'fromName',
+  toName: 'toName',
+  fromCity: 'fromCity',
+  toCity: 'toCity',
+  transportMode: 'transportMode',
+  distanceMeters: 'distanceMeters',
+  durationMinutes: 'durationMinutes',
+  amountPaidInr: 'amountPaidInr',
+  fareSource: 'fareSource',
+  experience: 'experience',
+  evidence: 'evidence',
+  confidence: 'confidence',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TravelRouteScalarFieldEnum = (typeof TravelRouteScalarFieldEnum)[keyof typeof TravelRouteScalarFieldEnum]
+
+
+export const TravelExpenseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tripId: 'tripId',
+  sequence: 'sequence',
+  category: 'category',
+  description: 'description',
+  amountInr: 'amountInr',
+  placeName: 'placeName',
+  evidence: 'evidence',
+  confidence: 'confidence',
+  createdAt: 'createdAt'
+} as const
+
+export type TravelExpenseScalarFieldEnum = (typeof TravelExpenseScalarFieldEnum)[keyof typeof TravelExpenseScalarFieldEnum]
+
+
+export const TravelExperienceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tripId: 'tripId',
+  sourceId: 'sourceId',
+  sequence: 'sequence',
+  title: 'title',
+  summary: 'summary',
+  experienceType: 'experienceType',
+  category: 'category',
+  subcategory: 'subcategory',
+  placeName: 'placeName',
+  city: 'city',
+  reportedAmountInr: 'reportedAmountInr',
+  expectedAmountInr: 'expectedAmountInr',
+  transportMode: 'transportMode',
+  problem: 'problem',
+  advice: 'advice',
+  sourceQuote: 'sourceQuote',
+  confidence: 'confidence',
+  visibility: 'visibility',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TravelExperienceScalarFieldEnum = (typeof TravelExperienceScalarFieldEnum)[keyof typeof TravelExperienceScalarFieldEnum]
 
 
 export const SortOrder = {

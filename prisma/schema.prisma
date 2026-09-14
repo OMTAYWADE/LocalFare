@@ -17,25 +17,36 @@ model User {
   name  String?
   email String? @unique
 
+  // Optional for email/password authentication.
+  // Google-only accounts keep this null.
+  passwordHash String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // One profile per user
   profile TravelerProfile?
 
-  // Food preferences
+  // User food preferences
   foodPreferences UserFoodPreference[]
 
-  // Place history
+  // Places
   savedPlaces   SavedPlace[]
   visitedPlaces VisitedPlace[]
 
-  // Search / scan history
+  // History
   searchHistory SearchHistory[]
   foodScans     FoodScan[]
 
   // Trips
   trips Trip[]
+
+  // Traveler memory
+  travelSources     TravelSource[]
+  travelPlaces      TravelPlace[]
+  travelRoutes      TravelRoute[]
+  travelExpenses    TravelExpense[]
+  travelExperiences TravelExperience[]
 }
 
 // ============================================================
@@ -69,6 +80,15 @@ model TravelerProfile {
 // ============================================================
 // USER FOOD PREFERENCE
 // ============================================================
+//
+// Examples:
+// Pani Puri
+// Vada Pav
+// Biryani
+//
+// A separate relation makes preferences easy to
+// extend later without stuffing many fields into User.
+//
 
 model UserFoodPreference {
   id String @id @default(cuid())
@@ -81,9 +101,7 @@ model UserFoodPreference {
 
   food Food @relation(fields: [foodId], references: [id], onDelete: Cascade)
 
-  // 1 = like
-  // 2 = strong preference
-  // 3 = favourite
+  // How strongly the user likes it
   preferenceScore Int @default(1)
 
   createdAt DateTime @default(now())
@@ -117,11 +135,7 @@ model Food {
   ingredients String[]
   tags        String[]
 
-  /**
-   * General/reference price.
-   * This should NOT be treated as an exact restaurant price
-   * unless there is a real source.
-   */
+  // General/reference price in INR
   priceInr Int?
 
   priceRange PriceRange?
@@ -131,6 +145,7 @@ model Food {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
   prices      FoodPrice[]
   scans       FoodScan[]
   preferences UserFoodPreference[]
@@ -141,15 +156,25 @@ model Food {
 // ============================================================
 // PLACE
 // ============================================================
+//
+// A general geographic place.
+// It can represent:
+// - restaurant
+// - cafe
+// - market
+// - attraction
+// - park
+// - museum
+// - landmark
+//
+// This prevents FairTrip from treating every Geoapify result
+// as a restaurant.
+//
 
 model Place {
   id String @id @default(cuid())
 
-  /**
-   * External provider ID.
-   * Example:
-   * Geoapify place ID
-   */
+  // Geoapify / other external provider ID
   externalId String? @unique
 
   name String
@@ -177,8 +202,10 @@ model Place {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Restaurant data, if this place is a food business
   restaurant Restaurant?
 
+  // User interaction
   savedBy   SavedPlace[]
   visitedBy VisitedPlace[]
 
@@ -190,6 +217,10 @@ model Place {
 // ============================================================
 // RESTAURANT
 // ============================================================
+//
+// Restaurant is a food-specific representation of a Place.
+// A place may or may not be a restaurant.
+//
 
 model Restaurant {
   id String @id @default(cuid())
@@ -198,6 +229,7 @@ model Restaurant {
 
   place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
 
+  // Food sold at this restaurant
   foodPrices FoodPrice[]
 
   createdAt DateTime @default(now())
@@ -207,6 +239,17 @@ model Restaurant {
 // ============================================================
 // FOOD PRICE
 // ============================================================
+//
+// This is the important model for your real food search.
+//
+// Example:
+//
+// Pani Puri
+//   Restaurant A -> ₹40
+//   Restaurant B -> ₹50
+//
+// Do not assume that every restaurant has the same price.
+//
 
 model FoodPrice {
   id String @id @default(cuid())
@@ -219,18 +262,10 @@ model FoodPrice {
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
-  /**
-   * Canonical stored price.
-   * FairTrip stores restaurant food prices in INR.
-   */
   priceInr Int
 
   currency CurrencyCode @default(INR)
 
-  /**
-   * TRUE means this price was estimated,
-   * not directly verified.
-   */
   estimated Boolean @default(false)
 
   source PriceSource
@@ -249,8 +284,14 @@ model FoodPrice {
 }
 
 // ============================================================
-// FOOD SCAN
+// FOOD SCAN HISTORY
 // ============================================================
+//
+// Keep the useful history only:
+// what the user scanned, confidence, when it happened.
+//
+// Don't store huge image blobs in PostgreSQL.
+//
 
 model FoodScan {
   id String @id @default(cuid())
@@ -305,6 +346,10 @@ model SavedPlace {
 // ============================================================
 // VISITED PLACE
 // ============================================================
+//
+// This is the useful part of "travel history".
+// We don't need to record every GPS coordinate.
+//
 
 model VisitedPlace {
   id String @id @default(cuid())
@@ -319,11 +364,7 @@ model VisitedPlace {
 
   visitedAt DateTime @default(now())
 
-  /**
-   * Optional short note.
-   * Example:
-   * "Best vada pav here"
-   */
+  // Optional short user note
   note String?
 
   @@index([userId])
@@ -334,6 +375,12 @@ model VisitedPlace {
 // ============================================================
 // SEARCH HISTORY
 // ============================================================
+//
+// Only useful search information:
+// query + location context + traveler type.
+//
+// No need to store every API response.
+//
 
 model SearchHistory {
   id String @id @default(cuid())
@@ -344,12 +391,6 @@ model SearchHistory {
 
   query String
 
-  /**
-   * User supplied area / landmark.
-   * Example:
-   * Dadar
-   * Crawford Market
-   */
   locationQuery String?
 
   latitude  Float?
@@ -366,6 +407,9 @@ model SearchHistory {
 // ============================================================
 // TRIP
 // ============================================================
+//
+// Stores only normal trip information.
+//
 
 model Trip {
   id String @id @default(cuid())
@@ -391,21 +435,283 @@ model Trip {
   startDate DateTime?
   endDate   DateTime?
 
+  // Traveler-memory lifecycle
+  status TripStatus @default(ACTIVE)
+
+  // Cached journey statistics
+  totalKnownSpendInr     Int @default(0)
+  totalTransportSpendInr Int @default(0)
+  totalOtherSpendInr     Int @default(0)
+
+  knownDistanceMeters  Int?
+  knownDurationMinutes Int?
+
+  sourceCount  Int @default(0)
+  placeCount   Int @default(0)
+  routeCount   Int @default(0)
+  expenseCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Traveler memory
+  sources     TravelSource[]
+  places      TravelPlace[]
+  routes      TravelRoute[]
+  expenses    TravelExpense[]
+  experiences TravelExperience[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+model TravelSource {
+  id String @id @default(cuid())
+
+  userId String
+  tripId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  platform   TravelSourcePlatform
+  sourceUrl  String
+  sourceId   String?
+  sourceType TravelSourceType
+
+  title        String?
+  channelName  String?
+  publishedAt  DateTime?
+  thumbnailUrl String?
+  contentId    String?
+
+  transcriptProvided Boolean                @default(false)
+  processingStatus   TravelProcessingStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  experiences TravelExperience[]
+
+  @@unique([tripId, sourceUrl])
+  @@index([userId])
+  @@index([tripId])
+  @@index([contentId])
+}
+
+model TravelPlace {
+  id String @id @default(cuid())
+
+  userId String
+  tripId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  name    String
+  address String?
+  city    String?
+  state   String?
+  country String?
+
+  latitude  Float?
+  longitude Float?
+
+  sequence   Int
+  confidence Float
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
-  @@index([createdAt])
+  @@index([tripId])
+  @@index([tripId, sequence])
+}
+
+model TravelRoute {
+  id String @id @default(cuid())
+
+  userId String
+  tripId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  sequence Int
+
+  fromName String
+  toName   String
+  fromCity String?
+  toCity   String?
+
+  transportMode TravelTransportMode
+
+  distanceMeters  Int?
+  durationMinutes Int?
+  amountPaidInr   Int?
+
+  fareSource FareSource @default(UNKNOWN)
+
+  experience String?
+  evidence   String?
+  confidence Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([tripId])
+  @@index([tripId, sequence])
+}
+
+model TravelExpense {
+  id String @id @default(cuid())
+
+  userId String
+  tripId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  sequence    Int?
+  category    TravelExpenseCategory
+  description String
+  amountInr   Int
+  placeName   String?
+  evidence    String?
+  confidence  Float
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([tripId])
+  @@index([tripId, sequence])
+}
+
+model TravelExperience {
+  id String @id @default(cuid())
+
+  userId   String
+  tripId   String
+  sourceId String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  source TravelSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+
+  sequence Int?
+
+  title   String
+  summary String
+
+  experienceType TravelExperienceType
+  category       TravelExpenseCategory
+  subcategory    String?
+
+  placeName String?
+  city      String?
+
+  reportedAmountInr Int?
+  expectedAmountInr Int?
+  transportMode     TravelTransportMode?
+
+  problem String?
+
+  advice      String[]
+  sourceQuote String?
+
+  confidence Float
+
+  // A model-generated report can never become a public verdict automatically.
+  visibility TravelVisibility @default(PRIVATE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([tripId])
+  @@index([sourceId])
+}
+
+enum TripStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum TravelSourcePlatform {
+  YOUTUBE
+  INSTAGRAM
+}
+
+enum TravelSourceType {
+  CHANNEL
+  PROFILE
+  VIDEO
+  POST
+}
+
+enum TravelProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TravelTransportMode {
+  WALK
+  BUS
+  TRAIN
+  METRO
+  SHARED_AUTO
+  METER_AUTO
+  TAXI
+  APP_TAXI
+  FERRY
+  FLIGHT
+  OTHER
+  UNKNOWN
+}
+
+enum FareSource {
+  EXPLICIT
+  CALCULATED
+  UNKNOWN
+}
+
+enum TravelExpenseCategory {
+  TRANSPORT
+  FOOD
+  SHOPPING
+  HOTEL
+  ATTRACTION
+  SERVICE
+  OTHER
+}
+
+enum TravelExperienceType {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+  WARNING
+  POSSIBLE_OVERCHARGE
+  REPORTED_SCAM
+}
+
+enum TravelVisibility {
+  PRIVATE
+  FAIRTRIP_CANDIDATE
+  FAIRTRIP_PUBLIC
 }
 
 // ============================================================
-// ENUMS
-// ============================================================
-
-enum TravelerType {
-  TOURIST
-  CITIZEN
-}
 
 enum CurrencyCode {
   INR
@@ -417,6 +723,11 @@ enum CurrencyCode {
   CAD
   SGD
   AED
+}
+
+enum TravelerType {
+  TOURIST
+  CITIZEN
 }
 
 enum FoodDiet {

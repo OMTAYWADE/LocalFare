@@ -55,7 +55,8 @@ export default function ExploreHeader() {
                 relative
                 isolate
                 overflow-hidden
-                rounded-[28px]
+                min-h-[430px]
+                rounded-[24px]
                 border
                 border-[#123c35]/10
                 bg-gradient-to-br
@@ -65,11 +66,14 @@ export default function ExploreHeader() {
                 px-4
                 py-6
                 shadow-[0_24px_70px_rgba(18,60,53,0.08)]
-                sm:rounded-[34px]
-                sm:px-8
+                sm:min-h-[455px]
+                sm:rounded-[32px]
+                sm:px-7
                 sm:py-9
+                lg:min-h-[470px]
                 lg:px-10
                 lg:py-10
+                xl:px-12
             "
         >
             {/* =====================================================
@@ -202,7 +206,8 @@ export default function ExploreHeader() {
                 className="
                     relative
                     z-10
-                    max-w-[720px]
+                    w-full
+                    max-w-[760px]
                 "
             >
                 {/* Badge */}
@@ -241,13 +246,13 @@ export default function ExploreHeader() {
                     data-header-title
                     className="
                         mt-4
-                        max-w-[620px]
-                        text-[2.1rem]
+                        max-w-[660px]
+                        text-[2rem]
+                        sm:text-[2.9rem]
                         font-black
                         leading-[0.96]
                         tracking-[-0.065em]
                         text-[#073f37]
-                        sm:text-5xl
                         lg:text-[3.8rem]
                     "
                 >
@@ -289,7 +294,8 @@ export default function ExploreHeader() {
                         grid
                         grid-cols-1
                         gap-2
-                        sm:grid-cols-3
+                        sm:grid-cols-2
+                        lg:grid-cols-3
                     "
                 >
                     <FeaturePill
@@ -330,9 +336,10 @@ export default function ExploreHeader() {
                 <div
                     className="
                         mt-5
-                        flex
+                        hidden
                         items-center
                         gap-2
+                        sm:flex
                         text-[10px]
                         font-bold
                         text-[#49625c]
