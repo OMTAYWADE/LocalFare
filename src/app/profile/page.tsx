@@ -1,4 +1,4 @@
-import { redirect   } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { auth } from "../../../auth";
 import { prisma } from "@/lib/prisma";
@@ -164,8 +164,8 @@ export default async function ProfilePage() {
         },
         journeys: user.trips.map((trip) => ({
             ...trip,
-            startDate: trip.startDate?.toISOString() ?? null,
-            endDate: trip.endDate?.toISOString() ?? null,
+            startDate: trip.startDate?.toISOString(),
+            endDate: trip.endDate?.toISOString(),
             createdAt: trip.createdAt.toISOString(),
             updatedAt: trip.updatedAt.toISOString(),
         })),
