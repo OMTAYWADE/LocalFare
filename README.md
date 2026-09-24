@@ -2,7 +2,65 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, run the development server:# 🌍 FairTrip
+
+<p align="center">
+  <img src="docs/screenshots/fairtrip-banner.png" alt="FairTrip" width="100%">
+</p>
+
+<h3 align="center">
+  Understand the Journey. Remember the Experience.
+</h3>
+
+<p align="center">
+  AI-powered travel content intelligence and journey reconstruction platform
+</p>
+
+<p align="center">
+  <b>Travel Content → AI Understanding → Place Extraction → Journey Reconstruction → Travel Memory</b>
+</p>
+
+---
+
+## 📌 Overview
+
+**FairTrip** is an AI-powered travel intelligence platform that converts unstructured travel content into structured, reusable travel information.
+
+Travelers often discover useful information through YouTube videos, social media posts, images and other travel content. However, important details such as:
+
+- places visited
+- sequence of locations
+- transportation
+- food experiences
+- expenses
+- memorable experiences
+
+remain buried inside the original content.
+
+FairTrip bridges this gap by **understanding travel content, extracting meaningful information, connecting places into a journey sequence, and storing the result as structured travel memory.**
+
+---
+
+# 🎯 Problem
+
+Travel information is fragmented across multiple platforms.
+
+A traveler watching a travel vlog may need to:
+
+```text
+Watch the video
+      ↓
+Find places manually
+      ↓
+Note the locations
+      ↓
+Search every place
+      ↓
+Check routes
+      ↓
+Remember transport
+      ↓
+Save personal notes
 
 ```bash
 npm run dev
