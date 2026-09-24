@@ -1,439 +1,453 @@
-FairTrip
-
-Travel smarter. Eat better. Pay fairly.
-
-A smart travel and local-discovery platform that helps users discover
-places, food, transport options, and useful local information based on
-location, budget, preferences, and visual input.
-
-1. Project Overview
-
-FairTrip is designed as a unified travel companion rather than a simple
-destination-search website.
-
-The interface shown in the current design includes:
-
-Travel discovery
-
-Nearby places and starting-point selection
-
-Interactive map and location detection
-
-Food discovery and recommendations
-
-Food/food-menu scanning
-
-AI-assisted image understanding
-
-Budget-aware recommendations
-
-Public transport discovery
-
-User preferences
-
-Authentication
-
-Responsive web experience
-
-The design uses a warm, modern visual language:
-
-Deep forest green
-
-Cream/off-white backgrounds
-
-Lime/yellow-green highlights
-
-Orange/coral accent
-
-Rounded cards
-
-Soft shadows
-
-Large editorial typography
-
-Map and image-heavy sections
-
-2. Main Product Areas
-
-FairTrip can be organized into the following product modules.
-
-                         FAIRTRIP
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-     Explore              Food                Scan
-        │                   │                   │
-   Places / Map       Food Search        Image Analysis
-   Nearby Places     Recommendations     Object/Food ID
-   Starting Point    Budget / Taste      Menu Reading
-        │                   │                   │
-        └───────────────────┼───────────────────┘
-                            │
-                        Transport
-                            │
-                    Routes / Stops
-                    Nearby Transport
-                    Route Discovery
-                            │
-                         Account
-                            │
-                Preferences / History
-
-3. Pages / Routes
-
-3.1 Home / Explore
-
-The home page is the main entry point.
-
-Sections
-
-Navigation
-
-Hero section
-
-Travel discovery
-
-Personalization
-
-Starting point
-
-Nearby places
-
-Map
-
-Popular searches
-
-Feature highlights
-
-Footer
-
+FairTrip 🌍
+<p align="center">
+  <strong>Travel smarter. Eat better. Pay fairly.</strong><br />
+  A location-aware travel, food, transport and visual-discovery platform built around one unified experience.
+</p>
+<p align="center">
+  <img src="docs/screenshots/explore-home.png" alt="FairTrip Explore Home" width="100%" />
+</p>
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#screenshots">Screenshots</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#project-structure">Project Structure</a> •
+  <a href="#getting-started">Getting Started</a>
+</p>
+---
+✨ Overview
+FairTrip is a smart travel-discovery platform designed to combine travel planning, local discovery, food discovery, public transport and image-based assistance in a single product.
+Instead of building separate applications for destinations, food, maps and visual search, FairTrip connects these capabilities through a shared location, preference and recommendation layer.
+Core idea
+```text
+                ┌────────────────────┐
+                │      FAIRTRIP      │
+                └─────────┬──────────┘
+                          │
+       ┌──────────────────┼──────────────────┐
+       │                  │                  │
+     Explore             Food               Scan
+       │                  │                  │
+   Places + Map      Taste + Budget      Image + OCR
+       │                  │                  │
+       └──────────────────┼──────────────────┘
+                          │
+                      Transport
+                          │
+                    Routes + Stops
+                          │
+                    Recommendation
+                          │
+                    Personalization
+```
+---
+🎯 What FairTrip Solves
+FairTrip is built around a simple question:
+> **“What should I do, eat or take next from where I am, within my preferences and budget?”**
+The system can use:
+📍 Current location or searched starting point
+💰 Budget
+🍜 Food preferences
+🕐 Time / meal context
+🚶 Distance and walking effort
+🚌 Transport availability
+📷 Images, menus and visual input
+🧠 AI-assisted interpretation
+---
+🚀 Features
+Module	What it does
+Explore	Discover nearby places, attractions and travel options
+Location	Use current location or search a city / landmark
+Map	Show places, routes, markers and transport stops
+Food	Search dishes and discover food based on taste and budget
+Personalization	Store budget, taste, dietary and time preferences
+Scan	Upload or capture images for visual understanding
+OCR / Menu	Extract dishes and prices from restaurant menus
+Transport	Find nearby stops, routes and alternatives
+Recommendations	Combine multiple signals before presenting options
+Accounts	Authentication, saved places, history and preferences
+---
+🖥️ Screenshots
+Explore / Home
+<p align="center">
+  <img src="docs/screenshots/explore-home.png" alt="Explore home page" width="100%" />
+</p>
+The home experience focuses on travel discovery with a large hero, quick personalization, starting point and nearby discovery.
+Location + Map
+<p align="center">
+  <img src="docs/screenshots/location-map.png" alt="Location and map interface" width="100%" />
+</p>
+The starting-point interface allows the user to use their current location or search for another landmark/city before discovering nearby places.
+Food Discovery
+<p align="center">
+  <img src="docs/screenshots/food-discovery.png" alt="Food discovery page" width="100%" />
+</p>
+Food recommendations can consider taste, eating time, budget, dietary requirements and local context.
+Scan Processing
+<p align="center">
+  <img src="docs/screenshots/scan-processing.png" alt="Scan processing interface" width="100%" />
+</p>
+The scan workflow can show progressive states such as uploading, analyzing, identifying and preparing a result.
+Scan Upload
+<p align="center">
+  <img src="docs/screenshots/scan-upload.png" alt="Scan upload interface" width="100%" />
+</p>
+The user can drop an image or choose an image from the device and select the type of object they want FairTrip to understand.
+FairTrip Intelligence
+<p align="center">
+  <img src="docs/screenshots/scan-intelligence.png" alt="FairTrip intelligence interface" width="100%" />
+</p>
+The scan experience is intended to evolve into a broader visual assistant for food, clothes, products, tools, objects and unknown items.
+---
+🧩 Product Pages
+1. Explore
+```text
+Navbar
+  ↓
 Hero
-
-Example messaging:
-
-Travel smarter.
-pay fairly.
-
-Discover places, plan your destination
-and understand local food and travel
-prices before you spend.
-
-The hero can contain:
-
-Current location
-
-Search destination
-
-Budget information
-
-Travel illustration
-
-Quick action buttons
-
-4. Location & Nearby Discovery
-
-The starting-point section allows the user to:
-
-Use current location
-
-Search a city
-
-Search a landmark
-
-Select a starting point
-
-View nearby places
-
-Example flow
-
-User
- │
- ├── Allow location
- │       │
- │       ▼
- │   Browser Geolocation
- │       │
- │       ▼
- │   Backend location service
- │       │
- │       ▼
- │   Nearby places
- │
- └── Search manually
-         │
-         ▼
-      Geocoding
-         │
-         ▼
-       Coordinates
-         │
-         ▼
-     Nearby search
-
-5. Map System
-
-The map section should show:
-
-Current location
-
-Search location
-
+  ↓
+Quick discovery / personalization
+  ↓
+Starting point
+  ↓
+Interactive map
+  ↓
 Nearby places
-
-Transport stops
-
-Restaurants
-
-Attractions
-
-Route information
-
-Recommended map architecture
-
-Next.js Map UI
-      │
-      ▼
-Map Provider
-      │
-      ├── Tiles
-      ├── Markers
-      ├── Zoom
-      └── Routes
-
-Possible providers:
-
-MapLibre GL
-
-MapTiler
-
-OpenStreetMap-based tiles
-
-Google Maps, if required by the final product
-
-Keep the map provider behind a service abstraction so it can be replaced
-later.
-
-interface MapService {
-  geocode(query: string): Promise<LocationResult[]>;
-  reverseGeocode(lat: number, lng: number): Promise<LocationResult>;
-  getRoute(from: Coordinates, to: Coordinates): Promise<RouteResult>;
-}
-
-6. Food Page
-
-The Food page focuses on helping users discover food based on more than
-the dish name.
-
-The current design contains:
-
-Eat better.
-Travel smarter.
-
-The system can consider:
-
-Taste
-
-Budget
-
-Eating time
-
-Dietary preferences
-
-Spice level
-
-Food type
-
-Location
-
+  ↓
+Popular searches
+  ↓
+Travel features
+  ↓
+Footer
+```
+2. Food
+```text
+Navbar
+  ↓
+Food Hero
+  ↓
 Food Search
+  ↓
+Popular Searches
+  ↓
+Preferences
+  ↓
+Recommendations
+  ↓
+Restaurant / dish details
+```
+3. Scan
+```text
+Navbar
+  ↓
+FairTrip Intelligence
+  ↓
+Category selection
+  ↓
+Upload / Camera
+  ↓
+Processing state
+  ↓
+AI result
+  ↓
+Related information
+```
+4. Transport
+```text
+Navbar
+  ↓
+Start / Destination
+  ↓
+Nearby stops
+  ↓
+Route calculation
+  ↓
+Direct + alternative routes
+  ↓
+Map
+  ↓
+Walking + travel details
+```
+5. Account
+```text
+Profile
+  ├── Preferences
+  ├── Saved places
+  ├── Search history
+  ├── Scan history
+  └── Settings
+```
+---
+🏗️ Architecture
+FairTrip should use a modular architecture so that map providers, AI providers, food data providers or transport sources can be replaced without rewriting the frontend.
+High-level architecture
+```mermaid
+flowchart TB
+    U[User] --> W[Next.js Web App]
+    W --> API[NestJS API]
 
-Example:
+    API --> AUTH[Auth Module]
+    API --> LOC[Location Module]
+    API --> FOOD[Food Module]
+    API --> SCAN[Scan Module]
+    API --> TRANS[Transport Module]
+    API --> REC[Recommendation Module]
 
-Search biryani, dosa, chai...
+    AUTH --> PG[(PostgreSQL)]
+    LOC --> CACHE[(Redis)]
+    FOOD --> CACHE
+    TRANS --> CACHE
+    REC --> PG
 
-Flow
-
-User searches food
-       │
-       ▼
-Food Search API
-       │
-       ├── Dish matching
-       ├── Location
-       ├── Budget
-       └── Preferences
-       │
-       ▼
-Recommendation Service
-       │
-       ▼
-Ranked food results
-
-7. Food Personalization
-
-The Food page can provide preference controls:
-
-Your taste
-Eating time
-Your budget
-Diet & spice
-
-A preference object can be stored as:
-
-interface FoodPreference {
-  cuisines: string[];
-  dietaryType?: string;
-  spiceLevel?: "low" | "medium" | "high";
-  budget: number;
-  mealTime?: "breakfast" | "lunch" | "snacks" | "dinner";
+    LOC --> MAPS[Map / Geocoding Providers]
+    TRANS --> TRANSAPI[Transport Providers]
+    FOOD --> FOODAPI[Food / Places Providers]
+    SCAN --> OBJ[Object Storage]
+    SCAN --> JOB[Background Worker]
+    JOB --> OCR[OCR / Vision / AI]
+    JOB --> PG
+    JOB --> OBJ
+```
+---
+🏛️ Layered Backend Architecture
+```text
+┌───────────────────────────────────────────────┐
+│                 Presentation                  │
+│            Next.js + React + Tailwind         │
+└───────────────────────┬───────────────────────┘
+                        │
+┌───────────────────────▼───────────────────────┐
+│                    API Layer                   │
+│          NestJS Controllers + DTOs             │
+└───────────────────────┬───────────────────────┘
+                        │
+┌───────────────────────▼───────────────────────┐
+│                  Domain Layer                  │
+│ Auth / Location / Food / Scan / Transport     │
+└───────────────────────┬───────────────────────┘
+                        │
+┌───────────────────────▼───────────────────────┐
+│                Service / Adapter Layer         │
+│ Maps / AI / OCR / Storage / Transport APIs    │
+└───────────────────────┬───────────────────────┘
+                        │
+┌───────────────────────▼───────────────────────┐
+│                Infrastructure                  │
+│ PostgreSQL / Redis / Object Storage / Worker   │
+└───────────────────────────────────────────────┘
+```
+---
+🧱 Project Structure
+A GitHub repository can be organized like this:
+```text
+fairtrip/
+│
+├── apps/
+│   ├── web/                         # Next.js frontend
+│   │   ├── app/
+│   │   │   ├── (marketing)/
+│   │   │   ├── explore/
+│   │   │   ├── food/
+│   │   │   ├── scan/
+│   │   │   ├── transport/
+│   │   │   ├── account/
+│   │   │   ├── api/                 # Frontend-only route handlers if needed
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── components/
+│   │   │   ├── navbar/
+│   │   │   ├── hero/
+│   │   │   ├── map/
+│   │   │   ├── food/
+│   │   │   ├── scan/
+│   │   │   ├── transport/
+│   │   │   └── ui/
+│   │   │
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   ├── public/
+│   │   └── styles/
+│   │
+│   └── api/                         # NestJS backend
+│       └── src/
+│           ├── auth/
+│           ├── users/
+│           ├── location/
+│           ├── places/
+│           ├── food/
+│           ├── scan/
+│           ├── transport/
+│           ├── recommendations/
+│           ├── ai/
+│           ├── storage/
+│           ├── cache/
+│           ├── common/
+│           ├── app.module.ts
+│           └── main.ts
+│
+├── packages/
+│   ├── ui/                           # Shared UI components
+│   ├── types/                        # Shared TypeScript types
+│   └── config/                       # Shared eslint / tsconfig / constants
+│
+├── prisma/
+│   ├── schema.prisma
+│   ├── migrations/
+│   └── seed.ts
+│
+├── docs/
+│   ├── screenshots/
+│   ├── architecture.md
+│   └── api.md
+│
+├── .env.example
+├── .gitignore
+├── docker-compose.yml
+├── package.json
+├── pnpm-workspace.yaml
+└── README.md
+```
+> If you are building a smaller college/hackathon version first, you can keep `web`, `api` and `prisma` at the repository root and move to a monorepo later.
+---
+🛠️ Tech Stack
+Frontend
+Next.js – App Router and server/client rendering
+React – UI composition
+TypeScript – type safety
+Tailwind CSS – styling and responsive layout
+Framer Motion – page and component motion
+MapLibre / Map provider SDK – map interaction
+Backend
+NestJS – modular API and service layer
+TypeScript – shared language with the frontend
+Prisma – database access
+PostgreSQL – primary relational database
+Redis – caching, rate limiting and short-lived state
+AI / Vision
+OCR service
+Vision / image classification
+AI interpretation layer
+Recommendation engine
+Infrastructure
+Object storage for images
+Background worker for long-running scan jobs
+Docker for local development
+CDN / reverse proxy for production
+---
+🗺️ Map & Location Architecture
+The map layer should be provider-independent.
+```text
+             LocationService
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+     GeocodingAdapter    RoutingAdapter
+          │                   │
+      ┌───┴────┐          ┌───┴────┐
+      │        │          │        │
+   Provider A Provider B Provider A Provider B
+```
+Example interface:
+```ts
+export interface GeocodingProvider {
+  search(query: string): Promise<LocationResult[]>;
+  reverse(lat: number, lng: number): Promise<LocationResult>;
 }
+```
+This prevents your controllers from being tightly coupled to one map provider.
+---
+🍜 Food Recommendation Architecture
+Food recommendations should not live inside React components.
+```text
+Location
+   +
+Taste
+   +
+Budget
+   +
+Meal Time
+   +
+Dietary Preference
+   +
+Distance
+        │
+        ▼
+Recommendation Service
+        │
+        ▼
+Ranking / Filtering
+        │
+        ▼
+Recommended Foods
+```
+A simplified scoring model could look like:
+```text
+score =
+    taste_match
+  + budget_match
+  + distance_score
+  + time_match
+  + dietary_match
+```
+The exact ranking logic should remain in the backend/domain layer so it can evolve without redesigning the frontend.
+---
+📷 Scan / AI Architecture
+The scan module should be asynchronous because OCR and vision processing can take longer than normal API requests.
+```mermaid
+sequenceDiagram
+    participant User
+    participant Web as Next.js
+    participant API as NestJS
+    participant Store as Object Storage
+    participant Queue as Worker / Queue
+    participant AI as OCR / Vision / AI
+    participant DB as PostgreSQL
 
-8. Popular Searches
-
-The interface can provide quick searches such as:
-
-Vada Pav
-
-Biryani
-
-Dosa
-
-Misal Pav
-
-Chai
-
-These should be data-driven rather than hard-coded.
-
-Example API:
-
-GET /api/food/popular
-
-Response:
-
-[
-  {
-    "name": "Vada Pav",
-    "slug": "vada-pav"
-  },
-  {
-    "name": "Biryani",
-    "slug": "biryani"
-  }
-]
-
-9. Scan Page
-
-The Scan page is one of the major FairTrip features.
-
-The user can upload or capture an image.
-
-Examples:
-
-Food
-
-Menu
-
-Product
-
-Clothes
-
-Object
-
-Tool
-
-Unknown item
-
-The interface shown in the design includes:
-
-Have a doubt?
-Scan it.
-
-and:
-
-Drop an image here
-
-10. Image Analysis Architecture
-
-The scan system should be separated from the main frontend.
-
-                    SCAN SYSTEM
-
-User
- │
- ▼
-Next.js Upload UI
- │
- ▼
-Upload API
- │
- ▼
-Object Storage
- │
- ▼
-Image Analysis Service
- │
- ├── Image classification
- ├── OCR
- ├── Object detection
- └── AI interpretation
- │
- ▼
-Recommendation / Knowledge Service
- │
- ▼
-Structured Result
- │
- ▼
-Next.js Result UI
-
-11. Scan Processing States
-
-The UI can show progress similar to:
-
-Uploading
-    ↓
-Analyzing
-    ↓
-Identifying
-    ↓
-Finding information
-    ↓
-Preparing result
-
-Example:
-
-FairTrip Smart Scan
-
-Preparing your FairTrip result...
-
-Identifying the dish and preparing
-useful food information.
-
-12. OCR / Menu Reading
-
-When the user uploads a restaurant menu:
-
+    User->>Web: Select / capture image
+    Web->>API: POST /api/v1/scan
+    API->>Store: Upload image
+    API->>Queue: Create scan job
+    API-->>Web: Return scanId
+    Queue->>AI: Analyze image
+    AI-->>Queue: Structured result
+    Queue->>DB: Save result
+    Web->>API: GET /api/v1/scan/:id
+    API-->>Web: Scan status + result
+```
+Scan states
+```text
+UPLOADING
+   ↓
+QUEUED
+   ↓
+ANALYZING
+   ↓
+IDENTIFIED
+   ↓
+COMPLETED
+```
+Possible failure state:
+```text
+ANALYZING → FAILED → RETRY
+```
+---
+🔎 OCR / Menu Understanding
+For menus:
+```text
 Menu Image
-    │
-    ▼
+    ↓
 OCR
-    │
-    ▼
-Extracted Text
-    │
-    ▼
-Dish Parser
-    │
-    ├── Dish
-    ├── Price
-    ├── Category
-    └── Description
-    │
-    ▼
-Food Recommendation Engine
-
-Example result:
-
+    ↓
+Raw Text
+    ↓
+Parser
+    ↓
+Dish + Price + Category
+    ↓
+Food Recommendation
+```
+Example response:
+```json
 {
   "restaurant": "Example Restaurant",
   "items": [
@@ -441,1077 +455,350 @@ Example result:
       "name": "Masala Dosa",
       "price": 120,
       "category": "South Indian"
+    },
+    {
+      "name": "Paneer Tikka",
+      "price": 220,
+      "category": "Starter"
     }
   ]
 }
-
-13. AI Service
-
-AI should be isolated behind a dedicated service.
-
-Frontend
-   │
-   ▼
-NestJS API
-   │
-   ▼
-AI Service
-   │
-   ├── Vision
-   ├── OCR interpretation
-   ├── Food understanding
-   ├── Recommendation
-   └── Natural language response
-
-The application should not expose AI provider API keys to the browser.
-
-14. Transport Page
-
-The Transport module can provide:
-
-Nearby bus stops
-
-Bus routes
-
-Train stations
-
-Metro stations
-
-Route search
-
-Direct routes
-
-Alternative routes
-
-Walking distance
-
-Estimated travel time
-
-Transport flow
-
-User location
+```
+---
+🚌 Transport Architecture
+Transport should support both direct and multi-modal routes.
+```text
+Current Location
       │
       ▼
-Nearest Stop Service
+Nearby Stop Search
       │
-      ▼
-Transport Data
-      │
-      ├── Stops
-      ├── Routes
-      ├── Vehicles
-      └── Timetable
+      ├── Walk
+      ├── Bus
+      ├── Train
+      └── Metro
       │
       ▼
 Route Engine
       │
-      ▼
-Recommended routes
-
-15. Route Engine
-
-A route search can combine:
-
-Walking
-   +
-Bus
-   +
-Train
-   +
-Metro
-
-Example:
-
-Current Location
-      │
-   Walk 500m
+      ├── Direct route
+      ├── Fastest route
+      ├── Fewer transfers
+      └── Lowest walking
       │
       ▼
-Bus Stop A
-      │
-   Bus Route 12
-      │
-      ▼
-Stop B
-      │
-   Walk 300m
-      │
-      ▼
-Destination
-
-The route engine should return multiple valid alternatives instead of
-coupling the UI to one provider.
-
-16. Recommendation Engine
-
-The recommendation engine can combine multiple signals:
-
-              Recommendation Engine
-                       │
-       ┌───────────────┼────────────────┐
-       │               │                │
-    Location         Budget           Taste
-       │               │                │
-       ├───────────────┼────────────────┤
-       │               │                │
-    Time            Distance         Dietary
-       │               │                │
-       └───────────────┼────────────────┘
-                       ▼
-                  Score/Rank
-                       │
-                       ▼
-                 Recommendations
-
-Do not make the recommendation logic part of the React components. Keep
-it in a backend/domain service.
-
-17. Suggested System Architecture
-
-For a production-oriented implementation:
-
-                         CLIENT
-                           │
-                    Next.js App Router
-                           │
-             ┌─────────────┼─────────────┐
-             │             │             │
-          Explore         Food          Scan
-             │             │             │
-             └─────────────┼─────────────┘
-                           │
-                        REST API
-                           │
-                     NestJS Backend
-                           │
-       ┌───────────────────┼────────────────────┐
-       │                   │                    │
-   Auth Module        Discovery Module      Food Module
-       │                   │                    │
-   User Module         Location Module      Scan Module
-       │                   │                    │
-       └───────────────────┼────────────────────┘
-                           │
-                    Service Layer
-                           │
-       ┌───────────────────┼────────────────────┐
-       │                   │                    │
-   PostgreSQL          Redis Cache          Object Storage
-       │                                        │
-       │                                        │
-       └───────────────┐              ┌─────────┘
-                       │              │
-                 External Services    AI Services
-                       │              │
-              Maps / Transport     Vision / OCR
-              Food / Places        Recommendation
-
-18. Recommended Tech Stack
-
-Frontend
-
-Next.js
-
-React
-
-TypeScript
-
-Tailwind CSS
-
-Framer Motion
-
-MapLibre GL / compatible map library
-
-Backend
-
-NestJS
-
-TypeScript
-
-REST API
-
-WebSocket where real-time updates are required
-
-Database
-
-PostgreSQL
-
-Prisma ORM
-
-Cache
-
-Redis
-
-Use Redis for:
-
-Frequently requested nearby locations
-
-Popular searches
-
-Temporary scan jobs
-
-Rate limiting
-
-Session-related short-lived data
-
-19. Authentication
-
-Recommended authentication flow:
-
-Browser
-  │
-  ▼
-Login
-  │
-  ▼
-NestJS Auth
-  │
-  ├── Access Token
-  └── Refresh Token
-          │
-          ▼
-      PostgreSQL
-
-Possible authentication methods:
-
-Email/password
-
-Google OAuth
-
-Optional future providers
-
-Passwords should never be stored directly.
-
-Store only secure password hashes.
-
-20. Database Architecture
-
-Suggested core entities:
-
+Route Results
+```
+The backend should normalize different transport providers into one internal format.
+---
+🗄️ Database Design
+Core entities:
+```text
 User
- │
  ├── UserPreference
  ├── SearchHistory
- ├── Scan
- └── SavedPlace
+ ├── SavedPlace
+ └── Scan
+       └── ScanResult
 
 Place
- │
  ├── Category
- ├── Location
- └── Reviews / metadata
-
-Food
- │
- ├── FoodCategory
- ├── Restaurant
- └── FoodPreference
-
-TransportStop
- │
- ├── Route
- └── TransportProvider
-
-Scan
- │
- ├── Image
- ├── ScanResult
- └── ExtractedItem
-
-21. Example Database Relationship
-
-User
- │
- ├─────────────── UserPreference
- │
- ├─────────────── SearchHistory
- │
- ├─────────────── SavedPlace
- │
- └─────────────── Scan
-                      │
-                      └──── ScanResult
-
+ └── Location
 
 Restaurant
- │
- └──── FoodItem
+ └── FoodItem
 
 TransportStop
- │
- └──── Route
-
-22. API Architecture
-
-Use modular APIs.
-
+ └── Route
+```
+Suggested Prisma models:
+```text
+User
+UserPreference
+SavedPlace
+SearchHistory
+Scan
+ScanResult
+Place
+Restaurant
+FoodItem
+TransportStop
+TransportRoute
+```
+Keep external provider IDs alongside your internal IDs so records can be synchronized without making third-party IDs your primary key.
+---
+⚡ Redis Strategy
+Redis can be used for data that is expensive or repeated:
+```text
+Nearby places
+Popular searches
+Geocoding results
+Transport lookups
+Rate limiting
+Temporary scan state
+```
+Example request flow:
+```text
+GET /food/popular
+       │
+       ▼
+     Redis
+      / \
+   HIT   MISS
+    │      │
+    │      ▼
+    │   Database/API
+    │      │
+    │      ▼
+    │   Save cache
+    │      │
+    └──────┘
+       │
+       ▼
+    Response
+```
+---
+🔐 Security
+Security should be part of the architecture, not a final add-on.
+API
+DTO validation
+Global validation pipe
+Authentication guards
+Authorization checks
+Rate limiting
+CORS policy
+Security headers
+Request size limits
+Structured error responses
+Uploads
+```text
+File received
+   ↓
+MIME validation
+   ↓
+Extension validation
+   ↓
+Size validation
+   ↓
+Storage isolation
+   ↓
+AI processing
+```
+Never trust a browser-provided filename or MIME type by itself.
+Secrets
+Never commit:
+```text
+DATABASE_URL
+JWT_SECRET
+AI_API_KEY
+MAP_API_KEY
+STORAGE_SECRET
+```
+Use `.env` locally and secret management in production.
+---
+🌐 API Design
+Version the API from the beginning:
+```text
 /api/v1/auth
 /api/v1/users
-/api/v1/places
 /api/v1/location
+/api/v1/places
 /api/v1/food
 /api/v1/scan
 /api/v1/transport
 /api/v1/recommendations
-
+```
+Example endpoints
+Method	Endpoint	Purpose
+`POST`	`/api/v1/auth/login`	Login
+`POST`	`/api/v1/auth/register`	Register
+`GET`	`/api/v1/location/nearby`	Nearby location data
+`GET`	`/api/v1/places/nearby`	Nearby places
+`GET`	`/api/v1/food/search?q=`	Search food
+`GET`	`/api/v1/food/popular`	Popular food
+`POST`	`/api/v1/scan`	Create scan
+`GET`	`/api/v1/scan/:id`	Scan result/status
+`GET`	`/api/v1/transport/nearby`	Nearby stops
+`POST`	`/api/v1/transport/route`	Route search
+`GET`	`/api/v1/recommendations`	Personalized recommendations
+---
+📦 Local Development
+Prerequisites
+Install:
+Node.js 20+
+pnpm
+PostgreSQL
+Redis
+Git
+Docker (recommended)
+Clone
+```bash
+git clone https://github.com/<your-username>/fairtrip.git
+cd fairtrip
+```
+Install
+```bash
+pnpm install
+```
+Environment
+```bash
+cp .env.example .env
+```
 Example:
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/fairtrip"
+REDIS_URL="redis://localhost:6379"
 
-GET /api/v1/location/nearby
-GET /api/v1/food/search?q=biryani
-GET /api/v1/food/popular
-POST /api/v1/scan
-GET /api/v1/scan/:id
-GET /api/v1/transport/nearby
-POST /api/v1/transport/route
+JWT_SECRET="change-me"
+JWT_REFRESH_SECRET="change-me-too"
 
-23. Service Layer
+MAP_API_KEY=""
+AI_API_KEY=""
 
-The NestJS backend should be organized by business responsibility.
-
-src/
-├── auth/
-├── users/
-├── location/
-├── places/
-├── food/
-├── scan/
-├── transport/
-├── recommendations/
-├── storage/
-├── ai/
-├── cache/
-└── common/
-
-Each module can contain:
-
-module.ts
-controller.ts
-service.ts
-dto/
-entities/
-interfaces/
-
+STORAGE_ENDPOINT=""
+STORAGE_ACCESS_KEY=""
+STORAGE_SECRET_KEY=""
+STORAGE_BUCKET="fairtrip"
+```
+Database
+```bash
+pnpm prisma generate
+pnpm prisma migrate dev
+```
+Run web
+```bash
+pnpm --filter web dev
+```
+Run API
+```bash
+pnpm --filter api start:dev
+```
+---
+🐳 Docker Development
+A local development stack can contain:
+```text
+Next.js
+NestJS
+PostgreSQL
+Redis
+Worker
+```
 Example:
-
-food/
-├── food.module.ts
-├── food.controller.ts
-├── food.service.ts
-├── dto/
-│   ├── search-food.dto.ts
-│   └── food-preference.dto.ts
-└── interfaces/
-
-24. External Service Abstraction
-
-Do not directly call third-party APIs from controllers.
-
-Bad:
-
-Controller
+```bash
+docker compose up -d
+```
+Then run migrations:
+```bash
+pnpm prisma migrate dev
+```
+---
+🧪 Testing
+Recommended test layers:
+```text
+Unit Tests
    ↓
-Axios
+Integration Tests
    ↓
-Map Provider
-
-Better:
-
-Controller
+API Tests
    ↓
-LocationService
-   ↓
-MapProviderAdapter
-   ↓
-Map API
-
-This allows the provider to be changed later.
-
-For example:
-
-interface GeocodingProvider {
-  search(query: string): Promise<LocationResult[]>;
-  reverse(lat: number, lng: number): Promise<LocationResult>;
-}
-
-Implementations can include:
-
-PhotonProvider
-MapTilerProvider
-GoogleProvider
-
-25. Storage Architecture
-
-Uploaded scan images should not be permanently stored in the application
-server filesystem.
-
-Recommended:
-
-User
- │
- ▼
-Upload API
- │
- ▼
-Object Storage
- │
- ├── original image
- ├── optimized image
- └── temporary scan asset
-
-Possible storage services:
-
-Cloudflare R2
-
-AWS S3
-
-Supabase Storage
-
-Cloudinary
-
-Use signed URLs when appropriate.
-
-26. Background Jobs
-
-AI image processing can take longer than normal API requests.
-
-Instead of:
-
-POST /scan
-     │
-     ▼
-Wait 20 seconds
-     │
-     ▼
-Response
-
-Use:
-
-POST /scan
-     │
-     ▼
-Create Scan Job
-     │
-     ▼
-Return scanId
-     │
-     ▼
-Background Worker
-     │
-     ├── OCR
-     ├── Vision
-     └── AI analysis
-     │
-     ▼
-Save Result
-
-The frontend can then receive status updates using polling or
-WebSocket/SSE.
-
-27. Caching Strategy
-
-Redis can cache data that changes slowly.
-
-Examples:
-
-nearby places
-popular foods
-transport schedules
-geocoding results
-popular searches
-
-Example:
-
-GET /food/popular
-
-          │
-          ▼
-        Redis
-       /     \
-    HIT       MISS
-     │          │
-     ▼          ▼
- Response    PostgreSQL/API
-                │
-                ▼
-              Redis
-
-Do not cache sensitive user data without a clear invalidation strategy.
-
-28. Security Architecture
-
-Important protections:
-
-HTTPS
-
-Secure authentication
-
-Password hashing
-
-Input validation
-
-DTO validation
-
-Rate limiting
-
-CORS configuration
-
-Security headers
-
-API authorization
-
-File-type validation
-
-File-size limits
-
-Malware scanning for uploaded files where appropriate
-
-Secret management
-
-Database access controls
-
-Audit logging for important actions
-
-For scan uploads:
-
-Upload
-  │
-  ├── MIME validation
-  ├── Extension validation
-  ├── Size validation
-  ├── Storage isolation
-  └── Processing
-
-Never trust the filename supplied by the browser.
-
-29. Frontend Architecture
-
-Recommended:
-
-app/
-├── page.tsx
-├── food/
-│   └── page.tsx
-├── scan/
-│   └── page.tsx
-├── transport/
-│   └── page.tsx
-├── explore/
-│   └── page.tsx
-├── account/
-│   └── page.tsx
-└── layout.tsx
-
-Components:
-
-components/
-├── navbar/
-├── hero/
-├── map/
-├── food/
-├── scan/
-├── transport/
-├── cards/
-├── forms/
-└── ui/
-
-30. Page Structure
-
-Explore
-
-Navbar
- ↓
-Hero
- ↓
-Personalization
- ↓
-Starting Point
- ↓
-Map
- ↓
-Nearby Places
- ↓
-Popular Searches
- ↓
-Footer
-
-Food
-
-Navbar
- ↓
-Food Hero
- ↓
-Food Search
- ↓
-Popular Searches
- ↓
-Food Preferences
- ↓
-Recommendations
- ↓
-Footer
-
-Scan
-
-Navbar
- ↓
-Scan Introduction
- ↓
-Category Selector
- ↓
-Upload / Camera
- ↓
-Analyzing State
- ↓
-AI Result
- ↓
-Related Information
-
-Transport
-
-Navbar
- ↓
-Transport Search
- ↓
-Current Location
- ↓
-Nearby Stops
- ↓
-Route Planner
- ↓
-Route Alternatives
- ↓
-Map
-
-31. Design System
-
-Main colors
-
---forest: #0B4038;
---forest-dark: #08332D;
---cream: #F6F1E7;
---lime: #E4F879;
---orange: #F26B3A;
---peach: #F7D9C9;
---text: #123F38;
---muted: #71827D;
-
-UI principles
-
-Large rounded cards
-
-20--32px border radius
-
-Soft shadows
-
-Strong typography hierarchy
-
-Large whitespace
-
-Minimal borders
-
-Consistent iconography
-
-Responsive layouts
-
-Accessible contrast
-
-32. Responsive Design
-
-The design should support:
-
-Desktop
-   ↓
-Tablet
-   ↓
-Mobile
-
-Desktop:
-
-[ Navigation ]
-
-[ Large Hero                    ]
-
-[ Content       Content         ]
-
-Mobile:
-
-[ Logo       Menu ]
-
-[ Hero ]
-
-[ Search ]
-
-[ Card ]
-
-[ Map ]
-
-[ Results ]
-
-Avoid using fixed desktop pixel positions for important content.
-
-Prefer:
-
-max-width
-grid
-flex
-gap
-padding
-clamp()
-minmax()
-
-33. Performance
-
-Recommended optimizations:
-
-Next.js image optimization
-
-Lazy loading
-
-Route-level code splitting
-
-API caching
-
-Redis caching
-
-Pagination
-
-Debounced search
-
-Image compression
-
-Background processing for AI
-
-CDN for static assets
-
-For search:
-
+End-to-End Tests
+```
+Important cases to test:
+Login / registration
+Location permissions denied
+Invalid map search
+Food search with no result
+Budget filtering
+Scan upload failures
+OCR errors
+AI timeout
+Redis unavailable
+External API unavailable
+Transport route with no result
+---
+📈 Performance
+The application should avoid calling external APIs unnecessarily.
+Search
+Use debouncing:
+```text
 User types
-   │
-   ▼
-Debounce 300–500ms
-   │
-   ▼
-API request
-
-This prevents sending an API request for every single keystroke.
-
-34. Error Handling
-
-The backend should return consistent errors.
-
-Example:
-
-{
-  "success": false,
-  "message": "Unable to find nearby places",
-  "code": "LOCATION_SEARCH_FAILED"
-}
-
-Frontend:
-
-Loading
-   ↓
-Success
-
-or
-
-Loading
-   ↓
-Error
-   ↓
-Retry
-
-35. Observability
-
-For a production deployment, add:
-
-Structured logging
-
-Request IDs
-
-Error tracking
-
-API latency monitoring
-
-Database monitoring
-
-Background job monitoring
-
-Useful categories:
-
-INFO
-WARN
-ERROR
-SECURITY
-AI
-PAYMENT
-
-36. Deployment Architecture
-
-A possible deployment:
-
-                       Internet
-                           │
-                           ▼
-                    CDN / Reverse Proxy
-                           │
-             ┌─────────────┴─────────────┐
-             │                           │
-        Next.js App                 NestJS API
-             │                           │
-             │                    ┌──────┼───────┐
-             │                    │      │       │
-             │                 Redis PostgreSQL Worker
-             │                            │       │
-             │                            │       ▼
-             │                            │    AI Services
-             │                            │
-             └──────────────┬─────────────┘
-                            │
-                       Object Storage
-
-37. Environment Variables
-
-Never commit secrets.
-
-Example:
-
-DATABASE_URL=
-REDIS_URL=
-
-JWT_SECRET=
-JWT_REFRESH_SECRET=
-
-MAP_API_KEY=
-FOOD_API_KEY=
-
-AI_API_KEY=
-
-STORAGE_ENDPOINT=
-STORAGE_ACCESS_KEY=
-STORAGE_SECRET_KEY=
-STORAGE_BUCKET=
-
-Use:
-
-.env
-.env.local
-
-and add them to .gitignore.
-
-38. Development Workflow
-
-1. Design UI
-      ↓
-2. Create frontend route
-      ↓
-3. Define API contract
-      ↓
-4. Create DTO
-      ↓
-5. Implement service
-      ↓
-6. Connect database
-      ↓
-7. Add external provider
-      ↓
-8. Add caching
-      ↓
-9. Add validation
-      ↓
-10. Test
-      ↓
-11. Deploy
-
-39. Testing Strategy
-
-Frontend
-
-Test:
-
-Components
-
-Forms
-
-Navigation
-
-Responsive states
-
-Upload UI
-
-Backend
-
-Test:
-
-Controllers
-
-Services
-
-DTO validation
-
-Authentication
-
-Recommendation logic
-
-Transport routes
-
-Scan processing
-
-Integration
-
-Test:
-
-Frontend
-   ↓
+  ↓
+wait 300–500ms
+  ↓
+request
+```
+Images
+Compress uploads
+Generate optimized variants
+Use CDN/object storage
+Lazy load large media
 API
-   ↓
-Database
-   ↓
-External Service
-
-40. Future Features
-
-Possible future modules:
-
-Hotel discovery
-
-Event discovery
-
-Local experiences
-
-Travel itinerary generation
-
-Price comparison
-
-Offline travel mode
-
-Saved trips
-
-Trip sharing
-
-User reviews
-
-Community recommendations
-
-AI travel assistant
-
-Voice-based search
-
-Multilingual support
-
-Personalized trip planner
-
-41. Project Goal
-
-FairTrip aims to combine:
-
-TRAVEL
-   +
-FOOD
-   +
-TRANSPORT
-   +
-LOCATION
-   +
-AI
-   +
-BUDGET
-   +
-PERSONALIZATION
-
-into one cohesive travel-discovery platform.
-
-The goal is not simply to show information, but to help users understand
-their options before making a travel or food decision.
-
-42. Recommended Final Architecture
-
-                         ┌─────────────────────┐
-                         │      FAIRTRIP       │
-                         └──────────┬──────────┘
-                                    │
-                          ┌─────────▼─────────┐
-                          │   Next.js Client  │
-                          │ React + Tailwind  │
-                          └─────────┬─────────┘
-                                    │
-                               REST / SSE
-                                    │
-                          ┌─────────▼─────────┐
-                          │    NestJS API     │
-                          └─────────┬─────────┘
-                                    │
-       ┌──────────────┬─────────────┼──────────────┬──────────────┐
-       │              │             │              │              │
-       ▼              ▼             ▼              ▼              ▼
-     Auth          Location        Food          Scan         Transport
-       │              │             │              │              │
-       └──────────────┴─────────────┼──────────────┴──────────────┘
-                                    │
-                          ┌─────────▼─────────┐
-                          │  Domain Services  │
-                          └─────────┬─────────┘
-                                    │
-                 ┌──────────────────┼──────────────────┐
-                 │                  │                  │
-                 ▼                  ▼                  ▼
-             PostgreSQL           Redis          Background Worker
-                                                        │
-                                                        ▼
-                                                 AI / OCR / Vision
-                                                        │
-                                                        ▼
-                                                  Object Storage
-
-43. Project Philosophy
-
-FairTrip should be built as a modular system.
-
-The frontend should be responsible for presentation and interaction.
-
-The backend should be responsible for business rules, authentication,
-validation, orchestration, and integrations.
-
-External providers should be accessed through service adapters.
-
-Long-running AI operations should use background jobs.
-
-Frequently accessed data should use caching.
-
-User and application data should be stored in PostgreSQL.
-
-This structure makes the application easier to extend when new features
-such as hotels, events, itinerary planning, voice search, or additional
-map providers are introduced.
-
-44. Status
-
-Current UI concepts
-
-Explore / travel landing page
-
-Food discovery page
-
-Scan page concept
-
-Map / starting-point interface
-
-Personalization interface
-
-Navigation system
-
-Transport implementation
-
-Authentication
-
-Database
-
-AI scan pipeline
-
-Recommendation engine
-
-Production deployment
-
-License
-
-Add the project's chosen license here before public release.
+Cache repeated reads
+Paginate lists
+Use database indexes
+Move AI processing to workers
+---
+🔭 Future Roadmap
+Phase 1 — Core
+[ ] Explore page
+[ ] Location search
+[ ] Map
+[ ] Food discovery
+[ ] Authentication
+Phase 2 — Intelligence
+[ ] Scan
+[ ] OCR
+[ ] Food recognition
+[ ] AI recommendations
+Phase 3 — Mobility
+[ ] Nearby transport
+[ ] Route planning
+[ ] Multi-modal routes
+[ ] Real-time data where available
+Phase 4 — Personalization
+[ ] Saved trips
+[ ] User preferences
+[ ] Search history
+[ ] Personalized home feed
+Phase 5 — Platform
+[ ] Hotels
+[ ] Events
+[ ] Experiences
+[ ] Offline mode
+[ ] Voice search
+[ ] Multilingual support
+---
+🧠 Engineering Principles
+1. Provider independence
+Map, food, transport and AI providers should be replaceable through adapters.
+2. Domain-first backend
+Business rules belong in services/domain modules, not controllers or UI components.
+3. Async for expensive work
+OCR, vision and AI analysis should use background jobs.
+4. Cache intentionally
+Cache repeated external lookups while keeping cache invalidation explicit.
+5. Validate at the boundary
+Every API request and file upload should be validated before it reaches business logic.
+6. Keep secrets server-side
+The browser should never receive private provider keys.
+---
+🤝 Contributing
+Create a branch:
+```bash
+git checkout -b feature/food-recommendations
+```
+Make your changes.
+Run tests and linting.
+Commit with a meaningful message.
+Open a pull request.
+Example commit:
+```text
+feat(food): add budget-aware food recommendations
+```
+---
+📄 License
+Add your selected license before publishing the repository.
+---
+<p align="center">
+  Built with ❤️ for smarter, fairer local travel discovery.
+</p>
