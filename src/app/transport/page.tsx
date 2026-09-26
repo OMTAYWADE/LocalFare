@@ -1,5 +1,5 @@
-import TravelMemoryPage from "@/features/travelMemory/components/TravelMemoryPage";
+import LocalTransport from "@/features/transport/components/LocalTransport";
 
-export default function JournalPage() {
-    return <TravelMemoryPage />;
+export default function TransportPage() {
+    return <LocalTransport />;
 }

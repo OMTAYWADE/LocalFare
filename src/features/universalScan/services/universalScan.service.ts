@@ -280,9 +280,8 @@ function extractOutputText(
 }
 
 /*
- * Gemini sometimes wraps JSON in markdown fences or adds
- * a short sentence before/after the JSON even when the
- * prompt says "JSON only".
+ * Gemini can sometimes wrap JSON in
+ * markdown fences or additional text.
  *
  * Extract the actual JSON object before parsing it.
  */
@@ -291,17 +290,14 @@ function parseRecognitionJson(
 ): unknown {
     const cleaned = outputText
         .trim()
-        .replace(/^```json\\s*/i, "")
-        .replace(/^```\\s*/i, "")
-        .replace(/\\s*```$/i, "")
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/i, "")
         .trim();
 
-    // First try the complete response.
     try {
         const parsed = JSON.parse(cleaned);
 
-        // Some models can return a JSON string containing
-        // another JSON object.
         if (typeof parsed === "string") {
             try {
                 return JSON.parse(parsed);
@@ -312,22 +308,143 @@ function parseRecognitionJson(
 
         return parsed;
     } catch {
-        // Continue below and extract the first JSON object.
+        // Continue below.
     }
 
     const start = cleaned.indexOf("{");
     const end = cleaned.lastIndexOf("}");
 
-    if (start === -1 || end <= start) {
+    if (
+        start === -1 ||
+        end <= start
+    ) {
         throw new Error(
             "Gemini did not return a JSON object.",
         );
     }
 
     const jsonCandidate =
-        cleaned.slice(start, end + 1);
+        cleaned.slice(
+            start,
+            end + 1,
+        );
 
     return JSON.parse(jsonCandidate);
+}
+
+/**
+ * Sleep helper used for exponential backoff.
+ */
+function sleep(
+    milliseconds: number,
+): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(
+            resolve,
+            milliseconds,
+        );
+    });
+}
+
+/**
+ * Calls Gemini with automatic retry.
+ *
+ * Retries only temporary server/rate-limit
+ * errors such as 503 and 429.
+ */
+async function fetchGeminiWithRetry(
+    url: string,
+    options: RequestInit,
+    maxRetries = 3,
+): Promise<Response> {
+    let lastResponse: Response | undefined;
+
+    for (
+        let attempt = 0;
+        attempt <= maxRetries;
+        attempt++
+    ) {
+        try {
+            const response =
+                await fetch(
+                    url,
+                    options,
+                );
+
+            lastResponse = response;
+
+            // Success
+            if (response.ok) {
+                return response;
+            }
+
+            // Only retry temporary errors.
+            const shouldRetry =
+                response.status === 429 ||
+                response.status === 500 ||
+                response.status === 502 ||
+                response.status === 503 ||
+                response.status === 504;
+
+            if (
+                !shouldRetry ||
+                attempt === maxRetries
+            ) {
+                return response;
+            }
+
+            /*
+             * Exponential backoff:
+             *
+             * attempt 0 -> 1 second
+             * attempt 1 -> 2 seconds
+             * attempt 2 -> 4 seconds
+             */
+            const delay =
+                1000 *
+                Math.pow(
+                    2,
+                    attempt,
+                );
+
+            console.warn(
+                `[UniversalScan] Gemini returned ${response.status}. ` +
+                `Retrying in ${delay}ms ` +
+                `(attempt ${attempt + 1}/${maxRetries})...`,
+            );
+
+            await sleep(delay);
+        } catch (error) {
+            /*
+             * Network errors can also be temporary.
+             */
+            if (attempt === maxRetries) {
+                throw error;
+            }
+
+            const delay =
+                1000 *
+                Math.pow(
+                    2,
+                    attempt,
+                );
+
+            console.warn(
+                `[UniversalScan] Gemini network error. ` +
+                `Retrying in ${delay}ms...`,
+            );
+
+            await sleep(delay);
+        }
+    }
+
+    if (lastResponse) {
+        return lastResponse;
+    }
+
+    throw new Error(
+        "Unable to connect to Gemini.",
+    );
 }
 
 async function callGemini(
@@ -413,6 +530,19 @@ Rules:
 15. Do not identify unrelated background objects.
 
 Return JSON only.
+
+Expected format:
+
+{
+    "name": "string",
+    "type": "food | clothing | product | electronics | household | handicraft | cosmetic | tool | vehicle-part | brand | place | business | other | unknown",
+    "kind": "local | regional | branded | unknown",
+    "brand": "string or null",
+    "model": "string or null",
+    "confidence": 0,
+    "attributes": {},
+    "detectedText": []
+}
 `;
 
     const inputParts: Array<
@@ -424,6 +554,9 @@ Return JSON only.
         },
     ];
 
+    /*
+     * TEXT INPUT
+     */
     if (
         input.inputType === "text"
     ) {
@@ -443,6 +576,9 @@ Return JSON only.
         });
     }
 
+    /*
+     * IMAGE INPUT
+     */
     if (
         input.inputType === "image"
     ) {
@@ -478,8 +614,11 @@ Return JSON only.
         });
     }
 
+    /*
+     * GEMINI REQUEST
+     */
     const response =
-        await fetch(
+        await fetchGeminiWithRetry(
             "https://generativelanguage.googleapis.com/v1beta/interactions",
             {
                 method: "POST",
@@ -500,17 +639,60 @@ Return JSON only.
 
                 cache: "no-store",
             },
+            3,
         );
 
+    /*
+     * Gemini still failed after retries.
+     */
     if (!response.ok) {
         const errorText =
             await response.text();
 
+        let message =
+            `Gemini recognition failed (${response.status}).`;
+
+        /*
+         * Give a cleaner message for temporary
+         * availability problems.
+         */
+        if (
+            response.status === 503
+        ) {
+            message =
+                "Gemini is temporarily unavailable due to high demand. Please try again in a few moments.";
+        } else if (
+            response.status === 429
+        ) {
+            message =
+                "Gemini request limit reached. Please try again shortly.";
+        } else if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+            message =
+                "Gemini API authentication failed. Check GEMINI_API_KEY.";
+        }
+
+        console.error(
+            "[UniversalScan] Gemini API error:",
+            {
+                status:
+                    response.status,
+                body:
+                    errorText,
+                model,
+            },
+        );
+
         throw new Error(
-            `Gemini recognition failed (${response.status}): ${errorText}`,
+            `${message} ${errorText}`,
         );
     }
 
+    /*
+     * Parse Gemini response.
+     */
     const data =
         (await response.json()) as GeminiResponse;
 
@@ -525,7 +707,9 @@ Return JSON only.
 
     try {
         return normalizeRecognition(
-            parseRecognitionJson(outputText),
+            parseRecognitionJson(
+                outputText,
+            ),
         );
     } catch (parseError) {
         console.error(
@@ -737,4 +921,4 @@ export async function recognizeUniversal(
               }.`
             : `Recognized ${recognition.name}.`,
     };
-}   
+}

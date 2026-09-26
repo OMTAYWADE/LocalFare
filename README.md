@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 [README(1).md](https://github.com/user-attachments/files/32615771/README.1.md)
+=======
+>>>>>>> 62b983b (changes is readme and screenshots for it)
 # FairTrip 🌍
 
 <p align="center">
